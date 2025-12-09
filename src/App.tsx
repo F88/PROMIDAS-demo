@@ -76,6 +76,13 @@ function App() {
     }
   };
 
+  const handleTokenChange = () => {
+    // Clear all prototypes and refresh stats
+    clearRandom();
+    clearSearch();
+    updateStats();
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -308,7 +315,12 @@ function App() {
         </p>
       </footer>
 
-      {showSettings && <Settings onClose={() => setShowSettings(false)} />}
+      {showSettings && (
+        <Settings
+          onClose={() => setShowSettings(false)}
+          onTokenChange={handleTokenChange}
+        />
+      )}
     </div>
   );
 }
