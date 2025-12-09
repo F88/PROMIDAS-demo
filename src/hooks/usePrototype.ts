@@ -4,7 +4,10 @@ import type {
   ProtopediaInMemoryRepositoryStats,
 } from "@f88/promidas";
 import type { ListPrototypesParams } from "protopedia-api-v2-client";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
+import {
+  getProtopediaRepository,
+  REPOSITORY_TTL_MS,
+} from "../lib/protopedia-repository";
 
 export function useRepositoryStats() {
   const [stats, setStats] = useState<ProtopediaInMemoryRepositoryStats | null>(
@@ -33,7 +36,7 @@ export function useRepositoryStats() {
         if (currentStats.cachedAt && !currentStats.isExpired) {
           // Calculate time until expiration
           const now = Date.now();
-          const expiresAt = currentStats.cachedAt + 30000; // ttlMs from repository config
+          const expiresAt = currentStats.cachedAt + REPOSITORY_TTL_MS;
           const timeUntilExpiry = expiresAt - now;
 
           if (timeUntilExpiry > 0) {

@@ -6,6 +6,10 @@ import type {
 import { getApiToken } from "./token-storage";
 import type { ProtoPediaApiClientOptions } from "protopedia-api-v2-client";
 
+// Repository configuration constants
+export const REPOSITORY_TTL_MS = 1_000 * 30; // 30 seconds
+export const REPOSITORY_MAX_PAYLOAD_SIZE = 10 * 1024 * 1024; // 10 MiB
+
 let repository: ProtopediaInMemoryRepository | null = null;
 
 export function getProtopediaRepository(): ProtopediaInMemoryRepository {
@@ -17,9 +21,8 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
     }
 
     const storeConfig: PrototypeMapStoreConfig = {
-      //
-      ttlMs: 1_000 * 30, // 30 seconds
-      maxPayloadSizeBytes: 10 * 1024 * 1024, // 30 MiB limit
+      ttlMs: REPOSITORY_TTL_MS,
+      maxPayloadSizeBytes: REPOSITORY_MAX_PAYLOAD_SIZE,
     };
 
     const protopediaApiClientOptions: ProtoPediaApiClientOptions = {
