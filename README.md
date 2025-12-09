@@ -60,7 +60,7 @@ npm run dev
 ### データ取得とキャッシング
 
 - `createProtopediaInMemoryRepository`によるインメモリストレージ
-- TTL: 30分
+- TTL: 30秒
 - 最大ペイロードサイズ: 30 MiB
 - 自動的なスナップショット管理
 
