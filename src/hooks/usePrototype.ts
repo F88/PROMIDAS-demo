@@ -23,8 +23,36 @@ export function useRepositoryStats() {
 
   useEffect(() => {
     updateStats();
-    const interval = setInterval(updateStats, 1000);
-    return () => clearInterval(interval);
+
+    // Schedule next update when TTL expires instead of polling
+    const scheduleNextUpdate = () => {
+      try {
+        const repo = getProtopediaRepository();
+        const currentStats = repo.getStats();
+
+        if (currentStats.cachedAt && !currentStats.isExpired) {
+          // Calculate time until expiration
+          const now = Date.now();
+          const expiresAt = currentStats.cachedAt + 30000; // ttlMs from repository config
+          const timeUntilExpiry = expiresAt - now;
+
+          if (timeUntilExpiry > 0) {
+            return setTimeout(() => {
+              updateStats();
+              scheduleNextUpdate();
+            }, timeUntilExpiry + 100); // Add small buffer
+          }
+        }
+      } catch (err) {
+        // Token not set yet
+      }
+      return undefined;
+    };
+
+    const timeout = scheduleNextUpdate();
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
   }, []);
 
   return { stats, updateStats };
