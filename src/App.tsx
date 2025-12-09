@@ -9,6 +9,7 @@ import { PrototypeCard } from "./components/PrototypeCard";
 import { Settings } from "./components/Settings";
 import { hasApiToken } from "./lib/token-storage";
 import "./App.css";
+import type { ListPrototypesParams } from "protopedia-api-v2-client";
 
 function App() {
   const [showSettings, setShowSettings] = useState(!hasApiToken());
