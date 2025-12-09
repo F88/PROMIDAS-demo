@@ -43,21 +43,22 @@ function App() {
     clear: clearSearch,
   } = usePrototypeSearch();
 
-  const handleSetupSnapshot = () => {
+  const handleSetupSnapshot = async () => {
     let limit = parseInt(snapshotLimit) || 10;
     if (limit > 100) {
       limit = 100;
       setSnapshotLimit("100");
     }
     const offset = parseInt(snapshotOffset) || 0;
-    const params: any = { limit, offset };
+    const params: ListPrototypesParams = { limit, offset };
 
     if (snapshotUserNm) params.userNm = snapshotUserNm;
     if (snapshotTagNm) params.tagNm = snapshotTagNm;
     if (snapshotEventNm) params.eventNm = snapshotEventNm;
     if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
 
-    setupSnapshot(params).then(() => updateStats());
+    await setupSnapshot(params);
+    updateStats();
   };
 
   const handleRefreshSnapshot = async () => {
