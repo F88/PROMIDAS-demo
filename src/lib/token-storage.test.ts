@@ -52,16 +52,16 @@ describe("token-storage", () => {
   });
 
   describe("removeApiToken", () => {
-    it("removes the token from localStorage", () => {
-      localStorage.setItem("protopedia_api_token", "test-token");
+    it("removes the token from sessionStorage", () => {
+      sessionStorage.setItem("protopedia_api_token", "test-token");
       removeApiToken();
-      expect(localStorage.getItem("protopedia_api_token")).toBeNull();
+      expect(sessionStorage.getItem("protopedia_api_token")).toBeNull();
     });
 
     it("does nothing when no token exists", () => {
       // Should not throw error
       expect(() => removeApiToken()).not.toThrow();
-      expect(localStorage.getItem("protopedia_api_token")).toBeNull();
+      expect(sessionStorage.getItem("protopedia_api_token")).toBeNull();
     });
   });
 
@@ -71,18 +71,18 @@ describe("token-storage", () => {
     });
 
     it("returns true when a token is stored", () => {
-      localStorage.setItem("protopedia_api_token", "test-token");
+      sessionStorage.setItem("protopedia_api_token", "test-token");
       expect(hasApiToken()).toBe(true);
     });
 
     it("returns false after token is removed", () => {
-      localStorage.setItem("protopedia_api_token", "test-token");
+      sessionStorage.setItem("protopedia_api_token", "test-token");
       removeApiToken();
       expect(hasApiToken()).toBe(false);
     });
 
     it("returns true even for empty string token", () => {
-      localStorage.setItem("protopedia_api_token", "");
+      sessionStorage.setItem("protopedia_api_token", "");
       expect(hasApiToken()).toBe(true);
     });
   });
@@ -90,17 +90,19 @@ describe("token-storage", () => {
   describe("edge cases", () => {
     it("handles storage quota exceeded gracefully", () => {
       // Mock setItem to throw quota exceeded error
-      const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      const originalSetItem = sessionStorage.setItem;
+      sessionStorage.setItem = vi.fn(() => {
         throw new DOMException("QuotaExceededError");
       });
 
-      expect(() => setApiToken("token")).toThrow();
+      // Should not throw, error is caught and logged
+      expect(() => setApiToken("token")).not.toThrow();
 
-      spy.mockRestore();
+      sessionStorage.setItem = originalSetItem;
     });
 
     it("handles special characters in tokens", () => {
-      const specialToken = "token-with-!@#$%^&*()_+={}[]|\\:\";<>?,./";
+      const specialToken = 'token-with-!@#$%^&*()_+={}[]|\\:";<>?,./';
       setApiToken(specialToken);
       expect(getApiToken()).toBe(specialToken);
     });
@@ -111,10 +113,10 @@ describe("token-storage", () => {
       expect(getApiToken()).toBe(longToken);
     });
 
-    it("maintains independence from other localStorage keys", () => {
-      localStorage.setItem("other-key", "other-value");
+    it("maintains independence from other sessionStorage keys", () => {
+      sessionStorage.setItem("other-key", "other-value");
       setApiToken("api-token");
-      expect(localStorage.getItem("other-key")).toBe("other-value");
+      expect(sessionStorage.getItem("other-key")).toBe("other-value");
       expect(getApiToken()).toBe("api-token");
     });
   });
