@@ -19,8 +19,8 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
 
       {prototype.tags && prototype.tags.length > 0 && (
         <div className="tags">
-          {prototype.tags.map((tag, index) => (
-            <span key={index} className="tag">
+          {prototype.tags.map((tag) => (
+            <span key={tag} className="tag">
               {tag}
             </span>
           ))}
