@@ -90,15 +90,13 @@ describe("token-storage", () => {
   describe("edge cases", () => {
     it("handles storage quota exceeded gracefully", () => {
       // Mock setItem to throw quota exceeded error
-      const originalSetItem = Storage.prototype.setItem;
-      Storage.prototype.setItem = vi.fn(() => {
+      const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
         throw new DOMException("QuotaExceededError");
       });
 
       expect(() => setApiToken("token")).toThrow();
 
-      // Restore original setItem
-      Storage.prototype.setItem = originalSetItem;
+      spy.mockRestore();
     });
 
     it("handles special characters in tokens", () => {
