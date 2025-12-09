@@ -12,6 +12,7 @@ export function Settings({ onClose, onTokenChange }: SettingsProps) {
   const [token, setToken] = useState(getApiToken() || "");
   const [showToken, setShowToken] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleSave = () => {
     if (token.trim()) {
@@ -27,15 +28,18 @@ export function Settings({ onClose, onTokenChange }: SettingsProps) {
   };
 
   const handleDelete = () => {
-    if (confirm("Are you sure you want to delete the API token?")) {
-      removeApiToken();
-      resetRepository();
-      setToken("");
-      setTimeout(() => {
-        onClose();
-        onTokenChange?.();
-      }, 500);
-    }
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    removeApiToken();
+    resetRepository();
+    setToken("");
+    setShowDeleteConfirm(false);
+    setTimeout(() => {
+      onClose();
+      onTokenChange?.();
+    }, 500);
   };
 
   return (
@@ -96,6 +100,29 @@ export function Settings({ onClose, onTokenChange }: SettingsProps) {
             )}
           </div>
         </div>
+
+        {showDeleteConfirm && (
+          <div className="confirm-overlay">
+            <div className="confirm-modal">
+              <h3>Delete API Token?</h3>
+              <p>Are you sure you want to delete the API token?</p>
+              <div className="confirm-actions">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="confirm-delete-button"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
