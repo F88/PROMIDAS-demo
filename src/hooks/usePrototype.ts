@@ -101,52 +101,6 @@ export function useRandomPrototype() {
   return { prototype, loading, error, fetchRandom, clear };
 }
 
-export function usePrototypeById(id: number | null) {
-  const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (id === null) {
-      return;
-    }
-
-    const fetchById = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const repo = getProtopediaRepository();
-        const stats = repo.getStats();
-
-        // Setup snapshot if not initialized
-        if (stats.size === 0) {
-          await repo.setupSnapshot({ offset: 0, limit: 100 });
-        }
-
-        const result = await repo.getPrototypeFromSnapshotById(id);
-
-        if (!result) {
-          setError(`Prototype with ID ${id} not found in cache`);
-          setPrototype(null);
-        } else {
-          setPrototype(result);
-        }
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch prototype"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchById();
-  }, [id]);
-
-  return { prototype, loading, error };
-}
-
 export function useSnapshotManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
