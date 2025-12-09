@@ -8,8 +8,8 @@ import {
 
 describe("token-storage", () => {
   beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
+    // Clear sessionStorage before each test
+    sessionStorage.clear();
     // Clear all mocks
     vi.clearAllMocks();
   });
@@ -21,33 +21,33 @@ describe("token-storage", () => {
 
     it("returns the stored token when it exists", () => {
       const token = "test-api-token-123";
-      localStorage.setItem("protopedia_api_token", token);
+      sessionStorage.setItem("protopedia_api_token", token);
       expect(getApiToken()).toBe(token);
     });
 
     it("returns null after token is removed", () => {
-      localStorage.setItem("protopedia_api_token", "test-token");
-      localStorage.removeItem("protopedia_api_token");
+      sessionStorage.setItem("protopedia_api_token", "test-token");
+      sessionStorage.removeItem("protopedia_api_token");
       expect(getApiToken()).toBeNull();
     });
   });
 
   describe("setApiToken", () => {
-    it("stores the token in localStorage", () => {
+    it("stores the token in sessionStorage", () => {
       const token = "my-secret-token";
       setApiToken(token);
-      expect(localStorage.getItem("protopedia_api_token")).toBe(token);
+      expect(sessionStorage.getItem("protopedia_api_token")).toBe(token);
     });
 
     it("overwrites existing token", () => {
       setApiToken("old-token");
       setApiToken("new-token");
-      expect(localStorage.getItem("protopedia_api_token")).toBe("new-token");
+      expect(sessionStorage.getItem("protopedia_api_token")).toBe("new-token");
     });
 
     it("stores empty string token", () => {
       setApiToken("");
-      expect(localStorage.getItem("protopedia_api_token")).toBe("");
+      expect(sessionStorage.getItem("protopedia_api_token")).toBe("");
     });
   });
 

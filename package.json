@@ -9,9 +9,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
+    "test": "vitest run",
+    "test:ui": "vitest run --ui",
+    "test:coverage": "vitest run --coverage",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
