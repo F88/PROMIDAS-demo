@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { getApiToken, setApiToken, removeApiToken } from "../lib/token-storage";
+import { resetRepository } from "../lib/protopedia-repository";
 import "./Settings.css";
 
 interface SettingsProps {
   onClose: () => void;
+  onTokenChange?: () => void;
 }
 
-export function Settings({ onClose }: SettingsProps) {
+export function Settings({ onClose, onTokenChange }: SettingsProps) {
   const [token, setToken] = useState(getApiToken() || "");
   const [showToken, setShowToken] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -14,12 +16,12 @@ export function Settings({ onClose }: SettingsProps) {
   const handleSave = () => {
     if (token.trim()) {
       setApiToken(token.trim());
+      resetRepository();
       setSaved(true);
       setTimeout(() => {
         setSaved(false);
         onClose();
-        // Reload to apply new token
-        window.location.reload();
+        onTokenChange?.();
       }, 1000);
     }
   };
@@ -27,9 +29,11 @@ export function Settings({ onClose }: SettingsProps) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete the API token?")) {
       removeApiToken();
+      resetRepository();
       setToken("");
       setTimeout(() => {
-        window.location.reload();
+        onClose();
+        onTokenChange?.();
       }, 500);
     }
   };
