@@ -1,0 +1,94 @@
+.prototype-card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.prototype-card h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.prototype-image {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.prototype-meta {
+  margin: 1rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.prototype-meta p {
+  margin: 0.5rem 0;
+}
+
+.prototype-id {
+  font-family: monospace;
+  color: #999;
+}
+
+.team-name {
+  font-weight: 500;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tag {
+  padding: 0.25rem 0.75rem;
+  background: #f0f0f0;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.prototype-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #0066cc;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.prototype-link:hover {
+  background: #0052a3;
+}
+
+.summary {
+  margin: 1rem 0;
+  color: #555;
+  line-height: 1.6;
+}
+
+.prototype-footer {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.prototype-footer span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
