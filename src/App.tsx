@@ -60,8 +60,9 @@ function App() {
     setupSnapshot(params).then(() => updateStats());
   };
 
-  const handleRefreshSnapshot = () => {
-    refreshSnapshot().then(() => updateStats());
+  const handleRefreshSnapshot = async () => {
+    await refreshSnapshot();
+    updateStats();
   };
 
   const handleFetchRandom = () => {
