@@ -67,7 +67,9 @@ npm run dev
 ### カスタムフック
 
 - `useRandomPrototype` - ランダムなプロトタイプ取得
-- `usePrototypeById` - IDによるプロトタイプ取得
+- `usePrototypeSearch` - IDによるプロトタイプ検索
+- `useRepositoryStats` - リポジトリ統計情報の取得
+- `useSnapshotManagement` - スナップショット管理(setup/refresh)
 
 ## テスト
 
