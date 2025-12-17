@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { PrototypeCard } from "../components/PrototypeCard";
-import type { NormalizedPrototype } from "@f88/promidas";
+import type { NormalizedPrototype } from "@f88/promidas/types";
 
 describe("PrototypeCard", () => {
   const mockPrototype: NormalizedPrototype = {
@@ -10,7 +10,11 @@ describe("PrototypeCard", () => {
     teamNm: "Test Team",
     users: [],
     tags: ["tag1", "tag2"],
+    materials: [],
+    events: [],
+    awards: [],
     summary: "Test summary",
+    systemDescription: "",
     status: 1,
     releaseFlg: 1,
     createDate: "2024-01-01",

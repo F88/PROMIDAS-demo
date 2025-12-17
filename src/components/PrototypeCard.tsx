@@ -1,4 +1,4 @@
-import type { NormalizedPrototype } from "@f88/promidas";
+import type { NormalizedPrototype } from "@f88/promidas/types";
 import "./PrototypeCard.css";
 
 interface PrototypeCardProps {
@@ -19,7 +19,7 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
 
       {prototype.tags && prototype.tags.length > 0 && (
         <div className="tags">
-          {prototype.tags.map((tag) => (
+          {prototype.tags.map((tag: string) => (
             <span key={tag} className="tag">
               {tag}
             </span>

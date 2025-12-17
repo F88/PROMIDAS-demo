@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import type {
-  NormalizedPrototype,
-  ProtopediaInMemoryRepositoryStats,
-} from "@f88/promidas";
+import type { NormalizedPrototype } from "@f88/promidas/types";
+import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { ValidationError } from "@f88/promidas/repository";
 import type { ListPrototypesParams } from "protopedia-api-v2-client";
 import {
   getProtopediaRepository,
@@ -10,9 +9,7 @@ import {
 } from "../lib/protopedia-repository";
 
 export function useRepositoryStats() {
-  const [stats, setStats] = useState<ProtopediaInMemoryRepositoryStats | null>(
-    null
-  );
+  const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
   const updateStats = () => {
     try {
@@ -33,7 +30,10 @@ export function useRepositoryStats() {
         const repo = getProtopediaRepository();
         const currentStats = repo.getStats();
 
-        if (currentStats.cachedAt && !currentStats.isExpired) {
+        if (
+          typeof currentStats.cachedAt === "number" &&
+          !currentStats.isExpired
+        ) {
           // Calculate time until expiration
           const now = Date.now();
           const expiresAt = currentStats.cachedAt + REPOSITORY_TTL_MS;
@@ -79,18 +79,26 @@ export function useRandomPrototype() {
         await repo.setupSnapshot({ offset: 0, limit: 100 });
       }
 
-      const randomPrototype = await repo.getRandomPrototypeFromSnapshot();
+      const randomPrototypes = await repo.getRandomSampleFromSnapshot(1);
 
-      if (!randomPrototype) {
+      if (randomPrototypes.length === 0) {
         setError("No prototypes available in snapshot");
         setPrototype(null);
       } else {
-        setPrototype(randomPrototype);
+        setPrototype(randomPrototypes[0] as NormalizedPrototype);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch prototype"
-      );
+      if (err instanceof ValidationError) {
+        setError(
+          `Validation error${err.field ? ` in ${err.field}` : ""}: ${
+            err.message
+          }`
+        );
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch prototype"
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -120,7 +128,17 @@ export function useSnapshotManagement() {
       const limit = params.limit || 100;
       setSuccess(`Snapshot initialized with up to ${limit} prototypes`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to setup snapshot");
+      if (err instanceof ValidationError) {
+        setError(
+          `Validation error${err.field ? ` in ${err.field}` : ""}: ${
+            err.message
+          }`
+        );
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Failed to setup snapshot"
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -136,9 +154,17 @@ export function useSnapshotManagement() {
       await repo.refreshSnapshot();
       setSuccess("Snapshot refreshed successfully");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to refresh snapshot"
-      );
+      if (err instanceof ValidationError) {
+        setError(
+          `Validation error${err.field ? ` in ${err.field}` : ""}: ${
+            err.message
+          }`
+        );
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Failed to refresh snapshot"
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -158,7 +184,7 @@ export function usePrototypeSearch() {
 
     try {
       const repo = getProtopediaRepository();
-      const result = await repo.getPrototypeFromSnapshotById(id);
+      const result = await repo.getPrototypeFromSnapshotByPrototypeId(id);
 
       if (!result) {
         setError(`Prototype with ID ${id} not found in snapshot`);
@@ -167,9 +193,17 @@ export function usePrototypeSearch() {
         setPrototype(result);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to search prototype"
-      );
+      if (err instanceof ValidationError) {
+        setError(
+          `Validation error${err.field ? ` in ${err.field}` : ""}: ${
+            err.message
+          }`
+        );
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Failed to search prototype"
+        );
+      }
       setPrototype(null);
     } finally {
       setLoading(false);
