@@ -48,5 +48,10 @@ export function usePrototypeAnalysis() {
     }
   };
 
-  return { analysis, loading, error, analyze };
+  const clear = () => {
+    setAnalysis(null);
+    setError(null);
+  };
+
+  return { analysis, loading, error, analyze, clear };
 }

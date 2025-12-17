@@ -1,9 +1,20 @@
 import { useState } from "react";
+import { Container, Grid } from "@mui/material";
 import { useRandomPrototype } from "./hooks/use-random-prototype";
 import { useRepositoryStats } from "./hooks/use-repository-stats";
 import { useSnapshotManagement } from "./hooks/use-snapshot-management";
 import { usePrototypeSearch } from "./hooks/use-prototype-search";
-import { PrototypeCard } from "./components/PrototypeCard";
+import { usePrototypeIds } from "./hooks/use-prototype-ids";
+import { useSingleRandom } from "./hooks/use-single-random";
+import { useConfig } from "./hooks/use-config";
+import { useAllPrototypes } from "./hooks/use-all-prototypes";
+import { usePrototypeAnalysis } from "./hooks/use-prototype-analysis";
+import { StoreContainer } from "./components/store/store-container";
+import { RepositoryContainer } from "./components/repository/repository-container";
+import { FetcherContainer } from "./components/fetcher/fetcher-container";
+import { ConfigContainer } from "./components/config/config-container";
+import { TokenConfiguration } from "./components/config/token-configuration";
+import { DataFlowIndicator } from "./components/DataFlowIndicator";
 import {
   hasApiToken,
   getApiToken,
@@ -23,7 +34,12 @@ function App() {
   const [snapshotEventNm, setSnapshotEventNm] = useState("");
   const [snapshotMaterialNm, setSnapshotMaterialNm] = useState("");
   const [token, setTokenInput] = useState(getApiToken() || "");
-  const [showToken, setShowToken] = useState(false);
+
+  // Data flow visualization states
+  const [isFetcherActive, setIsFetcherActive] = useState(false);
+  const [isStoreActive, setIsStoreActive] = useState(false);
+  const [isRepositoryActive, setIsRepositoryActive] = useState(false);
+  const [isDisplayActive, setIsDisplayActive] = useState(false);
 
   const {
     prototype: randomPrototype,
@@ -47,6 +63,69 @@ function App() {
     searchById,
     clear: clearSearch,
   } = usePrototypeSearch();
+  const {
+    ids: prototypeIds,
+    loading: idsLoading,
+    error: idsError,
+    fetchIds,
+    clear: clearIds,
+  } = usePrototypeIds();
+  const {
+    prototype: singleRandomPrototype,
+    loading: singleRandomLoading,
+    error: singleRandomError,
+    fetchSingleRandom,
+    clear: clearSingleRandom,
+  } = useSingleRandom();
+  const {
+    config: repoConfig,
+    loading: configLoading,
+    error: configError,
+    fetchConfig,
+    clear: clearConfig,
+  } = useConfig();
+  const {
+    prototypes: allPrototypes,
+    loading: allLoading,
+    error: allError,
+    fetchAll,
+    clear: clearAll,
+  } = useAllPrototypes();
+  const {
+    analysis,
+    loading: analysisLoading,
+    error: analysisError,
+    analyze,
+    clear: clearAnalysis,
+  } = usePrototypeAnalysis();
+
+  // Visualize data flow: Fetcher -> Store -> Repository -> Display
+  const visualizeDataFlow = async (operation: () => Promise<void> | void) => {
+    // 1. Fetcher activates
+    setIsFetcherActive(true);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // 2. Store activates
+    setIsFetcherActive(false);
+    setIsStoreActive(true);
+
+    // Execute the operation while Store is active
+    await operation();
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    // 3. Repository activates
+    setIsStoreActive(false);
+    setIsRepositoryActive(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // 4. Display activates
+    setIsRepositoryActive(false);
+    setIsDisplayActive(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // 5. Clear all
+    setIsDisplayActive(false);
+  };
 
   const handleSetupSnapshot = async () => {
     let limit = parseInt(snapshotLimit) || 10;
@@ -62,31 +141,80 @@ function App() {
     if (snapshotEventNm) params.eventNm = snapshotEventNm;
     if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
 
-    await setupSnapshot(params);
-    updateStats();
+    await visualizeDataFlow(async () => {
+      await setupSnapshot(params);
+      updateStats();
+    });
   };
 
   const handleRefreshSnapshot = async () => {
-    await refreshSnapshot();
-    updateStats();
+    await visualizeDataFlow(async () => {
+      await refreshSnapshot();
+      updateStats();
+    });
   };
 
   const handleFetchRandom = () => {
     clearSearch();
-    fetchRandom();
+    visualizeDataFlow(() => {
+      fetchRandom();
+    });
   };
 
   const handleSearch = () => {
     const id = parseInt(searchId);
     if (!isNaN(id)) {
-      searchById(id);
+      visualizeDataFlow(() => {
+        searchById(id);
+      });
     }
+  };
+
+  const wrappedFetchSingleRandom = () => {
+    visualizeDataFlow(() => {
+      fetchSingleRandom();
+    });
+  };
+
+  const wrappedFetchIds = () => {
+    visualizeDataFlow(() => {
+      fetchIds();
+    });
+  };
+
+  const wrappedFetchConfig = () => {
+    visualizeDataFlow(() => {
+      fetchConfig();
+    });
+  };
+
+  const wrappedFetchAll = () => {
+    visualizeDataFlow(() => {
+      fetchAll();
+    });
+  };
+
+  const wrappedAnalyze = () => {
+    visualizeDataFlow(() => {
+      analyze();
+    });
+  };
+
+  const wrappedUpdateStats = () => {
+    visualizeDataFlow(() => {
+      updateStats();
+    });
   };
 
   const handleTokenChange = () => {
     // Clear all prototypes and refresh stats
     clearRandom();
     clearSearch();
+    clearIds();
+    clearSingleRandom();
+    clearConfig();
+    clearAll();
+    clearAnalysis();
     updateStats();
   };
 
@@ -114,255 +242,133 @@ function App() {
         <p className="subtitle">
           ProtoPedia Resource Organized Management In-memory Data Access Store
         </p>
+        <DataFlowIndicator
+          isFetcherActive={isFetcherActive}
+          isStoreActive={isStoreActive}
+          isRepositoryActive={isRepositoryActive}
+          isDisplayActive={isDisplayActive}
+        />
       </header>
 
-      <main className="app-main">
-        {/* API Token Configuration */}
-        <div className="token-section">
-          <h3>API Token Configuration</h3>
-          <div className="token-form">
-            <div className="token-input-group">
-              <input
-                type={showToken ? "text" : "password"}
-                value={token}
-                onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="Enter your ProtoPedia API token"
-                className="token-input"
+      <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ConfigContainer>
+              <TokenConfiguration
+                token={token}
+                setToken={setTokenInput}
+                hasToken={hasApiToken()}
+                onSaveToken={handleSaveToken}
+                onDeleteToken={handleDeleteToken}
               />
-              <button
-                type="button"
-                onClick={() => setShowToken(!showToken)}
-                className="toggle-visibility"
-                aria-label={showToken ? "Hide token" : "Show token"}
-              >
-                {showToken ? "👁️" : "👁️‍🗨️"}
-              </button>
-            </div>
-            <div className="token-actions">
-              <button onClick={handleSaveToken} disabled={!token.trim()}>
-                Save Token
-              </button>
-              {hasApiToken() && (
-                <button onClick={handleDeleteToken} className="delete-button">
-                  Delete Token
-                </button>
-              )}
-            </div>
-            <p className="token-help">
-              トークンは{" "}
-              <a
-                href="https://protopedia.net/settings/application"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ProtoPedia Settings
-              </a>{" "}
-              で確認できます
-            </p>
-          </div>
-        </div>
+            </ConfigContainer>
+          </Grid>
 
-        {/* Stats Display */}
-        {stats && (
-          <div className="stats-card">
-            <h3>Repository Stats</h3>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-label">Snapshot Size:</span>
-                <span className="stat-value">{stats.size} prototypes</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Cached At:</span>
-                <span className="stat-value">
-                  {stats.cachedAt
-                    ? new Date(stats.cachedAt).toLocaleString()
-                    : "Not cached"}
-                </span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Status:</span>
-                <span
-                  className={`stat-value ${
-                    stats.isExpired ? "expired" : "valid"
-                  }`}
-                >
-                  {stats.isExpired ? "Expired" : "Valid"}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FetcherContainer isActive={isFetcherActive} />
+          </Grid>
 
-        {/* Snapshot Management */}
-        <div className="snapshot-controls">
-          <h3>Snapshot Management</h3>
-          <div className="snapshot-form">
-            <div className="form-group">
-              <label htmlFor="snapshot-limit">Limit:</label>
-              <input
-                id="snapshot-limit"
-                type="number"
-                value={snapshotLimit}
-                onChange={(e) => setSnapshotLimit(e.target.value)}
-                min="1"
-                max="100"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-offset">Offset:</label>
-              <input
-                id="snapshot-offset"
-                type="number"
-                value={snapshotOffset}
-                onChange={(e) => setSnapshotOffset(e.target.value)}
-                min="0"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-user">User Name:</label>
-              <input
-                id="snapshot-user"
-                type="text"
-                value={snapshotUserNm}
-                onChange={(e) => setSnapshotUserNm(e.target.value)}
-                placeholder="Filter by user"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-tag">Tag Name:</label>
-              <input
-                id="snapshot-tag"
-                type="text"
-                value={snapshotTagNm}
-                onChange={(e) => setSnapshotTagNm(e.target.value)}
-                placeholder="Filter by tag"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-event">Event Name:</label>
-              <input
-                id="snapshot-event"
-                type="text"
-                value={snapshotEventNm}
-                onChange={(e) => setSnapshotEventNm(e.target.value)}
-                placeholder="Filter by event"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-material">Material Name:</label>
-              <input
-                id="snapshot-material"
-                type="text"
-                value={snapshotMaterialNm}
-                onChange={(e) => setSnapshotMaterialNm(e.target.value)}
-                placeholder="Filter by material"
-              />
-            </div>
-            <button
-              onClick={handleSetupSnapshot}
-              disabled={snapshotLoading}
-              className="action-button"
-            >
-              {snapshotLoading ? "Loading..." : "Setup Snapshot"}
-            </button>
-            <button
-              onClick={handleRefreshSnapshot}
-              disabled={snapshotLoading || !stats || stats.size === 0}
-              className="action-button secondary"
-            >
-              {snapshotLoading ? "Loading..." : "Refresh Snapshot"}
-            </button>
-          </div>
-          {snapshotSuccess && (
-            <div className="success-message">{snapshotSuccess}</div>
-          )}
-          {snapshotError && (
-            <div className="error-message">{snapshotError}</div>
-          )}
-        </div>
-
-        {/* Random Prototype */}
-        <div className="controls-section">
-          <h3>Random Prototype</h3>
-          <div className="controls">
-            <button
-              onClick={handleFetchRandom}
-              disabled={randomLoading || !stats || stats.size === 0}
-              className="fetch-button"
-            >
-              {randomLoading ? "Loading..." : "Show Random Prototype"}
-            </button>
-            {randomPrototype && (
-              <button onClick={clearRandom} className="action-button secondary">
-                Clear
-              </button>
-            )}
-          </div>
-          {randomError && (
-            <div className="error-message">
-              <p>Error: {randomError}</p>
-            </div>
-          )}
-          {randomPrototype && !randomLoading && (
-            <PrototypeCard prototype={randomPrototype} />
-          )}
-        </div>
-
-        {/* Search by ID */}
-        <div className="controls-section">
-          <h3>Search by ID</h3>
-          <div className="search-controls">
-            <input
-              type="number"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
-              placeholder="Enter Prototype ID"
-              className="search-input"
+          <Grid size={{ xs: 12 }}>
+            <StoreContainer
+              isActive={isStoreActive}
+              stats={stats}
+              fetchStats={wrappedUpdateStats}
+              repoConfig={repoConfig}
+              configLoading={configLoading}
+              configError={configError}
+              fetchConfig={wrappedFetchConfig}
+              clearConfig={clearConfig}
             />
-            <button
-              onClick={handleSearch}
-              disabled={
-                searchLoading || !searchId || !stats || stats.size === 0
-              }
-              className="fetch-button"
-            >
-              {searchLoading ? "Searching..." : "Search"}
-            </button>
-            {searchPrototype && (
-              <button onClick={clearSearch} className="action-button secondary">
-                Clear
-              </button>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <RepositoryContainer
+              isActive={isRepositoryActive}
+              snapshotLimit={snapshotLimit}
+              setSnapshotLimit={setSnapshotLimit}
+              snapshotOffset={snapshotOffset}
+              setSnapshotOffset={setSnapshotOffset}
+              snapshotUserNm={snapshotUserNm}
+              setSnapshotUserNm={setSnapshotUserNm}
+              snapshotTagNm={snapshotTagNm}
+              setSnapshotTagNm={setSnapshotTagNm}
+              snapshotEventNm={snapshotEventNm}
+              setSnapshotEventNm={setSnapshotEventNm}
+              snapshotMaterialNm={snapshotMaterialNm}
+              setSnapshotMaterialNm={setSnapshotMaterialNm}
+              snapshotLoading={snapshotLoading}
+              snapshotSuccess={snapshotSuccess}
+              snapshotError={snapshotError}
+              stats={stats}
+              handleSetupSnapshot={handleSetupSnapshot}
+              handleRefreshSnapshot={handleRefreshSnapshot}
+              randomPrototype={randomPrototype}
+              randomLoading={randomLoading}
+              randomError={randomError}
+              handleFetchRandom={handleFetchRandom}
+              clearRandom={clearRandom}
+              searchId={searchId}
+              setSearchId={setSearchId}
+              searchPrototype={searchPrototype}
+              searchLoading={searchLoading}
+              searchError={searchError}
+              handleSearch={handleSearch}
+              clearSearch={clearSearch}
+              singleRandomPrototype={singleRandomPrototype}
+              singleRandomLoading={singleRandomLoading}
+              singleRandomError={singleRandomError}
+              fetchSingleRandom={wrappedFetchSingleRandom}
+              clearSingleRandom={clearSingleRandom}
+              prototypeIds={prototypeIds}
+              idsLoading={idsLoading}
+              idsError={idsError}
+              fetchIds={wrappedFetchIds}
+              clearIds={clearIds}
+              allPrototypes={allPrototypes}
+              allLoading={allLoading}
+              allError={allError}
+              fetchAll={wrappedFetchAll}
+              clearAll={clearAll}
+              analysis={analysis}
+              analysisLoading={analysisLoading}
+              analysisError={analysisError}
+              analyze={wrappedAnalyze}
+              clearAnalysis={clearAnalysis}
+            />
+          </Grid>
+
+          {!randomPrototype &&
+            !searchPrototype &&
+            !singleRandomPrototype &&
+            !prototypeIds &&
+            !repoConfig &&
+            !allPrototypes &&
+            !analysis &&
+            !randomLoading &&
+            !searchLoading &&
+            !singleRandomLoading &&
+            !idsLoading &&
+            !configLoading &&
+            !allLoading &&
+            !analysisLoading &&
+            stats &&
+            stats.size > 0 && (
+              <Grid size={{ xs: 12 }}>
+                <div className="empty-state">
+                  <p>Click any button above to explore the PROMIDAS API</p>
+                </div>
+              </Grid>
             )}
-          </div>
-          {searchError && (
-            <div className="error-message">
-              <p>Error: {searchError}</p>
-            </div>
-          )}
-          {searchPrototype && !searchLoading && (
-            <PrototypeCard prototype={searchPrototype} />
-          )}
-        </div>
 
-        {!randomPrototype &&
-          !searchPrototype &&
-          !randomLoading &&
-          !searchLoading &&
-          stats &&
-          stats.size > 0 && (
-            <div className="empty-state">
-              <p>
-                Click "Show Random Prototype" or enter an ID and click "Search"
-              </p>
-            </div>
+          {(!stats || stats.size === 0) && !snapshotLoading && (
+            <Grid size={{ xs: 12 }}>
+              <div className="empty-state">
+                <p>No snapshot loaded. Please setup a snapshot first.</p>
+              </div>
+            </Grid>
           )}
-
-        {(!stats || stats.size === 0) && !snapshotLoading && (
-          <div className="empty-state">
-            <p>No snapshot loaded. Please setup a snapshot first.</p>
-          </div>
-        )}
-      </main>
+        </Grid>
+      </Container>
 
       <footer className="app-footer">
         <p>

@@ -49,5 +49,10 @@ export function useAllPrototypes() {
     }
   };
 
-  return { prototypes, loading, error, fetchAll };
+  const clear = () => {
+    setPrototypes([]);
+    setError(null);
+  };
+
+  return { prototypes, loading, error, fetchAll, clear };
 }

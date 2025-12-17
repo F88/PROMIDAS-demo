@@ -16,7 +16,11 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@f88/promidas": "github:f88/promidas#v0.11.0",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },

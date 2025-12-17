@@ -48,6 +48,9 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
           //
           // Remove x-client-user-agent header for browser CORS compatibility
           // ProtoPedia API does not allow this custom header in browser requests
+          //
+          // NOTE: X-ProtoPedia-API-Client also fails CORS (tested 2025-12-17)
+          // Custom headers require server-side CORS configuration
           const headers = new Headers(init?.headers);
           headers.delete("x-client-user-agent");
           // Keep all other headers including Authorization

@@ -160,10 +160,6 @@
 .token-help a:hover {
   text-decoration: underline;
 }
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
-}
 
 .controls {
   text-align: center;
@@ -432,6 +428,82 @@
   text-decoration: underline;
 }
 
+/* Section Description */
+.section-description {
+  margin: -0.5rem 0 1rem 0;
+  font-size: 0.875rem;
+  color: #718096;
+  font-style: italic;
+}
+
+/* IDs Display */
+.ids-display {
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.ids-count {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.ids-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.id-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #667eea;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.id-badge.more {
+  background: #cbd5e0;
+  color: #2d3748;
+}
+
+/* Config Display */
+.config-display {
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.config-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.config-label {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.config-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333;
+}
+
 @media (max-width: 640px) {
   .app-header h1 {
     font-size: 2rem;
@@ -451,4 +523,257 @@
   .app-main {
     padding: 1rem;
   }
+}
+
+/* ========== Data Flow Visualization ========== */
+
+@keyframes containerGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(102, 126, 234, 0);
+    border-color: #e5e7eb;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6), 0 0 40px rgba(102, 126, 234, 0.4);
+    border-color: #667eea;
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(102, 126, 234, 0);
+    border-color: #e5e7eb;
+  }
+}
+
+.container-wrapper {
+  position: relative;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.container-wrapper.active {
+  animation: containerGlow 1s ease-in-out;
+}
+
+.container-label {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: white;
+  padding: 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fetcher-container {
+  border-color: #10b981;
+}
+
+.fetcher-container.active {
+  animation: containerGlow 1s ease-in-out;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+}
+
+.fetcher-container .container-label {
+  color: #10b981;
+}
+
+.store-container {
+  border-color: #f59e0b;
+}
+
+.store-container.active {
+  animation: containerGlow 1s ease-in-out;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+}
+
+.store-container .container-label {
+  color: #f59e0b;
+}
+
+.repository-container {
+  border-color: #667eea;
+}
+
+.repository-container.active {
+  animation: containerGlow 1s ease-in-out;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+}
+
+.repository-container .container-label {
+  color: #667eea;
+}
+
+.config-container {
+  border-color: #8b5cf6;
+}
+
+.config-container.active {
+  animation: containerGlow 1s ease-in-out;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+}
+
+.config-container .container-label {
+  color: #8b5cf6;
+}
+
+.config-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ========== Top Containers Grid (Config + Store) ========== */
+
+.top-containers-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 2rem;
+}
+
+/* Tablet and larger: 2 columns */
+@media (min-width: 768px) {
+  .top-containers-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile: single column */
+@media (max-width: 767px) {
+  .top-containers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== Store Grid Layout ========== */
+
+.store-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+/* Tablet and larger screens: 2 columns */
+@media (min-width: 768px) {
+  .store-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile: ensure single column */
+@media (max-width: 767px) {
+  .store-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== Repository Grid Layout ========== */
+
+.repository-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 768px) {
+  .repository-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop and larger: 3 columns */
+@media (min-width: 1280px) {
+  .repository-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mobile: ensure single column */
+@media (max-width: 767px) {
+  .repository-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== Data Flow Indicator ========== */
+
+@keyframes indicatorPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.data-flow-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 1rem;
+}
+
+.indicator-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  opacity: 0.9;
+}
+
+.indicator-items {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.indicator-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.indicator-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.indicator-item.active .indicator-icon {
+  animation: indicatorPulse 0.8s ease-in-out infinite;
+}
+
+.indicator-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.indicator-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  opacity: 0.8;
+}
+
+.indicator-arrow {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.25rem;
+  font-weight: bold;
 }
