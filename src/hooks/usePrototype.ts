@@ -217,3 +217,58 @@ export function usePrototypeSearch() {
 
   return { prototype, loading, error, searchById, clear };
 }
+
+export function usePrototypeAnalysis() {
+  const [analysis, setAnalysis] = useState<{
+    min: number | null;
+    max: number | null;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const analyze = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const repo = getProtopediaRepository();
+      const result = await repo.analyzePrototypes();
+      setAnalysis(result);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to analyze prototypes"
+      );
+      setAnalysis(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { analysis, loading, error, analyze };
+}
+
+export function useAllPrototypes() {
+  const [prototypes, setPrototypes] = useState<NormalizedPrototype[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAll = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const repo = getProtopediaRepository();
+      const all = await repo.getAllFromSnapshot();
+      setPrototypes([...all] as NormalizedPrototype[]);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch all prototypes"
+      );
+      setPrototypes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { prototypes, loading, error, fetchAll };
+}
