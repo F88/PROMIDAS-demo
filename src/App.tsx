@@ -1,10 +1,8 @@
 import { useState } from "react";
-import {
-  useRandomPrototype,
-  useRepositoryStats,
-  useSnapshotManagement,
-  usePrototypeSearch,
-} from "./hooks/usePrototype";
+import { useRandomPrototype } from "./hooks/use-random-prototype";
+import { useRepositoryStats } from "./hooks/use-repository-stats";
+import { useSnapshotManagement } from "./hooks/use-snapshot-management";
+import { usePrototypeSearch } from "./hooks/use-prototype-search";
 import { PrototypeCard } from "./components/PrototypeCard";
 import {
   hasApiToken,
