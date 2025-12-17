@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import type { NormalizedPrototype } from "@f88/promidas/types";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { ValidationError } from "@f88/promidas/repository";
+import {
+  ValidationError,
+  type SnapshotOperationResult,
+  type SnapshotOperationSuccess,
+} from "@f88/promidas/repository";
 import type { ListPrototypesParams } from "protopedia-api-v2-client";
 import {
   getProtopediaRepository,
@@ -124,7 +128,28 @@ export function useSnapshotManagement() {
 
     try {
       const repo = getProtopediaRepository();
-      await repo.setupSnapshot(params);
+      const result = await repo.setupSnapshot(params);
+
+      // Check if setup was successful
+      if (!result.ok) {
+        // Demo site: Log full error information to console for debugging
+        // DO NOT REMOVE: This helps users understand PROMIDAS error responses
+        console.error("[PROMIDAS Demo] setupSnapshot failed:", {
+          status: result.status,
+          error: result.error,
+          code: result.code,
+          fullResult: result,
+        });
+
+        // Demo site: Show all available information from PROMIDAS
+        const parts = [];
+        if (result.status) parts.push(`[Status: ${result.status}]`);
+        if (result.code) parts.push(`[Code: ${result.code}]`);
+        parts.push(result.error || "Unknown error");
+        setError(parts.join(" "));
+        return;
+      }
+
       const limit = params.limit || 100;
       setSuccess(`Snapshot initialized with up to ${limit} prototypes`);
     } catch (err) {
@@ -151,7 +176,42 @@ export function useSnapshotManagement() {
 
     try {
       const repo = getProtopediaRepository();
-      await repo.refreshSnapshot();
+      const result: SnapshotOperationResult = await repo.refreshSnapshot();
+
+      // Check if refresh was successful
+      if (result.ok) {
+        console.debug(
+          "[PROMIDAS Demo] refreshSnapshot succeeded",
+          result as SnapshotOperationSuccess
+        );
+      } else {
+        console.debug(
+          "[PROMIDAS Demo] refreshSnapshot failed",
+          result as SnapshotOperationResult
+        );
+      }
+
+      if (!result.ok) {
+        // Demo site: Log full error information to console for debugging
+        // DO NOT REMOVE: This helps users understand PROMIDAS error responses
+        console.error("[PROMIDAS Demo] refreshSnapshot failed:", {
+          status: result.status,
+          error: result.error,
+          details: result.details,
+          fullResult: result,
+        });
+
+        // Demo site: Show all available information from PROMIDAS
+        const parts = [];
+        if (result.status) parts.push(`[Status: ${result.status}]`);
+        parts.push(result.error || "Unknown error");
+        if (result.details && Object.keys(result.details).length > 0) {
+          parts.push(`Details: ${JSON.stringify(result.details)}`);
+        }
+        setError(parts.join(" "));
+        return;
+      }
+
       setSuccess("Snapshot refreshed successfully");
     } catch (err) {
       if (err instanceof ValidationError) {

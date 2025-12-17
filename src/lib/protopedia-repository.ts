@@ -41,7 +41,18 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
       protoPediaApiClientOptions: {
         logLevel: LOG_LEVEL_FOR_DEMO_SITE,
         token,
-        userAgent: "PROMIDAS-Demo-Site/1.0.0",
+        fetch: async (url, init) => {
+          // Workaround for CORS issue with x-client-user-agent header
+          //
+          // see https://github.com/F88/promidas/issues/55
+          //
+          // Remove x-client-user-agent header for browser CORS compatibility
+          // ProtoPedia API does not allow this custom header in browser requests
+          const headers = new Headers(init?.headers);
+          headers.delete("x-client-user-agent");
+          // Keep all other headers including Authorization
+          return globalThis.fetch(url, { ...init, headers });
+        },
       },
       progressLog: true, // Enable progress logging for download tracking
     };
