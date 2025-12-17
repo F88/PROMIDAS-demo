@@ -1,10 +1,12 @@
 import { PromidasRepositoryBuilder } from "@f88/promidas";
 import type {
   ProtopediaInMemoryRepository,
+  ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
 } from "@f88/promidas";
 import { getApiToken } from "./token-storage";
 import type { LogLevel } from "@f88/promidas/logger";
+import type { ProtopediaApiCustomClientConfig } from "@f88/promidas/fetcher";
 
 // Repository configuration constants
 export const REPOSITORY_TTL_MS = 1_000 * 30; // 30 seconds
@@ -29,25 +31,25 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
       logLevel: LOG_LEVEL_FOR_DEMO_SITE,
     };
 
-    repository = new PromidasRepositoryBuilder()
-      .setStoreConfig(storeConfig)
-      .setApiClientConfig({
-        protoPediaApiClientOptions: {
-          logLevel: LOG_LEVEL_FOR_DEMO_SITE,
-          token,
-          fetch: async (url, init) => {
-            // Remove x-client-user-agent header for browser compatibility
-            const headers = new Headers(init?.headers);
-            headers.delete("x-client-user-agent");
-            return globalThis.fetch(url, { ...init, headers });
-          },
-        },
-        progressLog: true, // Enable progress logging for download tracking
-      })
-      .setRepositoryConfig({
+    const protopediaInMemoryRepositoryConfig: ProtopediaInMemoryRepositoryConfig =
+      {
         logLevel: LOG_LEVEL_FOR_DEMO_SITE,
         enableEvents: true, // Enable event system for real-time notifications
-      })
+      };
+
+    const protopediaApiCustomClientConfig: ProtopediaApiCustomClientConfig = {
+      protoPediaApiClientOptions: {
+        logLevel: LOG_LEVEL_FOR_DEMO_SITE,
+        token,
+        userAgent: "PROMIDAS-Demo-Site/1.0.0",
+      },
+      progressLog: true, // Enable progress logging for download tracking
+    };
+
+    repository = new PromidasRepositoryBuilder()
+      .setStoreConfig(storeConfig)
+      .setApiClientConfig(protopediaApiCustomClientConfig)
+      .setRepositoryConfig(protopediaInMemoryRepositoryConfig)
       .build();
   }
 

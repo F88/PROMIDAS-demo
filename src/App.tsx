@@ -6,13 +6,17 @@ import {
   usePrototypeSearch,
 } from "./hooks/usePrototype";
 import { PrototypeCard } from "./components/PrototypeCard";
-import { Settings } from "./components/Settings";
-import { hasApiToken } from "./lib/token-storage";
+import {
+  hasApiToken,
+  getApiToken,
+  setApiToken,
+  removeApiToken,
+} from "./lib/token-storage";
+import { resetRepository } from "./lib/protopedia-repository";
 import "./App.css";
 import type { ListPrototypesParams } from "protopedia-api-v2-client";
 
 function App() {
-  const [showSettings, setShowSettings] = useState(!hasApiToken());
   const [searchId, setSearchId] = useState("7917");
   const [snapshotLimit, setSnapshotLimit] = useState("10");
   const [snapshotOffset, setSnapshotOffset] = useState("0");
@@ -20,6 +24,8 @@ function App() {
   const [snapshotTagNm, setSnapshotTagNm] = useState("");
   const [snapshotEventNm, setSnapshotEventNm] = useState("");
   const [snapshotMaterialNm, setSnapshotMaterialNm] = useState("");
+  const [token, setTokenInput] = useState(getApiToken() || "");
+  const [showToken, setShowToken] = useState(false);
 
   const {
     prototype: randomPrototype,
@@ -86,6 +92,23 @@ function App() {
     updateStats();
   };
 
+  const handleSaveToken = () => {
+    if (token.trim()) {
+      setApiToken(token.trim());
+      resetRepository();
+      handleTokenChange();
+    }
+  };
+
+  const handleDeleteToken = () => {
+    if (confirm("トークンを削除してよろしいですか？")) {
+      removeApiToken();
+      resetRepository();
+      setTokenInput("");
+      handleTokenChange();
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -93,16 +116,54 @@ function App() {
         <p className="subtitle">
           ProtoPedia Resource Organized Management In-memory Data Access Store
         </p>
-        <button
-          onClick={() => setShowSettings(true)}
-          className="settings-button"
-          aria-label="Settings"
-        >
-          ⚙️ Settings
-        </button>
       </header>
 
       <main className="app-main">
+        {/* API Token Configuration */}
+        <div className="token-section">
+          <h3>API Token Configuration</h3>
+          <div className="token-form">
+            <div className="token-input-group">
+              <input
+                type={showToken ? "text" : "password"}
+                value={token}
+                onChange={(e) => setTokenInput(e.target.value)}
+                placeholder="Enter your ProtoPedia API token"
+                className="token-input"
+              />
+              <button
+                type="button"
+                onClick={() => setShowToken(!showToken)}
+                className="toggle-visibility"
+                aria-label={showToken ? "Hide token" : "Show token"}
+              >
+                {showToken ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
+            <div className="token-actions">
+              <button onClick={handleSaveToken} disabled={!token.trim()}>
+                Save Token
+              </button>
+              {hasApiToken() && (
+                <button onClick={handleDeleteToken} className="delete-button">
+                  Delete Token
+                </button>
+              )}
+            </div>
+            <p className="token-help">
+              トークンは{" "}
+              <a
+                href="https://protopedia.net/settings/application"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ProtoPedia Settings
+              </a>{" "}
+              で確認できます
+            </p>
+          </div>
+        </div>
+
         {/* Stats Display */}
         {stats && (
           <div className="stats-card">
@@ -317,13 +378,6 @@ function App() {
           </a>
         </p>
       </footer>
-
-      {showSettings && (
-        <Settings
-          onClose={() => setShowSettings(false)}
-          onTokenChange={handleTokenChange}
-        />
-      )}
     </div>
   );
 }
