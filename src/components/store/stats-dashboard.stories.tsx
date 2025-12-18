@@ -33,6 +33,7 @@ const createMockStats = (
   ...overrides,
 });
 
+// State-based stories
 export const NotStored: Story = {
   args: {
     stats: null,
@@ -47,6 +48,106 @@ export const Stored: Story = {
   },
 };
 
+export const Expired: Story = {
+  args: {
+    stats: createMockStats({
+      remainingTtlMs: 0,
+      isExpired: true,
+    }),
+    config: mockConfig,
+  },
+};
+
+// TTL pattern stories
+export const Ttl30Seconds: Story = {
+  args: {
+    stats: createMockStats({
+      remainingTtlMs: 25000, // 25s remaining
+    }),
+    config: {
+      ...mockConfig,
+      ttlMs: 30000, // 30s
+    },
+  },
+};
+
+export const Ttl60Seconds: Story = {
+  args: {
+    stats: createMockStats({
+      remainingTtlMs: 45000, // 45s remaining
+    }),
+    config: {
+      ...mockConfig,
+      ttlMs: 60000, // 60s
+    },
+  },
+};
+
+export const Ttl10Minutes: Story = {
+  args: {
+    stats: createMockStats({
+      remainingTtlMs: 480000, // 8min remaining
+    }),
+    config: {
+      ...mockConfig,
+      ttlMs: 600000, // 10min
+    },
+  },
+};
+
+export const Ttl30Minutes: Story = {
+  args: {
+    stats: createMockStats({
+      remainingTtlMs: 1500000, // 25min remaining
+    }),
+    config: {
+      ...mockConfig,
+      ttlMs: 1800000, // 30min
+    },
+  },
+};
+
+// Memory size pattern stories
+export const Memory5MB: Story = {
+  args: {
+    stats: createMockStats({
+      dataSizeBytes: 2621440, // 2.5 MB (50%)
+      size: 100,
+    }),
+    config: {
+      ...mockConfig,
+      maxDataSizeBytes: 5242880, // 5 MB
+    },
+  },
+};
+
+export const Memory10MB: Story = {
+  args: {
+    stats: createMockStats({
+      dataSizeBytes: 5242880, // 5 MB (50%)
+      size: 1000,
+    }),
+    config: {
+      ...mockConfig,
+      maxDataSizeBytes: 10485760, // 10 MB
+    },
+  },
+};
+
+export const Memory30MB: Story = {
+  args: {
+    stats: createMockStats({
+      dataSizeBytes: 15728640, // 15 MB (50%)
+      size: 10000,
+    }),
+    config: {
+      ...mockConfig,
+      maxDataSizeBytes: 31457280, // 30 MB
+    },
+  },
+};
+
+// Additional scenarios
 export const HighMemoryUsage: Story = {
   args: {
     stats: createMockStats({
@@ -60,16 +161,6 @@ export const LowTtl: Story = {
   args: {
     stats: createMockStats({
       remainingTtlMs: 5000, // 5s (16.7%)
-    }),
-    config: mockConfig,
-  },
-};
-
-export const Expired: Story = {
-  args: {
-    stats: createMockStats({
-      remainingTtlMs: 0,
-      isExpired: true,
     }),
     config: mockConfig,
   },

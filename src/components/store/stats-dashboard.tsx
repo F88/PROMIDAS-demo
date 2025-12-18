@@ -12,31 +12,52 @@ interface StatsDashboardProps {
   config: StoreConfig | null;
 }
 
+interface StyledChipProps {
+  label: string;
+  color?:
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning';
+  fontWeight?: number;
+}
+
+function StyledChip({ label, color = 'default', fontWeight }: StyledChipProps) {
+  return (
+    <Chip
+      label={label}
+      color={color}
+      size="small"
+      sx={{
+        fontWeight,
+        transition: 'all 0.3s ease-in-out',
+        height: 24,
+        fontSize: '0.75rem',
+        '& .MuiChip-label': {
+          px: 1,
+          py: 0,
+        },
+      }}
+    />
+  );
+}
+
 interface StatsChipProps {
   state: StoreState;
 }
 
 function StateChip({ state }: StatsChipProps) {
   if (state === 'not-stored') {
-    return (
-      <Chip
-        label="Not Stored"
-        color="default"
-        size="small"
-        sx={{
-          fontWeight: 600,
-          transition: 'all 0.3s ease-in-out',
-        }}
-      />
-    );
+    return <StyledChip label="Not Stored" color="default" fontWeight={600} />;
   }
 
   return (
-    <Chip
+    <StyledChip
       label={state === 'expired' ? 'Expired' : 'Stored'}
       color={state === 'expired' ? 'error' : 'success'}
-      size="small"
-      sx={{ transition: 'all 0.3s ease-in-out' }}
     />
   );
 }
@@ -248,7 +269,7 @@ function StoredStatsContent({
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <StateChip state={storeState} />
           {stats.refreshInFlight && (
-            <Chip label="Refreshing" color="warning" size="small" />
+            <StyledChip label="Refreshing" color="warning" />
           )}
         </Stack>
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
