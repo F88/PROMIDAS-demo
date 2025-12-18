@@ -38,7 +38,7 @@ export function RandomPrototype({
   } = useRandomPrototype();
 
   const handleFetchRandom = () => {
-    const size = parseInt(randomSampleSize) || 1;
+    const size = parseInt(randomSampleSize) || 0;
     visualizeFlow(() => {
       fetchRandom(size);
     }, 'get-from-snapshot');
@@ -63,7 +63,7 @@ export function RandomPrototype({
           }}
           fullWidth
           size="small"
-          slotProps={{ htmlInput: { min: 1, max: 10 } }}
+          slotProps={{ htmlInput: { min: 0, max: 99_999 } }}
           sx={{ maxWidth: 200 }}
         />
       </Stack>
