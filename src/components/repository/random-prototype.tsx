@@ -1,5 +1,8 @@
+import { Stack, Alert } from "@mui/material";
 import { PrototypeCard } from "../PrototypeCard";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { SectionCard } from "../common/section-card";
+import { ActionButton } from "../common/action-button";
 
 interface RandomPrototypeProps {
   randomPrototype: any;
@@ -19,30 +22,35 @@ export function RandomPrototype({
   clearRandom,
 }: RandomPrototypeProps) {
   return (
-    <div className="controls-section">
-      <h3>getRandomSampleFromSnapshot()</h3>
-      <div className="controls">
-        <button
+    <SectionCard
+      title="getRandomSampleFromSnapshot()"
+      description="Get multiple random prototypes from snapshot"
+      category="Query"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
           onClick={handleFetchRandom}
           disabled={randomLoading || !stats || stats.size === 0}
-          className="fetch-button"
+          loading={randomLoading}
         >
-          {randomLoading ? "Loading..." : "getRandomSampleFromSnapshot()"}
-        </button>
-        {randomPrototype && (
-          <button onClick={clearRandom} className="action-button secondary">
-            Clear
-          </button>
-        )}
-      </div>
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={randomPrototype == null}
+          onClick={clearRandom}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
       {randomError && (
-        <div className="error-message">
-          <p>Error: {randomError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {randomError}
+        </Alert>
       )}
       {randomPrototype && !randomLoading && (
         <PrototypeCard prototype={randomPrototype} />
       )}
-    </div>
+    </SectionCard>
   );
 }

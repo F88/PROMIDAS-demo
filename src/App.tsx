@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Grid } from "@mui/material";
 import { useRandomPrototype } from "./hooks/use-random-prototype";
 import { useRepositoryStats } from "./hooks/use-repository-stats";
@@ -10,6 +10,7 @@ import { useConfig } from "./hooks/use-config";
 import { useAllPrototypes } from "./hooks/use-all-prototypes";
 import { usePrototypeAnalysis } from "./hooks/use-prototype-analysis";
 import { StoreContainer } from "./components/store/store-container";
+import { StatsDashboard } from "./components/store/stats-dashboard";
 import { RepositoryContainer } from "./components/repository/repository-container";
 import { FetcherContainer } from "./components/fetcher/fetcher-container";
 import { ConfigContainer } from "./components/config/config-container";
@@ -82,7 +83,6 @@ function App() {
     loading: configLoading,
     error: configError,
     fetchConfig,
-    clear: clearConfig,
   } = useConfig();
   const {
     prototypes: allPrototypes,
@@ -98,6 +98,21 @@ function App() {
     analyze,
     clear: clearAnalysis,
   } = usePrototypeAnalysis();
+
+  // Initialize config and stats on mount
+  useEffect(() => {
+    fetchConfig();
+    updateStats();
+  }, []);
+
+  // Periodically update stats to show remaining TTL changes
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      updateStats();
+    }, 1_000); // Update every 1 seconds
+
+    return () => clearInterval(intervalId);
+  }, [updateStats]);
 
   // Visualize data flow: Fetcher -> Store -> Repository -> Display
   const visualizeDataFlow = async (operation: () => Promise<void> | void) => {
@@ -125,6 +140,15 @@ function App() {
 
     // 5. Clear all
     setIsDisplayActive(false);
+  };
+
+  const handleResetSnapshotForm = () => {
+    setSnapshotLimit("10");
+    setSnapshotOffset("0");
+    setSnapshotUserNm("");
+    setSnapshotTagNm("");
+    setSnapshotEventNm("");
+    setSnapshotMaterialNm("");
   };
 
   const handleSetupSnapshot = async () => {
@@ -212,7 +236,6 @@ function App() {
     clearSearch();
     clearIds();
     clearSingleRandom();
-    clearConfig();
     clearAll();
     clearAnalysis();
     updateStats();
@@ -238,10 +261,16 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>PROMIDAS Demo</h1>
-        <p className="subtitle">
-          ProtoPedia Resource Organized Management In-memory Data Access Store
-        </p>
+        <div className="header-content">
+          <div>
+            <h1>PROMIDAS Demo</h1>
+            <p className="subtitle">
+              ProtoPedia Resource Organized Management In-memory Data Access
+              Store
+            </p>
+          </div>
+          <StatsDashboard stats={stats} config={repoConfig} />
+        </div>
         <DataFlowIndicator
           isFetcherActive={isFetcherActive}
           isStoreActive={isStoreActive}
@@ -273,11 +302,10 @@ function App() {
               isActive={isStoreActive}
               stats={stats}
               fetchStats={wrappedUpdateStats}
-              repoConfig={repoConfig}
+              config={repoConfig}
               configLoading={configLoading}
               configError={configError}
               fetchConfig={wrappedFetchConfig}
-              clearConfig={clearConfig}
             />
           </Grid>
 
@@ -301,6 +329,7 @@ function App() {
               snapshotError={snapshotError}
               stats={stats}
               handleSetupSnapshot={handleSetupSnapshot}
+              handleResetSnapshotForm={handleResetSnapshotForm}
               handleRefreshSnapshot={handleRefreshSnapshot}
               randomPrototype={randomPrototype}
               randomLoading={randomLoading}

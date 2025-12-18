@@ -1,59 +1,88 @@
+import { Box, Typography, Stack, Chip } from "@mui/material";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { SectionCard } from "../common/section-card";
 
 interface StatsDisplayProps {
   stats: PrototypeInMemoryStats | null;
-  fetchStats: () => void;
 }
 
-export function StatsDisplay({ stats, fetchStats }: StatsDisplayProps) {
+export function StatsDisplay({ stats }: StatsDisplayProps) {
   return (
-    <div className="stats-card">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1rem",
-        }}
-      >
-        <h3>getStats()</h3>
-        <button
-          onClick={fetchStats}
-          className="fetch-button"
-          style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
-        >
-          getStats()
-        </button>
-      </div>
+    <SectionCard
+      title="Statistics"
+      description="Current snapshot statistics"
+      category="Store"
+    >
       {!stats && (
-        <div style={{ textAlign: "center", color: "#6b7280", padding: "1rem" }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          sx={{ py: 2 }}
+        >
           No stats available. Please setup a snapshot first.
-        </div>
+        </Typography>
       )}
       {stats && (
-        <div className="stats-grid">
-          <div className="stat-item">
-            <span className="stat-label">Snapshot Size:</span>
-            <span className="stat-value">{stats.size} prototypes</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-label">Cached At:</span>
-            <span className="stat-value">
+        <Stack spacing={1.5}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Snapshot Size:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
+              {stats.size} prototypes
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Cached At:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
               {stats.cachedAt
                 ? new Date(stats.cachedAt).toLocaleString()
                 : "Not cached"}
-            </span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-label">Status:</span>
-            <span
-              className={`stat-value ${stats.isExpired ? "expired" : "valid"}`}
-            >
-              {stats.isExpired ? "Expired" : "Valid"}
-            </span>
-          </div>
-        </div>
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Status:
+            </Typography>
+            <Chip
+              label={stats.isExpired ? "Expired" : "Valid"}
+              color={stats.isExpired ? "error" : "success"}
+              size="small"
+            />
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Remaining TTL:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
+              {stats.remainingTtlMs > 0
+                ? `${(stats.remainingTtlMs / 1000).toFixed(1)} seconds`
+                : "Expired"}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Data Size:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
+              {(stats.dataSizeBytes / 1024).toFixed(2)} KB
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Refresh Status:
+            </Typography>
+            <Chip
+              label={stats.refreshInFlight ? "In Progress" : "Idle"}
+              color={stats.refreshInFlight ? "warning" : "default"}
+              size="small"
+            />
+          </Box>
+        </Stack>
       )}
-    </div>
+    </SectionCard>
   );
 }

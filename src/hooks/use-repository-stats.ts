@@ -74,5 +74,9 @@ export function useRepositoryStats() {
     };
   }, []);
 
-  return { stats, updateStats };
+  const clearStats = () => {
+    setStats(null);
+  };
+
+  return { stats, updateStats, clearStats };
 }

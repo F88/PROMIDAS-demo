@@ -9,7 +9,24 @@
   text-align: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto 1rem;
+  gap: 2rem;
+}
+
+.header-content > div:first-child {
+  flex: 1;
+  text-align: left;
 }
 
 .app-header h1 {

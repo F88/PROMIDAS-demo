@@ -1,9 +1,8 @@
 import { Stack, TextField, Grid, Alert } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
 import { SectionCard } from "../common/section-card";
 import { ActionButton } from "../common/action-button";
 
-interface SnapshotManagementProps {
+interface SetupSnapshotProps {
   snapshotLimit: string;
   setSnapshotLimit: (value: string) => void;
   snapshotOffset: string;
@@ -19,12 +18,11 @@ interface SnapshotManagementProps {
   snapshotLoading: boolean;
   snapshotSuccess: string | null;
   snapshotError: string | null;
-  stats: PrototypeInMemoryStats | null;
   handleSetupSnapshot: () => void;
-  handleRefreshSnapshot: () => void;
+  handleResetSnapshotForm: () => void;
 }
 
-export function SnapshotManagement({
+export function SetupSnapshot({
   snapshotLimit,
   setSnapshotLimit,
   snapshotOffset,
@@ -40,12 +38,15 @@ export function SnapshotManagement({
   snapshotLoading,
   snapshotSuccess,
   snapshotError,
-  stats,
   handleSetupSnapshot,
-  handleRefreshSnapshot,
-}: SnapshotManagementProps) {
+  handleResetSnapshotForm,
+}: SetupSnapshotProps) {
   return (
-    <SectionCard title="setupSnapshot() / refreshSnapshot()">
+    <SectionCard
+      title="setupSnapshot()"
+      description="Initialize snapshot with filtering options"
+      category="Snapshot"
+    >
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid size={{ xs: 6, sm: 4 }}>
           <TextField
@@ -123,12 +124,11 @@ export function SnapshotManagement({
           実行
         </ActionButton>
         <ActionButton
-          onClick={handleRefreshSnapshot}
-          disabled={snapshotLoading || !stats || stats.size === 0}
-          loading={snapshotLoading}
+          onClick={handleResetSnapshotForm}
           variant="secondary"
+          disabled={snapshotLoading}
         >
-          更新
+          リセット
         </ActionButton>
       </Stack>
       {snapshotSuccess && (

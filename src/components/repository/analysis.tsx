@@ -1,4 +1,7 @@
+import { Stack, Alert, Typography, Box } from "@mui/material";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { SectionCard } from "../common/section-card";
+import { ActionButton } from "../common/action-button";
 
 interface AnalysisProps {
   analysis: { min: number | null; max: number | null } | null;
@@ -18,46 +21,52 @@ export function Analysis({
   clearAnalysis,
 }: AnalysisProps) {
   return (
-    <div className="controls-section">
-      <h3>analyzePrototypes()</h3>
-      <p className="section-description">
-        Extract min/max ID range from snapshot
-      </p>
-      <div className="controls">
-        <button
+    <SectionCard
+      title="analyzePrototypes()"
+      description="Extract min/max ID range from snapshot"
+      category="Analysis"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
           onClick={analyze}
           disabled={analysisLoading || !stats || stats.size === 0}
-          className="fetch-button"
+          loading={analysisLoading}
         >
-          {analysisLoading ? "Loading..." : "analyzePrototypes()"}
-        </button>
-        {analysis && (
-          <button onClick={clearAnalysis} className="action-button secondary">
-            Clear
-          </button>
-        )}
-      </div>
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={analysis == null}
+          onClick={clearAnalysis}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
       {analysisError && (
-        <div className="error-message">
-          <p>Error: {analysisError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {analysisError}
+        </Alert>
       )}
       {analysis && !analysisLoading && (
-        <div className="config-display">
-          <div className="config-item">
-            <span className="config-label">Minimum ID:</span>
-            <span className="config-value">
+        <Stack spacing={1.5}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Minimum ID:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
               {analysis.min !== null ? analysis.min : "N/A"}
-            </span>
-          </div>
-          <div className="config-item">
-            <span className="config-label">Maximum ID:</span>
-            <span className="config-value">
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Maximum ID:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
               {analysis.max !== null ? analysis.max : "N/A"}
-            </span>
-          </div>
-        </div>
+            </Typography>
+          </Box>
+        </Stack>
       )}
-    </div>
+    </SectionCard>
   );
 }

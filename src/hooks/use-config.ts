@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { getProtopediaRepository } from "../lib/protopedia-repository";
-import type { PrototypeInMemoryStoreConfig } from "@f88/promidas";
+import type { ProtopediaInMemoryRepository } from "@f88/promidas";
+
+export type StoreConfig = ReturnType<ProtopediaInMemoryRepository["getConfig"]>;
 
 /**
  * Custom hook for retrieving repository configuration.
@@ -9,10 +11,7 @@ import type { PrototypeInMemoryStoreConfig } from "@f88/promidas";
  * Console logs are intentionally included for demo site debugging.
  */
 export function useConfig() {
-  const [config, setConfig] = useState<Omit<
-    Required<PrototypeInMemoryStoreConfig>,
-    "logger"
-  > | null>(null);
+  const [config, setConfig] = useState<StoreConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

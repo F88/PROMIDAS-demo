@@ -1,26 +1,27 @@
 import { ConfigDisplay } from "./config-display";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { GetStats } from "./get-stats";
+import { GetConfig } from "./get-config";
 import { StatsDisplay } from "./stats-display";
+import type { StoreConfig } from "../../hooks/use-config";
 
 interface StoreContainerProps {
   stats: PrototypeInMemoryStats | null;
   fetchStats: () => void;
-  repoConfig: any;
+  config: StoreConfig | null;
   configLoading: boolean;
   configError: string | null;
   fetchConfig: () => void;
-  clearConfig: () => void;
   isActive?: boolean;
 }
 
 export function StoreContainer({
   stats,
   fetchStats,
-  repoConfig,
+  config,
   configLoading,
   configError,
   fetchConfig,
-  clearConfig,
   isActive = false,
 }: StoreContainerProps) {
   return (
@@ -31,14 +32,14 @@ export function StoreContainer({
     >
       <span className="container-label">Store</span>
       <div className="store-grid">
-        <StatsDisplay stats={stats} fetchStats={fetchStats} />
         <ConfigDisplay
-          repoConfig={repoConfig}
+          repoConfig={config}
           configLoading={configLoading}
           configError={configError}
-          fetchConfig={fetchConfig}
-          clearConfig={clearConfig}
         />
+        <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
+        <StatsDisplay stats={stats} />
+        <GetStats fetchStats={fetchStats} />
       </div>
     </div>
   );

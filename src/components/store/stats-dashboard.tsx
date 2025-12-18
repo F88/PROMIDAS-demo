@@ -1,0 +1,242 @@
+import { Box, Typography, Chip, Stack, LinearProgress } from "@mui/material";
+import type { PrototypeInMemoryStats } from "@f88/promidas";
+import type { StoreConfig } from "../../hooks/use-config";
+import { getStoreState, type StoreState } from "../../utils/store-state-utils";
+
+interface StatsDashboardProps {
+  stats: PrototypeInMemoryStats | null;
+  config: StoreConfig | null;
+}
+
+interface StatsChipProps {
+  state: StoreState;
+}
+
+function StateChip({ state }: StatsChipProps) {
+  if (state === "not-stored") {
+    return (
+      <Chip
+        label="Not Stored"
+        color="default"
+        size="small"
+        sx={{ fontWeight: 600 }}
+      />
+    );
+  }
+
+  return (
+    <Chip
+      label={state === "expired" ? "Expired" : "Stored"}
+      color={state === "expired" ? "error" : "success"}
+      size="small"
+    />
+  );
+}
+
+interface ContainerBoxProps {
+  children: React.ReactNode;
+  gap?: number;
+}
+
+function ContainerBox({ children, gap = 2 }: ContainerBoxProps) {
+  return (
+    <Box
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap,
+        p: 1,
+        bgcolor: "background.paper",
+        borderRadius: 1,
+        border: 1,
+        borderColor: "divider",
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+interface StoredStatsContentProps {
+  storeState: StoreState;
+  stats: PrototypeInMemoryStats;
+  config: StoreConfig | null;
+}
+
+interface StatItemProps {
+  label: string;
+  value: string | number;
+  progressPercent?: number;
+  progressColor?: "success" | "warning" | "error";
+}
+
+function getTtlProgressColor(
+  remainingPercent: number
+): "success" | "warning" | "error" {
+  if (remainingPercent >= 50) return "success";
+  if (remainingPercent >= 20) return "warning";
+  return "error";
+}
+
+function getMemoryProgressColor(
+  usagePercent: number
+): "success" | "warning" | "error" {
+  if (usagePercent <= 50) return "success";
+  if (usagePercent <= 80) return "warning";
+  return "error";
+}
+
+function StatItem({ label, value, progressPercent, progressColor }: StatItemProps) {
+  return (
+    <Box sx={{ width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mb: progressPercent !== undefined ? 0.5 : 0,
+        }}
+      >
+        <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
+          {label}:
+        </Typography>
+        <Typography
+          variant="body2"
+          component="span"
+          fontWeight={600}
+          color="text.primary"
+        >
+          {value}
+        </Typography>
+      </Box>
+      {progressPercent !== undefined && progressColor && (
+        <LinearProgress
+          variant="determinate"
+          value={progressPercent}
+          color={progressColor}
+          sx={{ height: 4, borderRadius: 2 }}
+        />
+      )}
+    </Box>
+  );
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  const k = 1024;
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${(bytes / Math.pow(k, i)).toFixed(2)} ${units[i]}`;
+}
+
+function StoredStatsContent({ storeState, stats, config }: StoredStatsContentProps) {
+  const ttlDisplay = config
+    ? (() => {
+        const remainingSec = (stats.remainingTtlMs / 1000).toFixed(1);
+        const totalSec = (config.ttlMs / 1000).toFixed(1);
+        return stats.remainingTtlMs > 0
+          ? `${remainingSec}s / ${totalSec}s`
+          : `Expired (${totalSec}s)`;
+      })()
+    : stats.remainingTtlMs > 0
+    ? `${(stats.remainingTtlMs / 1000).toFixed(1)}s`
+    : "Expired";
+
+  const ttlRemainingPercent = config
+    ? (stats.remainingTtlMs / config.ttlMs) * 100
+    : undefined;
+
+  const ttlProgressColor = ttlRemainingPercent !== undefined
+    ? getTtlProgressColor(ttlRemainingPercent)
+    : undefined;
+
+  const memoryDisplay = config
+    ? (() => {
+        const used = formatBytes(stats.dataSizeBytes);
+        const max = formatBytes(config.maxDataSizeBytes);
+        const percent = (
+          (stats.dataSizeBytes / config.maxDataSizeBytes) *
+          100
+        ).toFixed(1);
+        return `${used} / ${max} (${percent}%)`;
+      })()
+    : "N/A";
+
+  const memoryUsagePercent = config
+    ? (stats.dataSizeBytes / config.maxDataSizeBytes) * 100
+    : undefined;
+
+  const memoryProgressColor = memoryUsagePercent !== undefined
+    ? getMemoryProgressColor(memoryUsagePercent)
+    : undefined;
+
+  const cachedAtDisplay =
+    stats.cachedAt !== null
+      ? new Date(stats.cachedAt).toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      : "N/A";
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <StateChip state={storeState} />
+          {stats.refreshInFlight && (
+            <Chip label="Refreshing" color="warning" size="small" />
+          )}
+        </Stack>
+        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+          <StatItem label="Cached" value={cachedAtDisplay} />
+          <StatItem label="Size" value={stats.size} />
+        </Stack>
+      </Box>
+      <StatItem
+        label="TTL"
+        value={ttlDisplay}
+        progressPercent={ttlRemainingPercent}
+        progressColor={ttlProgressColor}
+      />
+      {config && (
+        <StatItem
+          label="Memory"
+          value={memoryDisplay}
+          progressPercent={memoryUsagePercent}
+          progressColor={memoryProgressColor}
+        />
+      )}
+    </Box>
+  );
+}
+
+export function StatsDashboard({ stats, config }: StatsDashboardProps) {
+  const storeState = getStoreState(stats);
+
+  return (
+    <ContainerBox gap={storeState === "not-stored" ? 1 : 2}>
+      {storeState === "not-stored" ? (
+        <>
+          <StateChip state={storeState} />
+          <Typography variant="caption" color="text.secondary">
+            No data in store
+          </Typography>
+        </>
+      ) : (
+        <StoredStatsContent
+          storeState={storeState}
+          stats={stats!}
+          config={config}
+        />
+      )}
+    </ContainerBox>
+  );
+}

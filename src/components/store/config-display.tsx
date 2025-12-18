@@ -1,57 +1,69 @@
+import { Box, Typography, Stack, Alert } from "@mui/material";
+import { SectionCard } from "../common/section-card";
+import type { StoreConfig } from "../../hooks/use-config";
+
 interface ConfigDisplayProps {
-  repoConfig: any;
+  repoConfig: StoreConfig | null;
   configLoading: boolean;
   configError: string | null;
-  fetchConfig: () => void;
-  clearConfig: () => void;
 }
 
 export function ConfigDisplay({
   repoConfig,
   configLoading,
   configError,
-  fetchConfig,
-  clearConfig,
 }: ConfigDisplayProps) {
   return (
-    <div className="controls-section">
-      <h3>getConfig()</h3>
-      <p className="section-description">Retrieve store settings</p>
-      <div className="controls">
-        <button
-          onClick={fetchConfig}
-          disabled={configLoading}
-          className="fetch-button"
-        >
-          {configLoading ? "Loading..." : "getConfig()"}
-        </button>
-        {repoConfig && (
-          <button onClick={clearConfig} className="action-button secondary">
-            Clear
-          </button>
-        )}
-      </div>
+    <SectionCard
+      title="Configuration"
+      description="Current store settings"
+      category="Store"
+    >
       {configError && (
-        <div className="error-message">
-          <p>Error: {configError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {configError}
+        </Alert>
+      )}
+      {!repoConfig && !configLoading && !configError && (
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          sx={{ py: 2 }}
+        >
+          No config available. Please execute getConfig() first.
+        </Typography>
       )}
       {repoConfig && !configLoading && (
-        <div className="config-display">
-          <div className="config-item">
-            <span className="config-label">TTL (Time To Live):</span>
-            <span className="config-value">
-              {(repoConfig.ttlMs / 1000 / 60).toFixed(0)} minutes
-            </span>
-          </div>
-          <div className="config-item">
-            <span className="config-label">Max Data Size:</span>
-            <span className="config-value">
-              {(repoConfig.maxDataSizeBytes / 1024 / 1024).toFixed(2)} MB
-            </span>
-          </div>
-        </div>
+        <Stack spacing={1.5}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              TTL (Time To Live):
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
+              {(repoConfig.ttlMs / 1000).toFixed(0)} seconds (
+              {(repoConfig.ttlMs / 1000 / 60).toFixed(1)} minutes)
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Max Data Size:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
+              {(repoConfig.maxDataSizeBytes / 1024 / 1024).toFixed(2)} MB (
+              {repoConfig.maxDataSizeBytes.toLocaleString()} bytes)
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Log Level:
+            </Typography>
+            <Typography variant="body2" fontWeight={500}>
+              {repoConfig.logLevel || "info"}
+            </Typography>
+          </Box>
+        </Stack>
       )}
-    </div>
+    </SectionCard>
   );
 }

@@ -1,4 +1,5 @@
-import { SnapshotManagement } from "./snapshot-management";
+import { SetupSnapshot } from "./setup-snapshot";
+import { RefreshSnapshot } from "./refresh-snapshot";
 import { RandomPrototype } from "./random-prototype";
 import { SearchById } from "./search-by-id";
 import { SingleRandom } from "./single-random";
@@ -28,6 +29,7 @@ interface RepositoryContainerProps {
   snapshotSuccess: string | null;
   snapshotError: string | null;
   handleSetupSnapshot: () => void;
+  handleResetSnapshotForm: () => void;
   handleRefreshSnapshot: () => void;
 
   // Random Prototype
@@ -96,6 +98,7 @@ export function RepositoryContainer({
   snapshotSuccess,
   snapshotError,
   handleSetupSnapshot,
+  handleResetSnapshotForm,
   handleRefreshSnapshot,
   randomPrototype,
   randomLoading,
@@ -139,8 +142,8 @@ export function RepositoryContainer({
     >
       <span className="container-label">Repository</span>
 
-      {/* Snapshot Management spans full width */}
-      <SnapshotManagement
+      {/* Setup Snapshot */}
+      <SetupSnapshot
         snapshotLimit={snapshotLimit}
         setSnapshotLimit={setSnapshotLimit}
         snapshotOffset={snapshotOffset}
@@ -156,8 +159,14 @@ export function RepositoryContainer({
         snapshotLoading={snapshotLoading}
         snapshotSuccess={snapshotSuccess}
         snapshotError={snapshotError}
-        stats={stats}
         handleSetupSnapshot={handleSetupSnapshot}
+        handleResetSnapshotForm={handleResetSnapshotForm}
+      />
+
+      {/* Refresh Snapshot */}
+      <RefreshSnapshot
+        snapshotLoading={snapshotLoading}
+        stats={stats}
         handleRefreshSnapshot={handleRefreshSnapshot}
       />
 

@@ -1,5 +1,8 @@
+import { Stack, Alert, Typography, Box, Chip } from "@mui/material";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
 import type { NormalizedPrototype } from "@f88/promidas/types";
+import { SectionCard } from "../common/section-card";
+import { ActionButton } from "../common/action-button";
 
 interface AllPrototypesProps {
   allPrototypes: NormalizedPrototype[] | null;
@@ -19,49 +22,56 @@ export function AllPrototypes({
   clearAll,
 }: AllPrototypesProps) {
   return (
-    <div className="controls-section">
-      <h3>getAllFromSnapshot()</h3>
-      <p className="section-description">
-        Retrieve all prototypes from snapshot
-      </p>
-      <div className="controls">
-        <button
+    <SectionCard
+      title="getAllFromSnapshot()"
+      description="Retrieve all prototypes from snapshot"
+      category="Query"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
           onClick={fetchAll}
           disabled={allLoading || !stats || stats.size === 0}
-          className="fetch-button"
+          loading={allLoading}
         >
-          {allLoading ? "Loading..." : "getAllFromSnapshot()"}
-        </button>
-        {allPrototypes && (
-          <button onClick={clearAll} className="action-button secondary">
-            Clear
-          </button>
-        )}
-      </div>
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={allPrototypes == null}
+          onClick={clearAll}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
       {allError && (
-        <div className="error-message">
-          <p>Error: {allError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {allError}
+        </Alert>
       )}
       {allPrototypes && !allLoading && (
-        <div className="ids-display">
-          <p className="ids-count">
+        <Box>
+          <Typography variant="body2" sx={{ mb: 1 }}>
             Total Prototypes: <strong>{allPrototypes.length}</strong>
-          </p>
-          <div className="ids-list">
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {allPrototypes.slice(0, 20).map((proto) => (
-              <span key={proto.id} className="id-badge">
-                {proto.id}: {proto.prototypeNm}
-              </span>
+              <Chip
+                key={proto.id}
+                label={`${proto.id}: ${proto.prototypeNm}`}
+                size="small"
+                variant="outlined"
+              />
             ))}
             {allPrototypes.length > 20 && (
-              <span className="id-badge more">
-                +{allPrototypes.length - 20} more
-              </span>
+              <Chip
+                label={`+${allPrototypes.length - 20} more`}
+                size="small"
+                color="primary"
+              />
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </SectionCard>
   );
 }

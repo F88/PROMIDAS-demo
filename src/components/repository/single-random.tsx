@@ -1,5 +1,8 @@
+import { Stack, Alert } from "@mui/material";
 import { PrototypeCard } from "../PrototypeCard";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { SectionCard } from "../common/section-card";
+import { ActionButton } from "../common/action-button";
 
 interface SingleRandomProps {
   singleRandomPrototype: any;
@@ -19,36 +22,35 @@ export function SingleRandom({
   clearSingleRandom,
 }: SingleRandomProps) {
   return (
-    <div className="controls-section">
-      <h3>getRandomPrototypeFromSnapshot()</h3>
-      <p className="section-description">Optimized for single random item</p>
-      <div className="controls">
-        <button
+    <SectionCard
+      title="getRandomPrototypeFromSnapshot()"
+      description="Optimized for single random item"
+      category="Query"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
           onClick={fetchSingleRandom}
           disabled={singleRandomLoading || !stats || stats.size === 0}
-          className="fetch-button"
+          loading={singleRandomLoading}
         >
-          {singleRandomLoading
-            ? "Loading..."
-            : "getRandomPrototypeFromSnapshot()"}
-        </button>
-        {singleRandomPrototype && (
-          <button
-            onClick={clearSingleRandom}
-            className="action-button secondary"
-          >
-            Clear
-          </button>
-        )}
-      </div>
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={singleRandomPrototype == null}
+          onClick={clearSingleRandom}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
       {singleRandomError && (
-        <div className="error-message">
-          <p>Error: {singleRandomError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {singleRandomError}
+        </Alert>
       )}
       {singleRandomPrototype && !singleRandomLoading && (
         <PrototypeCard prototype={singleRandomPrototype} />
       )}
-    </div>
+    </SectionCard>
   );
 }

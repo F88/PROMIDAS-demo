@@ -1,4 +1,7 @@
+import { Stack, Alert, Typography, Box, Chip } from "@mui/material";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { SectionCard } from "../common/section-card";
+import { ActionButton } from "../common/action-button";
 
 interface PrototypeIdsProps {
   prototypeIds: readonly number[] | null;
@@ -18,47 +21,51 @@ export function PrototypeIds({
   clearIds,
 }: PrototypeIdsProps) {
   return (
-    <div className="controls-section">
-      <h3>getPrototypeIdsFromSnapshot()</h3>
-      <p className="section-description">Efficient ID-only retrieval</p>
-      <div className="controls">
-        <button
+    <SectionCard
+      title="getPrototypeIdsFromSnapshot()"
+      description="Efficient ID-only retrieval"
+      category="Query"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
           onClick={fetchIds}
           disabled={idsLoading || !stats || stats.size === 0}
-          className="fetch-button"
+          loading={idsLoading}
         >
-          {idsLoading ? "Loading..." : "getPrototypeIdsFromSnapshot()"}
-        </button>
-        {prototypeIds && (
-          <button onClick={clearIds} className="action-button secondary">
-            Clear
-          </button>
-        )}
-      </div>
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={prototypeIds == null}
+          onClick={clearIds}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
       {idsError && (
-        <div className="error-message">
-          <p>Error: {idsError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {idsError}
+        </Alert>
       )}
       {prototypeIds && !idsLoading && (
-        <div className="ids-display">
-          <p className="ids-count">
+        <Box>
+          <Typography variant="body2" sx={{ mb: 1 }}>
             Total IDs: <strong>{prototypeIds.length}</strong>
-          </p>
-          <div className="ids-list">
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {prototypeIds.slice(0, 50).map((id) => (
-              <span key={id} className="id-badge">
-                {id}
-              </span>
+              <Chip key={id} label={id} size="small" variant="outlined" />
             ))}
             {prototypeIds.length > 50 && (
-              <span className="id-badge more">
-                +{prototypeIds.length - 50} more
-              </span>
+              <Chip
+                label={`+${prototypeIds.length - 50} more`}
+                size="small"
+                color="primary"
+              />
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </SectionCard>
   );
 }

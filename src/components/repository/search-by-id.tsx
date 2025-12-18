@@ -1,5 +1,8 @@
+import { Stack, TextField, Alert } from "@mui/material";
 import { PrototypeCard } from "../PrototypeCard";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { SectionCard } from "../common/section-card";
+import { ActionButton } from "../common/action-button";
 
 interface SearchByIdProps {
   searchId: string;
@@ -23,39 +26,46 @@ export function SearchById({
   clearSearch,
 }: SearchByIdProps) {
   return (
-    <div className="controls-section">
-      <h3>getPrototypeFromSnapshotByPrototypeId()</h3>
-      <div className="search-controls">
-        <input
+    <SectionCard
+      title="getPrototypeFromSnapshotByPrototypeId()"
+      description="Search for a specific prototype by ID"
+      category="Query"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <TextField
+          label="Prototype ID"
           type="number"
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
           placeholder="Enter Prototype ID"
-          className="search-input"
+          size="small"
+          sx={{ maxWidth: 200 }}
         />
-        <button
+      </Stack>
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
           onClick={handleSearch}
           disabled={searchLoading || !searchId || !stats || stats.size === 0}
-          className="fetch-button"
+          loading={searchLoading}
         >
-          {searchLoading
-            ? "Searching..."
-            : "getPrototypeFromSnapshotByPrototypeId()"}
-        </button>
-        {searchPrototype && (
-          <button onClick={clearSearch} className="action-button secondary">
-            Clear
-          </button>
-        )}
-      </div>
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={searchPrototype}
+          onClick={clearSearch}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
       {searchError && (
-        <div className="error-message">
-          <p>Error: {searchError}</p>
-        </div>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {searchError}
+        </Alert>
       )}
       {searchPrototype && !searchLoading && (
         <PrototypeCard prototype={searchPrototype} />
       )}
-    </div>
+    </SectionCard>
   );
 }

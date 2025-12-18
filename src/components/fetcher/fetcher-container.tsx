@@ -1,3 +1,5 @@
+import { Typography } from "@mui/material";
+
 /**
  * Fetcher Container
  *
@@ -17,16 +19,13 @@ export function FetcherContainer({ isActive = false }: FetcherContainerProps) {
       }`}
     >
       <span className="container-label">Fetcher</span>
-      <div
-        style={{
-          minHeight: "20px",
-          textAlign: "center",
-          color: "#6b7280",
-          fontSize: "0.875rem",
-        }}
+      <Typography
+        variant="body2"
+        color={isActive ? "success.main" : "text.secondary"}
+        align="center"
       >
         {isActive ? "📡 Fetching data from API..." : "Ready to fetch"}
-      </div>
+      </Typography>
     </div>
   );
 }
