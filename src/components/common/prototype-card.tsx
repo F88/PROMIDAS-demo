@@ -8,7 +8,6 @@ import {
   CardHeader,
   Typography,
   Chip,
-  Box,
   Stack,
 } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -48,103 +47,90 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
             </Typography>
           )}
 
-          {prototype.users && prototype.users.length > 0 && (
-            <Box sx={{ mb: 1 }}>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                alignItems="center"
-                sx={{ mb: 0.5 }}
-              >
-                <PeopleIcon fontSize="small" color="action" />
+          <Stack spacing={1.5} sx={{ mt: 2 }}>
+            {prototype.users && prototype.users.length > 0 && (
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <PeopleIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{ flexWrap: 'wrap', gap: 0.5 }}
+                >
+                  {prototype.users.map((user, index) => (
+                    <Chip
+                      key={index}
+                      label={user}
+                      size="small"
+                      variant="outlined"
+                    />
+                  ))}
+                </Stack>
               </Stack>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{ flexWrap: 'wrap', gap: 0.5 }}
-              >
-                {prototype.users.map((user, index) => (
-                  <Chip
-                    key={index}
-                    label={user}
-                    size="small"
-                    variant="outlined"
-                  />
-                ))}
-              </Stack>
-            </Box>
-          )}
+            )}
 
-          {prototype.tags && prototype.tags.length > 0 && (
-            <Box sx={{ mb: 1 }}>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                alignItems="center"
-                sx={{ mb: 0.5 }}
-              >
-                <LocalOfferIcon fontSize="small" color="action" />
+            {prototype.tags && prototype.tags.length > 0 && (
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <LocalOfferIcon
+                  fontSize="small"
+                  color="action"
+                  sx={{ mr: 0.5 }}
+                />
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{ flexWrap: 'wrap', gap: 0.5 }}
+                >
+                  {prototype.tags.map((tag, index) => (
+                    <Chip
+                      key={index}
+                      label={tag}
+                      size="small"
+                      color="primary"
+                    />
+                  ))}
+                </Stack>
               </Stack>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{ flexWrap: 'wrap', gap: 0.5 }}
-              >
-                {prototype.tags.map((tag, index) => (
-                  <Chip key={index} label={tag} size="small" color="primary" />
-                ))}
-              </Stack>
-            </Box>
-          )}
+            )}
 
-          {prototype.events && prototype.events.length > 0 && (
-            <Box sx={{ mb: 1 }}>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                alignItems="center"
-                sx={{ mb: 0.5 }}
-              >
-                <EventIcon fontSize="small" color="action" />
+            {prototype.events && prototype.events.length > 0 && (
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <EventIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{ flexWrap: 'wrap', gap: 0.5 }}
+                >
+                  {prototype.events.map((event, index) => (
+                    <Chip
+                      key={index}
+                      label={event}
+                      size="small"
+                      color="secondary"
+                    />
+                  ))}
+                </Stack>
               </Stack>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{ flexWrap: 'wrap', gap: 0.5 }}
-              >
-                {prototype.events.map((event, index) => (
-                  <Chip
-                    key={index}
-                    label={event}
-                    size="small"
-                    color="secondary"
-                  />
-                ))}
-              </Stack>
-            </Box>
-          )}
+            )}
 
-          {prototype.materials && prototype.materials.length > 0 && (
-            <Box sx={{ mb: 1 }}>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                alignItems="center"
-                sx={{ mb: 0.5 }}
-              >
-                <CategoryIcon fontSize="small" color="action" />
+            {prototype.materials && prototype.materials.length > 0 && (
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <CategoryIcon
+                  fontSize="small"
+                  color="action"
+                  sx={{ mr: 0.5 }}
+                />
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{ flexWrap: 'wrap', gap: 0.5 }}
+                >
+                  {prototype.materials.map((material, index) => (
+                    <Chip key={index} label={material} size="small" />
+                  ))}
+                </Stack>
               </Stack>
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{ flexWrap: 'wrap', gap: 0.5 }}
-              >
-                {prototype.materials.map((material, index) => (
-                  <Chip key={index} label={material} size="small" />
-                ))}
-              </Stack>
-            </Box>
-          )}
+            )}
+          </Stack>
         </CardContent>
       </CardActionArea>
       {prototype.mainUrl && (

@@ -11,11 +11,11 @@ import { useAllPrototypes } from './hooks/use-all-prototypes';
 import { usePrototypeAnalysis } from './hooks/use-prototype-analysis';
 import { StoreContainer } from './components/store/store-container';
 import { StatsDashboard } from './components/common/stats-dashboard';
+import { AppHeader } from './components/common/app-header';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { ConfigContainer } from './components/config/config-container';
 import { TokenConfiguration } from './components/config/token-configuration';
-import { DataFlowIndicator } from './components/common/data-flow-indicator';
 import {
   hasApiToken,
   getApiToken,
@@ -36,6 +36,40 @@ export const SNAPSHOT_LIMITS = {
   MIN_OFFSET: 0,
   DEFAULT_OFFSET: 0,
 } as const;
+
+/**
+ * PromidasInfoSection - Display link to PROMIDAS documentation
+ */
+function PromidasInfoSection() {
+  return (
+    <Box
+      sx={{
+        py: 4,
+        px: 2,
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+      }}
+    >
+      <Link
+        href="https://f88.github.io/promidas/"
+        target="_blank"
+        rel="noopener noreferrer"
+        underline="hover"
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 0.5,
+          color: 'white',
+          fontWeight: 500,
+          fontSize: '1.1rem',
+        }}
+      >
+        📚 PROMIDAS とは
+      </Link>
+    </Box>
+  );
+}
 
 function App() {
   const [searchId, setSearchId] = useState('1');
@@ -332,71 +366,16 @@ function App() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box
-        component="header"
-        sx={{
-          py: 3,
-          px: 2,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          alignItems={{ xs: 'stretch', sm: 'center' }}
-          justifyContent="space-between"
-          sx={{ maxWidth: 1400, margin: '0 auto 1rem' }}
-        >
-          <Box
-            sx={{
-              flex: 1,
-              textAlign: { xs: 'center', sm: 'left' },
-            }}
-          >
-            <Typography
-              variant="h3"
-              component="h1"
-              fontWeight={700}
-              sx={{ mb: 0.5 }}
-            >
-              PROMIDAS Demo
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
-              ProtoPedia Resource Organized Management In-memory Data Access
-              Store
-            </Typography>
-            <Link
-              href="https://f88.github.io/promidas/"
-              target="_blank"
-              rel="noopener noreferrer"
-              underline="hover"
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 0.5,
-                color: 'white',
-                fontWeight: 500,
-              }}
-            >
-              📚 PROMIDAS とは
-            </Link>
-          </Box>
-          <StatsDashboard stats={stats} config={repoConfig} />
-        </Stack>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <DataFlowIndicator
-            isFetcherActive={isFetcherActive}
-            isStoreActive={isStoreActive}
-            isRepositoryActive={isRepositoryActive}
-            isDisplayActive={isDisplayActive}
-          />
-        </Box>
-      </Box>
+      <AppHeader
+        stats={stats}
+        config={repoConfig}
+        isFetcherActive={isFetcherActive}
+        isStoreActive={isStoreActive}
+        isRepositoryActive={isRepositoryActive}
+        isDisplayActive={isDisplayActive}
+      />
+
+      <PromidasInfoSection />
 
       <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
         <Grid container spacing={3}>
