@@ -1,13 +1,13 @@
 import { Stack, TextField, Alert } from '@mui/material';
 import { PrototypeCard } from '../PrototypeCard';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { PrototypeInMemoryStats, Prototype } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 
 interface SearchByIdProps {
   searchId: string;
   setSearchId: (value: string) => void;
-  searchPrototype: any;
+  searchPrototype: Prototype | null;
   searchLoading: boolean;
   searchError: string | null;
   stats: PrototypeInMemoryStats | null;

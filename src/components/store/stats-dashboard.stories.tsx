@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StatsDashboard } from './stats-dashboard';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { StoreConfig } from '../../hooks/use-config';

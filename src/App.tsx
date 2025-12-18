@@ -103,6 +103,7 @@ function App() {
   useEffect(() => {
     fetchConfig();
     updateStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Periodically update stats to show remaining TTL changes

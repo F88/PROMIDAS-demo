@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getProtopediaRepository } from '../lib/protopedia-repository';
+import type { Prototype } from '@f88/promidas';
 
 /**
  * Custom hook for retrieving a single random prototype from the current snapshot.
@@ -8,7 +9,7 @@ import { getProtopediaRepository } from '../lib/protopedia-repository';
  * Console logs are intentionally included for demo site debugging.
  */
 export function useSingleRandom() {
-  const [prototype, setPrototype] = useState<any | null>(null);
+  const [prototype, setPrototype] = useState<Prototype | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
