@@ -482,17 +482,33 @@ function App() {
             stats &&
             stats.size > 0 && (
               <Grid size={{ xs: 12 }}>
-                <div className="empty-state">
-                  <p>Click any button above to explore the PROMIDAS API</p>
-                </div>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    padding: '3rem 1rem',
+                    color: '#666',
+                  }}
+                >
+                  <Typography>
+                    Click any button above to explore the PROMIDAS API
+                  </Typography>
+                </Box>
               </Grid>
             )}
 
           {(!stats || stats.size === 0) && !snapshotLoading && (
             <Grid size={{ xs: 12 }}>
-              <div className="empty-state">
-                <p>No snapshot loaded. Please setup a snapshot first.</p>
-              </div>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  padding: '3rem 1rem',
+                  color: '#666',
+                }}
+              >
+                <Typography>
+                  No snapshot loaded. Please setup a snapshot first.
+                </Typography>
+              </Box>
             </Grid>
           )}
         </Grid>

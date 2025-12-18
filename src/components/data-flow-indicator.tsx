@@ -1,4 +1,4 @@
-import { Box, Stack, Chip, Typography } from '@mui/material';
+import { Box, Stack, Chip } from '@mui/material';
 
 interface DataFlowIndicatorProps {
   isFetcherActive: boolean;
