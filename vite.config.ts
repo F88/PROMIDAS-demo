@@ -16,7 +16,16 @@ const dirname =
 export default defineConfig({
   base: '/PROMIDAS-demo/',
   plugins: [react()],
-  // @ts-expect-error - Vitest config
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'mui-core': ['@mui/material', '@mui/system'],
+          'mui-icons': ['@mui/icons-material'],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
