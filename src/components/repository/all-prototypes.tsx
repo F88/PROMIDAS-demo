@@ -3,6 +3,7 @@ import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 
 interface AllPrototypesProps {
   allPrototypes: NormalizedPrototype[] | null;
@@ -55,11 +56,10 @@ export function AllPrototypes({
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {allPrototypes.slice(0, 20).map((proto) => (
-              <Chip
+              <PrototypeIdAndName
                 key={proto.id}
-                label={`${proto.id}: ${proto.prototypeNm}`}
-                size="small"
-                variant="outlined"
+                id={proto.id}
+                name={proto.prototypeNm}
               />
             ))}
             {allPrototypes.length > 20 && (

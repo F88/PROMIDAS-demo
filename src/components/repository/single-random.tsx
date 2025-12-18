@@ -1,5 +1,5 @@
 import { Stack, Alert } from '@mui/material';
-import { PrototypeCard } from '../prototype-card';
+import { PrototypeCard } from '../common/prototype-card';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';

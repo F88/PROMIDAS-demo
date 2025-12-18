@@ -27,9 +27,12 @@ interface RepositoryContainerProps {
   setSnapshotEventNm: (value: string) => void;
   snapshotMaterialNm: string;
   setSnapshotMaterialNm: (value: string) => void;
-  snapshotLoading: boolean;
-  snapshotSuccess: string | null;
-  snapshotError: string | null;
+  setupLoading: boolean;
+  refreshLoading: boolean;
+  setupSuccess: string | null;
+  setupError: string | null;
+  refreshSuccess: string | null;
+  refreshError: string | null;
   handleSetupSnapshot: () => void;
   handleResetSnapshotForm: () => void;
   handleRefreshSnapshot: () => void;
@@ -96,9 +99,12 @@ export function RepositoryContainer({
   setSnapshotEventNm,
   snapshotMaterialNm,
   setSnapshotMaterialNm,
-  snapshotLoading,
-  snapshotSuccess,
-  snapshotError,
+  setupLoading,
+  refreshLoading,
+  setupSuccess,
+  setupError,
+  refreshSuccess,
+  refreshError,
   handleSetupSnapshot,
   handleResetSnapshotForm,
   handleRefreshSnapshot,
@@ -166,16 +172,18 @@ export function RepositoryContainer({
           setSnapshotEventNm={setSnapshotEventNm}
           snapshotMaterialNm={snapshotMaterialNm}
           setSnapshotMaterialNm={setSnapshotMaterialNm}
-          snapshotLoading={snapshotLoading}
-          snapshotSuccess={snapshotSuccess}
-          snapshotError={snapshotError}
+          snapshotLoading={setupLoading}
+          snapshotSuccess={setupSuccess}
+          snapshotError={setupError}
           handleSetupSnapshot={handleSetupSnapshot}
           handleResetSnapshotForm={handleResetSnapshotForm}
         />
 
         {/* Refresh Snapshot */}
         <RefreshSnapshot
-          snapshotLoading={snapshotLoading}
+          snapshotLoading={refreshLoading}
+          snapshotSuccess={refreshSuccess}
+          snapshotError={refreshError}
           stats={stats}
           handleRefreshSnapshot={handleRefreshSnapshot}
         />

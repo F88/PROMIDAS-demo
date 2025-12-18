@@ -21,15 +21,18 @@ import {
 } from './snapshot-helpers';
 
 export function useSnapshotManagement() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [setupLoading, setSetupLoading] = useState(false);
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [setupError, setSetupError] = useState<string | null>(null);
+  const [setupSuccess, setSetupSuccess] = useState<string | null>(null);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
+  const [refreshSuccess, setRefreshSuccess] = useState<string | null>(null);
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
   const setupSnapshot = async (params: ListPrototypesParams = {}) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+    setSetupLoading(true);
+    setSetupError(null);
+    setSetupSuccess(null);
 
     try {
       const repo = getProtopediaRepository();
@@ -41,34 +44,34 @@ export function useSnapshotManagement() {
 
       // Check if setup was successful
       if (!result.ok) {
-        handleSnapshotOperationError(result, setError);
+        handleSnapshotOperationError(result, setSetupError);
       } else {
         const limit = params.limit || 100;
-        setSuccess(`Snapshot initialized with up to ${limit} prototypes`);
+        setSetupSuccess(`Snapshot initialized with up to ${limit} prototypes`);
         // Set stats from result
         setStats(result.stats);
       }
     } catch (err) {
       if (err instanceof ValidationError) {
-        setError(
+        setSetupError(
           `Validation error${err.field ? ` in ${err.field}` : ''}: ${
             err.message
           }`,
         );
       } else {
-        setError(
+        setSetupError(
           err instanceof Error ? err.message : 'Failed to setup snapshot',
         );
       }
     } finally {
-      setLoading(false);
+      setSetupLoading(false);
     }
   };
 
   const refreshSnapshot = async () => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+    setRefreshLoading(true);
+    setRefreshError(null);
+    setRefreshSuccess(null);
 
     try {
       const repo = getProtopediaRepository();
@@ -79,28 +82,38 @@ export function useSnapshotManagement() {
       logFetchResult('refreshSnapshot', result);
 
       if (!result.ok) {
-        handleSnapshotOperationError(result, setError);
+        handleSnapshotOperationError(result, setRefreshError);
       } else {
-        setSuccess('Snapshot refreshed successfully');
+        setRefreshSuccess('Snapshot refreshed successfully');
         // Set stats from result
         setStats(result.stats);
       }
     } catch (err) {
       if (err instanceof ValidationError) {
-        setError(
+        setRefreshError(
           `Validation error${err.field ? ` in ${err.field}` : ''}: ${
             err.message
           }`,
         );
       } else {
-        setError(
+        setRefreshError(
           err instanceof Error ? err.message : 'Failed to refresh snapshot',
         );
       }
     } finally {
-      setLoading(false);
+      setRefreshLoading(false);
     }
   };
 
-  return { loading, error, success, stats, setupSnapshot, refreshSnapshot };
+  return {
+    setupLoading,
+    refreshLoading,
+    setupError,
+    setupSuccess,
+    refreshError,
+    refreshSuccess,
+    stats,
+    setupSnapshot,
+    refreshSnapshot,
+  };
 }

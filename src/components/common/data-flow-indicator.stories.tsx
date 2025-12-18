@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DataFlowIndicator } from './data-flow-indicator';
 
 const meta = {
-  title: 'Components/DataFlowIndicator',
+  title: 'Components/Common/DataFlowIndicator',
   component: DataFlowIndicator,
   parameters: {
     layout: 'centered',

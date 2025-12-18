@@ -2,6 +2,7 @@ import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 
 interface PrototypeIdsProps {
   prototypeIds: readonly number[] | null;
@@ -54,7 +55,7 @@ export function PrototypeIds({
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {prototypeIds.slice(0, 50).map((id) => (
-              <Chip key={id} label={id} size="small" variant="outlined" />
+              <PrototypeIdAndName key={id} id={id} />
             ))}
             {prototypeIds.length > 50 && (
               <Chip

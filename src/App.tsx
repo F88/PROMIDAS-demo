@@ -10,12 +10,12 @@ import { useConfig } from './hooks/use-config';
 import { useAllPrototypes } from './hooks/use-all-prototypes';
 import { usePrototypeAnalysis } from './hooks/use-prototype-analysis';
 import { StoreContainer } from './components/store/store-container';
-import { StatsDashboard } from './components/store/stats-dashboard';
+import { StatsDashboard } from './components/common/stats-dashboard';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { ConfigContainer } from './components/config/config-container';
 import { TokenConfiguration } from './components/config/token-configuration';
-import { DataFlowIndicator } from './components/data-flow-indicator';
+import { DataFlowIndicator } from './components/common/data-flow-indicator';
 import {
   hasApiToken,
   getApiToken,
@@ -51,9 +51,12 @@ function App() {
   } = useRandomPrototype();
   const { stats, updateStats } = useRepositoryStats();
   const {
-    loading: snapshotLoading,
-    error: snapshotError,
-    success: snapshotSuccess,
+    setupLoading,
+    refreshLoading,
+    setupError,
+    setupSuccess,
+    refreshError,
+    refreshSuccess,
     setupSnapshot,
     refreshSnapshot,
   } = useSnapshotManagement();
@@ -423,9 +426,12 @@ function App() {
               setSnapshotEventNm={setSnapshotEventNm}
               snapshotMaterialNm={snapshotMaterialNm}
               setSnapshotMaterialNm={setSnapshotMaterialNm}
-              snapshotLoading={snapshotLoading}
-              snapshotSuccess={snapshotSuccess}
-              snapshotError={snapshotError}
+              setupLoading={setupLoading}
+              refreshLoading={refreshLoading}
+              setupSuccess={setupSuccess}
+              setupError={setupError}
+              refreshSuccess={refreshSuccess}
+              refreshError={refreshError}
               stats={stats}
               handleSetupSnapshot={handleSetupSnapshot}
               handleResetSnapshotForm={handleResetSnapshotForm}
@@ -496,7 +502,7 @@ function App() {
               </Grid>
             )}
 
-          {(!stats || stats.size === 0) && !snapshotLoading && (
+          {(!stats || stats.size === 0) && !setupLoading && !refreshLoading && (
             <Grid size={{ xs: 12 }}>
               <Box
                 sx={{

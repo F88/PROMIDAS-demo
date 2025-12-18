@@ -30,7 +30,7 @@ export function ContainerWrapper({
       className={`container-wrapper ${type}-container ${isActive ? 'active' : ''}`}
       sx={{
         position: 'relative',
-        border: `2px solid ${color}20`,
+        border: `6px solid ${color}20`,
         borderRadius: 3,
         p: 3,
         mb: 4,
@@ -47,7 +47,7 @@ export function ContainerWrapper({
           backgroundColor: 'background.paper',
           color: color,
           fontWeight: 600,
-          fontSize: '0.75rem',
+          // fontSize: '0.75rem',
           textTransform: 'uppercase',
           letterSpacing: 0.5,
           border: 'none',
