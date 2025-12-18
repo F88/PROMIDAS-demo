@@ -1,30 +1,31 @@
-import { useState, useEffect } from 'react';
-import { Container, Grid, Link, Box, Stack, Typography } from '@mui/material';
-import { useRandomPrototype } from './hooks/use-random-prototype';
-import { useRepositoryStats } from './hooks/use-repository-stats';
-import { useSnapshotManagement } from './hooks/use-snapshot-management';
-import { usePrototypeSearch } from './hooks/use-prototype-search';
-import { usePrototypeIds } from './hooks/use-prototype-ids';
-import { useSingleRandom } from './hooks/use-single-random';
-import { useConfig } from './hooks/use-config';
-import { useAllPrototypes } from './hooks/use-all-prototypes';
-import { usePrototypeAnalysis } from './hooks/use-prototype-analysis';
-import { StoreContainer } from './components/store/store-container';
-import { StatsDashboard } from './components/common/stats-dashboard';
+import { Box, Container, Grid, Link, Stack, Typography } from '@mui/material';
+import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+import { useEffect, useState } from 'react';
+import './App.css';
 import { AppHeader } from './components/common/app-header';
-import { RepositoryContainer } from './components/repository/repository-container';
-import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { ConfigContainer } from './components/config/config-container';
 import { TokenConfiguration } from './components/config/token-configuration';
-import {
-  hasApiToken,
-  getApiToken,
-  setApiToken,
-  removeApiToken,
-} from './lib/token-storage';
+import { FetcherContainer } from './components/fetcher/fetcher-container';
+import { RepositoryContainer } from './components/repository/repository-container';
+import { StoreContainer } from './components/store/store-container';
 import { resetRepository } from './lib/protopedia-repository';
-import './App.css';
-import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+import {
+  getApiToken,
+  hasApiToken,
+  removeApiToken,
+  setApiToken,
+} from './lib/token-storage';
+import {
+  useRandomPrototype,
+  useRepositoryStats,
+  useSnapshotManagement,
+  usePrototypeSearch,
+  usePrototypeIds,
+  useSingleRandom,
+  useConfig,
+  useAllPrototypes,
+  usePrototypeAnalysis,
+} from './hooks';
 
 /**
  * Constants for snapshot configuration
