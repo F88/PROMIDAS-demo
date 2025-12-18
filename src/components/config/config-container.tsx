@@ -6,6 +6,7 @@
  */
 
 import { Box } from '@mui/material';
+import { ContainerWrapper } from '../common/container-wrapper';
 
 interface ConfigContainerProps {
   isActive?: boolean;
@@ -17,13 +18,8 @@ export function ConfigContainer({
   children,
 }: ConfigContainerProps) {
   return (
-    <div
-      className={`container-wrapper config-container ${
-        isActive ? 'active' : ''
-      }`}
-    >
-      <span className="container-label">Config</span>
+    <ContainerWrapper type="config" label="Config" isActive={isActive}>
       <Box mt={1}>{children}</Box>
-    </div>
+    </ContainerWrapper>
   );
 }

@@ -1,3 +1,5 @@
+import { Grid } from '@mui/material';
+import { ContainerWrapper } from '../common/container-wrapper';
 import { ConfigDisplay } from './config-display';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { GetStats } from './get-stats';
@@ -25,22 +27,25 @@ export function StoreContainer({
   isActive = false,
 }: StoreContainerProps) {
   return (
-    <div
-      className={`container-wrapper store-container ${
-        isActive ? 'active' : ''
-      }`}
-    >
-      <span className="container-label">Store</span>
-      <div className="store-grid">
-        <ConfigDisplay
-          repoConfig={config}
-          configLoading={configLoading}
-          configError={configError}
-        />
-        <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
-        <StatsDisplay stats={stats} />
-        <GetStats fetchStats={fetchStats} />
-      </div>
-    </div>
+    <ContainerWrapper type="store" label="Store" isActive={isActive}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <ConfigDisplay
+            repoConfig={config}
+            configLoading={configLoading}
+            configError={configError}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <StatsDisplay stats={stats} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <GetStats fetchStats={fetchStats} />
+        </Grid>
+      </Grid>
+    </ContainerWrapper>
   );
 }

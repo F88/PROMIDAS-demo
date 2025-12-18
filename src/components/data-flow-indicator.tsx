@@ -17,7 +17,7 @@ function FlowItem({ icon, label, isActive }: FlowItemProps) {
   return (
     <Chip
       icon={<span>{icon}</span>}
-      label={label}
+      label={<Box sx={{ display: { xs: 'none', sm: 'inline' } }}>{label}</Box>}
       size="small"
       sx={{
         backgroundColor: isActive
@@ -59,47 +59,18 @@ export function DataFlowIndicator({
         background: 'rgba(255, 255, 255, 0.1)',
         borderRadius: 3,
         backdropFilter: 'blur(10px)',
+        width: 'fit-content',
       }}
     >
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        spacing={{ xs: 1, sm: 2 }}
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Typography
-          variant="caption"
-          sx={{
-            fontWeight: 600,
-            color: 'white',
-            opacity: 0.9,
-            fontSize: { xs: '0.7rem', sm: '0.75rem' },
-          }}
-        >
-          Data Flow Status:
-        </Typography>
-        <Stack
-          direction="row"
-          spacing={0.5}
-          alignItems="center"
-          sx={{ flexWrap: 'wrap', justifyContent: 'center' }}
-        >
+      <Stack spacing={1.5}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
           <FlowItem icon="📡" label="Fetcher" isActive={isFetcherActive} />
-          <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)', mx: 0.5 }}>
-            →
-          </Typography>
           <FlowItem icon="💾" label="Store" isActive={isStoreActive} />
-          <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)', mx: 0.5 }}>
-            →
-          </Typography>
           <FlowItem
             icon="📚"
             label="Repository"
             isActive={isRepositoryActive}
           />
-          <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)', mx: 0.5 }}>
-            →
-          </Typography>
           <FlowItem icon="🖥️" label="Display" isActive={isDisplayActive} />
         </Stack>
       </Stack>

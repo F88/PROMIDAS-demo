@@ -115,32 +115,83 @@ function App() {
     return () => clearInterval(intervalId);
   }, [updateStats]);
 
-  // Visualize data flow: Fetcher -> Store -> Repository -> Display
-  const visualizeDataFlow = async (operation: () => Promise<void> | void) => {
-    // 1. Fetcher activates
-    setIsFetcherActive(true);
-    await new Promise((resolve) => setTimeout(resolve, 300));
+  // Visualize data flow with flexible step control
+  type FlowStep = 'fetcher' | 'store' | 'repository' | 'display';
 
-    // 2. Store activates
-    setIsFetcherActive(false);
-    setIsStoreActive(true);
+  const visualizeDataFlow = async (
+    operation: () => Promise<void> | void,
+    sequence: FlowStep[],
+  ) => {
+    const delays: Record<FlowStep, number> = {
+      fetcher: 300,
+      store: 600,
+      repository: 400,
+      display: 1000,
+    };
 
-    // Execute the operation while Store is active
-    await operation();
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    const setters: Record<FlowStep, (active: boolean) => void> = {
+      fetcher: setIsFetcherActive,
+      store: setIsStoreActive,
+      repository: setIsRepositoryActive,
+      display: setIsDisplayActive,
+    };
 
-    // 3. Repository activates
-    setIsStoreActive(false);
-    setIsRepositoryActive(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    let operationExecuted = false;
 
-    // 4. Display activates
-    setIsRepositoryActive(false);
-    setIsDisplayActive(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    for (const step of sequence) {
+      setters[step](true);
 
-    // 5. Clear all
-    setIsDisplayActive(false);
+      // Execute operation on the first step
+      if (!operationExecuted) {
+        await operation();
+        operationExecuted = true;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delays[step]));
+      setters[step](false);
+    }
+  };
+
+  // Convenience wrapper for common flow patterns
+  type FlowPattern =
+    | 'get-store-info'
+    | 'get-from-snapshot'
+    | 'fetch-individual'
+    | 'forced-fetch'
+    | 'simple-display';
+
+  const visualizeFlow = async (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => {
+    const patterns: Record<FlowPattern, FlowStep[]> = {
+      // Repository gets Store info (config/stats) and returns to Display
+      'get-store-info': ['repository', 'store', 'repository', 'display'],
+      // Repository gets data from snapshot in Store, returns to Display
+      'get-from-snapshot': ['repository', 'store', 'repository', 'display'],
+      // Repository checks Store (miss), fetches individual via Fetcher, saves to Store, returns to Display
+      'fetch-individual': [
+        'repository',
+        'store',
+        'fetcher',
+        'repository',
+        'store',
+        'display',
+      ],
+      // Repository forces fetch via Fetcher, saves to Store (success/fail), returns to Display
+      'forced-fetch': [
+        'repository',
+        'fetcher',
+        'repository',
+        'store',
+        'repository',
+        'display',
+      ],
+      // Simple display without data flow (for UI-only operations)
+      'simple-display': ['display'],
+    };
+
+    return visualizeDataFlow(operation, patterns[pattern]);
   };
 
   const handleResetSnapshotForm = () => {
@@ -166,69 +217,69 @@ function App() {
     if (snapshotEventNm) params.eventNm = snapshotEventNm;
     if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
 
-    await visualizeDataFlow(async () => {
+    await visualizeFlow(async () => {
       await setupSnapshot(params);
       updateStats();
-    });
+    }, 'forced-fetch');
   };
 
   const handleRefreshSnapshot = async () => {
-    await visualizeDataFlow(async () => {
+    await visualizeFlow(async () => {
       await refreshSnapshot();
       updateStats();
-    });
+    }, 'forced-fetch');
   };
 
   const handleFetchRandom = () => {
     clearSearch();
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       fetchRandom();
-    });
+    }, 'get-from-snapshot');
   };
 
   const handleSearch = () => {
     const id = parseInt(searchId);
     if (!isNaN(id)) {
-      visualizeDataFlow(() => {
+      visualizeFlow(() => {
         searchById(id);
-      });
+      }, 'get-from-snapshot');
     }
   };
 
   const wrappedFetchSingleRandom = () => {
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       fetchSingleRandom();
-    });
+    }, 'get-from-snapshot');
   };
 
   const wrappedFetchIds = () => {
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       fetchIds();
-    });
+    }, 'get-from-snapshot');
   };
 
   const wrappedFetchConfig = () => {
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       fetchConfig();
-    });
+    }, 'get-store-info');
   };
 
   const wrappedFetchAll = () => {
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       fetchAll();
-    });
+    }, 'get-from-snapshot');
   };
 
   const wrappedAnalyze = () => {
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       analyze();
-    });
+    }, 'get-from-snapshot');
   };
 
   const wrappedUpdateStats = () => {
-    visualizeDataFlow(() => {
+    visualizeFlow(() => {
       updateStats();
-    });
+    }, 'get-store-info');
   };
 
   const handleTokenChange = () => {
@@ -317,12 +368,14 @@ function App() {
           </Box>
           <StatsDashboard stats={stats} config={repoConfig} />
         </Stack>
-        <DataFlowIndicator
-          isFetcherActive={isFetcherActive}
-          isStoreActive={isStoreActive}
-          isRepositoryActive={isRepositoryActive}
-          isDisplayActive={isDisplayActive}
-        />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <DataFlowIndicator
+            isFetcherActive={isFetcherActive}
+            isStoreActive={isStoreActive}
+            isRepositoryActive={isRepositoryActive}
+            isDisplayActive={isDisplayActive}
+          />
+        </Box>
       </Box>
 
       <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>

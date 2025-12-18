@@ -1,4 +1,5 @@
 import { Typography } from '@mui/material';
+import { ContainerWrapper } from '../common/container-wrapper';
 
 /**
  * Fetcher Container
@@ -13,12 +14,7 @@ interface FetcherContainerProps {
 
 export function FetcherContainer({ isActive = false }: FetcherContainerProps) {
   return (
-    <div
-      className={`container-wrapper fetcher-container ${
-        isActive ? 'active' : ''
-      }`}
-    >
-      <span className="container-label">Fetcher</span>
+    <ContainerWrapper type="fetcher" label="Fetcher" isActive={isActive}>
       <Typography
         variant="body2"
         color={isActive ? 'success.main' : 'text.secondary'}
@@ -26,6 +22,6 @@ export function FetcherContainer({ isActive = false }: FetcherContainerProps) {
       >
         {isActive ? '📡 Fetching data from API...' : 'Ready to fetch'}
       </Typography>
-    </div>
+    </ContainerWrapper>
   );
 }
