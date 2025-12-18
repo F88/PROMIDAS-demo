@@ -43,7 +43,7 @@ export function FetcherContainer() {
       case 'in-progress': {
         const percentageStr = progress.percentage !== undefined ? progress.percentage.toFixed(1) : 'N/A';
         const incrementStr = progress.increment !== undefined ? `, +${progress.increment}` : '';
-        return `[${time}] 📡 Progress: ${percentageStr}% (estimated) (${progress.receivedBytes ?? 0} / ${progress.estimatedBytes ?? 0} bytes${incrementStr})`;
+        return `[${time}] 📡 Downloading: ${percentageStr}% (${progress.receivedBytes ?? 0} / ${progress.estimatedBytes ?? 0} bytes${incrementStr})`;
       }
       case 'completed':
         return `[${time}] ✅ Completed: ${formatBytes(progress.receivedBytes)} (estimated ~${formatBytes(progress.estimatedBytes)}), download: ${progress.downloadTimeMs}ms, total: ${progress.totalTimeMs}ms`;
