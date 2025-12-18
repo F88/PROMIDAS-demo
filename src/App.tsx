@@ -1,5 +1,4 @@
-import { Box, Container, Grid, Link, Stack, Typography } from '@mui/material';
-import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+import { Box, Container, Grid, Link, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { AppHeader } from './components/common/app-header';
@@ -15,17 +14,7 @@ import {
   removeApiToken,
   setApiToken,
 } from './lib/token-storage';
-import {
-  useRandomPrototype,
-  useRepositoryStats,
-  useSnapshotManagement,
-  usePrototypeSearch,
-  usePrototypeIds,
-  useSingleRandom,
-  useConfig,
-  useAllPrototypes,
-  usePrototypeAnalysis,
-} from './hooks';
+import { useRepositoryStats, useConfig } from './hooks';
 
 /**
  * Constants for snapshot configuration
@@ -48,7 +37,10 @@ function PromidasInfoSection() {
         py: 4,
         px: 2,
         textAlign: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        backgroundColor: 'rgba(52, 131, 75, 0.7)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
         color: 'white',
       }}
     >
@@ -73,18 +65,6 @@ function PromidasInfoSection() {
 }
 
 function App() {
-  const [searchId, setSearchId] = useState('1');
-  const [snapshotLimit, setSnapshotLimit] = useState(
-    SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString(),
-  );
-  const [snapshotOffset, setSnapshotOffset] = useState(
-    SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString(),
-  );
-  const [snapshotUserNm, setSnapshotUserNm] = useState('');
-  const [snapshotTagNm, setSnapshotTagNm] = useState('');
-  const [snapshotEventNm, setSnapshotEventNm] = useState('');
-  const [snapshotMaterialNm, setSnapshotMaterialNm] = useState('');
-  const [randomSampleSize, setRandomSampleSize] = useState('3');
   const [token, setTokenInput] = useState(getApiToken() || '');
 
   // Data flow visualization states
@@ -93,65 +73,13 @@ function App() {
   const [isRepositoryActive, setIsRepositoryActive] = useState(false);
   const [isDisplayActive, setIsDisplayActive] = useState(false);
 
-  const {
-    prototypes: randomPrototypes,
-    loading: randomLoading,
-    error: randomError,
-    fetchRandom,
-    clear: clearRandom,
-  } = useRandomPrototype();
   const { stats, updateStats } = useRepositoryStats();
-  const {
-    setupLoading,
-    refreshLoading,
-    setupError,
-    setupSuccess,
-    refreshError,
-    refreshSuccess,
-    setupSnapshot,
-    refreshSnapshot,
-  } = useSnapshotManagement();
-  const {
-    prototype: searchPrototype,
-    loading: searchLoading,
-    error: searchError,
-    searchById,
-    clear: clearSearch,
-  } = usePrototypeSearch();
-  const {
-    ids: prototypeIds,
-    loading: idsLoading,
-    error: idsError,
-    fetchIds,
-    clear: clearIds,
-  } = usePrototypeIds();
-  const {
-    prototype: singleRandomPrototype,
-    loading: singleRandomLoading,
-    error: singleRandomError,
-    fetchSingleRandom,
-    clear: clearSingleRandom,
-  } = useSingleRandom();
   const {
     config: repoConfig,
     loading: configLoading,
     error: configError,
     fetchConfig,
   } = useConfig();
-  const {
-    prototypes: allPrototypes,
-    loading: allLoading,
-    error: allError,
-    fetchAll,
-    clear: clearAll,
-  } = useAllPrototypes();
-  const {
-    analysis,
-    loading: analysisLoading,
-    error: analysisError,
-    analyze,
-    clear: clearAnalysis,
-  } = usePrototypeAnalysis();
 
   // Initialize config and stats on mount
   useEffect(() => {
@@ -248,87 +176,10 @@ function App() {
     return visualizeDataFlow(operation, patterns[pattern]);
   };
 
-  const handleResetSnapshotForm = () => {
-    setSnapshotLimit(SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString());
-    setSnapshotOffset(SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString());
-    setSnapshotUserNm('');
-    setSnapshotTagNm('');
-    setSnapshotEventNm('');
-    setSnapshotMaterialNm('');
-  };
-
-  const handleSetupSnapshot = async () => {
-    let limit = parseInt(snapshotLimit) || 10;
-    if (limit > 1000) {
-      limit = 1000;
-      setSnapshotLimit(limit.toString());
-    }
-    const offset = parseInt(snapshotOffset) || 0;
-    const params: ListPrototypesParams = { limit, offset };
-
-    if (snapshotUserNm) params.userNm = snapshotUserNm;
-    if (snapshotTagNm) params.tagNm = snapshotTagNm;
-    if (snapshotEventNm) params.eventNm = snapshotEventNm;
-    if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
-
-    await visualizeFlow(async () => {
-      await setupSnapshot(params);
-      updateStats();
-    }, 'forced-fetch');
-  };
-
-  const handleRefreshSnapshot = async () => {
-    await visualizeFlow(async () => {
-      await refreshSnapshot();
-      updateStats();
-    }, 'forced-fetch');
-  };
-
-  const handleFetchRandom = () => {
-    const size = parseInt(randomSampleSize) || 1;
-    clearSearch();
-    visualizeFlow(() => {
-      fetchRandom(size);
-    }, 'get-from-snapshot');
-  };
-
-  const handleSearch = () => {
-    const id = parseInt(searchId);
-    if (!isNaN(id)) {
-      visualizeFlow(() => {
-        searchById(id);
-      }, 'get-from-snapshot');
-    }
-  };
-
-  const wrappedFetchSingleRandom = () => {
-    visualizeFlow(() => {
-      fetchSingleRandom();
-    }, 'get-from-snapshot');
-  };
-
-  const wrappedFetchIds = () => {
-    visualizeFlow(() => {
-      fetchIds();
-    }, 'get-from-snapshot');
-  };
-
   const wrappedFetchConfig = () => {
     visualizeFlow(() => {
       fetchConfig();
     }, 'get-store-info');
-  };
-
-  const wrappedFetchAll = () => {
-    visualizeFlow(() => {
-      fetchAll();
-    }, 'get-from-snapshot');
-  };
-
-  const wrappedAnalyze = () => {
-    visualizeFlow(() => {
-      analyze();
-    }, 'get-from-snapshot');
   };
 
   const wrappedUpdateStats = () => {
@@ -338,13 +189,7 @@ function App() {
   };
 
   const handleTokenChange = () => {
-    // Clear all prototypes and refresh stats
-    clearRandom();
-    clearSearch();
-    clearIds();
-    clearSingleRandom();
-    clearAll();
-    clearAnalysis();
+    // Refresh stats after token change
     updateStats();
   };
 
@@ -411,97 +256,17 @@ function App() {
           <Grid size={{ xs: 12 }}>
             <RepositoryContainer
               isActive={isRepositoryActive}
-              snapshotLimit={snapshotLimit}
-              setSnapshotLimit={setSnapshotLimit}
-              snapshotOffset={snapshotOffset}
-              setSnapshotOffset={setSnapshotOffset}
-              snapshotUserNm={snapshotUserNm}
-              setSnapshotUserNm={setSnapshotUserNm}
-              snapshotTagNm={snapshotTagNm}
-              setSnapshotTagNm={setSnapshotTagNm}
-              snapshotEventNm={snapshotEventNm}
-              setSnapshotEventNm={setSnapshotEventNm}
-              snapshotMaterialNm={snapshotMaterialNm}
-              setSnapshotMaterialNm={setSnapshotMaterialNm}
-              setupLoading={setupLoading}
-              refreshLoading={refreshLoading}
-              setupSuccess={setupSuccess}
-              setupError={setupError}
-              refreshSuccess={refreshSuccess}
-              refreshError={refreshError}
               stats={stats}
-              handleSetupSnapshot={handleSetupSnapshot}
-              handleResetSnapshotForm={handleResetSnapshotForm}
-              handleRefreshSnapshot={handleRefreshSnapshot}
-              randomPrototypes={randomPrototypes}
-              randomLoading={randomLoading}
-              randomError={randomError}
-              randomSampleSize={randomSampleSize}
-              setRandomSampleSize={setRandomSampleSize}
-              handleFetchRandom={handleFetchRandom}
-              clearRandom={clearRandom}
-              searchId={searchId}
-              setSearchId={setSearchId}
-              searchPrototype={searchPrototype}
-              searchLoading={searchLoading}
-              searchError={searchError}
-              handleSearch={handleSearch}
-              clearSearch={clearSearch}
-              singleRandomPrototype={singleRandomPrototype}
-              singleRandomLoading={singleRandomLoading}
-              singleRandomError={singleRandomError}
-              fetchSingleRandom={wrappedFetchSingleRandom}
-              clearSingleRandom={clearSingleRandom}
-              prototypeIds={prototypeIds}
-              idsLoading={idsLoading}
-              idsError={idsError}
-              fetchIds={wrappedFetchIds}
-              clearIds={clearIds}
-              allPrototypes={allPrototypes}
-              allLoading={allLoading}
-              allError={allError}
-              fetchAll={wrappedFetchAll}
-              clearAll={clearAll}
-              analysis={analysis}
-              analysisLoading={analysisLoading}
-              analysisError={analysisError}
-              analyze={wrappedAnalyze}
-              clearAnalysis={clearAnalysis}
+              fetchStats={updateStats}
+              config={repoConfig}
+              configLoading={configLoading}
+              configError={configError}
+              fetchConfig={fetchConfig}
+              visualizeFlow={visualizeFlow}
             />
           </Grid>
 
-          {!randomPrototypes.length &&
-            !searchPrototype &&
-            !singleRandomPrototype &&
-            !prototypeIds &&
-            !repoConfig &&
-            !allPrototypes &&
-            !analysis &&
-            !randomLoading &&
-            !searchLoading &&
-            !singleRandomLoading &&
-            !idsLoading &&
-            !configLoading &&
-            !allLoading &&
-            !analysisLoading &&
-            stats &&
-            stats.size > 0 && (
-              <Grid size={{ xs: 12 }}>
-                <Box
-                  sx={{
-                    textAlign: 'center',
-                    padding: '3rem 1rem',
-                    color: '#666',
-                  }}
-                >
-                  <Typography>
-                    Click any button above to explore the PROMIDAS API
-                  </Typography>
-                </Box>
-              </Grid>
-            )}
-
-          {(!stats || stats.size === 0) && !setupLoading && !refreshLoading && (
+          {(!stats || stats.size === 0) && (
             <Grid size={{ xs: 12 }}>
               <Box
                 sx={{
