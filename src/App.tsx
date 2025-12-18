@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, Link, Box } from "@mui/material";
 import { useRandomPrototype } from "./hooks/use-random-prototype";
 import { useRepositoryStats } from "./hooks/use-repository-stats";
 import { useSnapshotManagement } from "./hooks/use-snapshot-management";
@@ -268,6 +268,23 @@ function App() {
               ProtoPedia Resource Organized Management In-memory Data Access
               Store
             </p>
+            <Box sx={{ mt: 1 }}>
+              <Link
+                href="https://f88.github.io/promidas/"
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  color: "white",
+                  fontWeight: 500,
+                }}
+              >
+                📚 PROMIDAS とは
+              </Link>
+            </Box>
           </div>
           <StatsDashboard stats={stats} config={repoConfig} />
         </div>
