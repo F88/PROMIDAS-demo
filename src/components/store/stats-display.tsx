@@ -24,16 +24,26 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
         </Typography>
       )}
       {stats && (
-        <Stack spacing={1.5}>
-          <Box>
+        <Stack spacing={0}>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               Snapshot Size:
             </Typography>
             <Typography variant="body2" fontWeight={500}>
               {stats.size} prototypes
             </Typography>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               Cached At:
             </Typography>
@@ -42,18 +52,26 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
                 ? new Date(stats.cachedAt).toLocaleString()
                 : 'Not cached'}
             </Typography>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="center"
+          >
             <Typography variant="caption" color="text.secondary">
-              Status:
+              Expired:
             </Typography>
-            <Chip
-              label={stats.isExpired ? 'Expired' : 'Valid'}
-              color={stats.isExpired ? 'error' : 'success'}
-              size="small"
-            />
-          </Box>
-          <Box>
+            <Typography variant="body2" fontWeight={500}>
+              {stats.isExpired ? 'True' : 'False'}
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               Remaining TTL:
             </Typography>
@@ -62,25 +80,33 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
                 ? `${(stats.remainingTtlMs / 1000).toFixed(1)} seconds`
                 : 'Expired'}
             </Typography>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               Data Size:
             </Typography>
             <Typography variant="body2" fontWeight={500}>
               {(stats.dataSizeBytes / 1024).toFixed(2)} KB
             </Typography>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="center"
+          >
             <Typography variant="caption" color="text.secondary">
-              Refresh Status:
+              Refresh In Flight:
             </Typography>
-            <Chip
-              label={stats.refreshInFlight ? 'In Progress' : 'Idle'}
-              color={stats.refreshInFlight ? 'warning' : 'default'}
-              size="small"
-            />
-          </Box>
+            <Typography variant="body2" fontWeight={500}>
+              {stats.refreshInFlight ? 'True' : 'False'}
+            </Typography>
+          </Stack>
         </Stack>
       )}
     </SectionCard>

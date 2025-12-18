@@ -35,8 +35,13 @@ export function ConfigDisplay({
         </Typography>
       )}
       {repoConfig && !configLoading && (
-        <Stack spacing={1.5}>
-          <Box>
+        <Stack spacing={0}>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               TTL (Time To Live):
             </Typography>
@@ -44,8 +49,13 @@ export function ConfigDisplay({
               {(repoConfig.ttlMs / 1000).toFixed(0)} seconds (
               {(repoConfig.ttlMs / 1000 / 60).toFixed(1)} minutes)
             </Typography>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               Max Data Size:
             </Typography>
@@ -53,15 +63,20 @@ export function ConfigDisplay({
               {(repoConfig.maxDataSizeBytes / 1024 / 1024).toFixed(2)} MB (
               {repoConfig.maxDataSizeBytes.toLocaleString()} bytes)
             </Typography>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            alignItems="baseline"
+          >
             <Typography variant="caption" color="text.secondary">
               Log Level:
             </Typography>
             <Typography variant="body2" fontWeight={500}>
               {repoConfig.logLevel || 'info'}
             </Typography>
-          </Box>
+          </Stack>
         </Stack>
       )}
     </SectionCard>

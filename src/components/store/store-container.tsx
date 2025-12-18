@@ -2,8 +2,8 @@ import { Grid } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { ConfigDisplay } from './config-display';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { GetStats } from './get-stats';
-import { GetConfig } from './get-config';
+// import { GetStats } from './get-stats';
+// import { GetConfig } from './get-config';
 import { StatsDisplay } from './stats-display';
 import type { StoreConfig } from '../../hooks/use-config';
 
@@ -19,11 +19,11 @@ interface StoreContainerProps {
 
 export function StoreContainer({
   stats,
-  fetchStats,
+  // fetchStats,
   config,
   configLoading,
   configError,
-  fetchConfig,
+  // fetchConfig,
   isActive = false,
 }: StoreContainerProps) {
   return (
@@ -36,15 +36,15 @@ export function StoreContainer({
             configError={configError}
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* <Grid size={{ xs: 12, md: 6 }}>
           <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
-        </Grid>
+        </Grid> */}
         <Grid size={{ xs: 12, md: 6 }}>
           <StatsDisplay stats={stats} />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* <Grid size={{ xs: 12, md: 6 }}>
           <GetStats fetchStats={fetchStats} />
-        </Grid>
+        </Grid> */}
       </Grid>
     </ContainerWrapper>
   );
