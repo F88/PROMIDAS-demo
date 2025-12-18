@@ -11,7 +11,7 @@ interface SectionCardProps {
 export function SectionCard({
   title,
   description,
-  category,
+  // category,
   children,
 }: SectionCardProps) {
   return (
@@ -25,7 +25,7 @@ export function SectionCard({
         borderColor: 'divider',
       }}
     >
-      {category && (
+      {/* {category && (
         <Chip
           label={category}
           size="small"
@@ -33,7 +33,7 @@ export function SectionCard({
           variant="outlined"
           sx={{ mb: 1 }}
         />
-      )}
+      )} */}
       <Typography
         variant="h6"
         component="h3"
