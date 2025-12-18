@@ -1,11 +1,12 @@
 import { Stack, Alert } from '@mui/material';
 import { PrototypeCard } from '../prototype-card';
-import type { PrototypeInMemoryStats, Prototype } from '@f88/promidas';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 
 interface RandomPrototypeProps {
-  randomPrototype: Prototype | null;
+  randomPrototype: NormalizedPrototype | null;
   randomLoading: boolean;
   randomError: string | null;
   stats: PrototypeInMemoryStats | null;

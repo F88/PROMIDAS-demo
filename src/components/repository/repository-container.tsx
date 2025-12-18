@@ -3,7 +3,6 @@ import { RefreshSnapshot } from './refresh-snapshot';
 import { RandomPrototype } from './random-prototype';
 import { SearchById } from './search-by-id';
 import { SingleRandom } from './single-random';
-import type { Prototype } from '@f88/promidas';
 import { PrototypeIds } from './prototype-ids';
 import { AllPrototypes } from './all-prototypes';
 import { Analysis } from './analysis';
@@ -34,7 +33,7 @@ interface RepositoryContainerProps {
   handleRefreshSnapshot: () => void;
 
   // Random Prototype
-  randomPrototype: Prototype | null;
+  randomPrototype: NormalizedPrototype | null;
   randomLoading: boolean;
   randomError: string | null;
   handleFetchRandom: () => void;
@@ -43,14 +42,14 @@ interface RepositoryContainerProps {
   // Search By ID
   searchId: string;
   setSearchId: (value: string) => void;
-  searchPrototype: Prototype | null;
+  searchPrototype: NormalizedPrototype | null;
   searchLoading: boolean;
   searchError: string | null;
   handleSearch: () => void;
   clearSearch: () => void;
 
   // Single Random
-  singleRandomPrototype: Prototype | null;
+  singleRandomPrototype: NormalizedPrototype | null;
   singleRandomLoading: boolean;
   singleRandomError: string | null;
   fetchSingleRandom: () => void;
