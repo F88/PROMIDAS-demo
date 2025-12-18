@@ -60,7 +60,7 @@ npm run dev
 
 1. [ProtoPedia設定ページ](https://protopedia.net/settings/application)でAPIトークンを取得
 2. 設定画面の入力欄にトークンを貼り付け
-3. "Save Token"ボタンをクリック
+3. "Save"ボタンをクリック
 
 トークンはブラウザのLocalStorageに保存されます。設定画面は右上の⚙️ボタンからいつでも開けます。
 
