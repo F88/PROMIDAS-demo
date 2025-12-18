@@ -65,7 +65,7 @@ export function TokenConfiguration({
           onClick={onSaveToken}
           disabled={!token.trim()}
         >
-          Save Token
+          Save
         </ActionButton>
         {hasToken && (
           <ActionButton
@@ -73,7 +73,7 @@ export function TokenConfiguration({
             startIcon={<Delete />}
             onClick={onDeleteToken}
           >
-            Delete Token
+            Delete
           </ActionButton>
         )}
       </Stack>
