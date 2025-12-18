@@ -25,7 +25,7 @@ export function SingleRandom({
   return (
     <SectionCard
       title="getRandomPrototypeFromSnapshot()"
-      description="Optimized for single random item"
+      description="Get a single random prototype (optimized method)"
       category="Query"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>

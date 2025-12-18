@@ -13,18 +13,21 @@ function createMockPrototype(
     prototypeNm: 'IoT Temperature Monitor',
     summary:
       'A smart temperature monitoring system using Arduino and cloud integration for real-time data tracking.',
+    freeComment: '',
+    systemDescription: '',
     mainUrl: 'https://protopedia.net/prototype/1001',
-    workImgPath: '/images/prototype-1001.jpg',
     createDate: '2024-01-15',
     releaseFlg: 1,
     status: 1,
-    statusNm: 'Published',
-    thumbnailUrl: 'https://protopedia.net/thumbnails/1001.jpg',
     viewCount: 1250,
-    likeCount: 42,
+    goodCount: 42,
     commentCount: 8,
-    tags: ['IoT', 'Arduino', 'Cloud'],
+    users: ['user1', 'user2'],
     teamNm: 'Tech Innovators',
+    tags: ['IoT', 'Arduino', 'Cloud'],
+    materials: ['ESP32', 'Temperature Sensor'],
+    events: ['Maker Faire 2024'],
+    awards: [],
     ...overrides,
   };
 }
@@ -92,10 +95,13 @@ export const MinimalData: Story = {
   args: {
     prototype: createMockPrototype({
       summary: '',
+      users: [],
       tags: [],
+      materials: [],
+      events: [],
       teamNm: '',
       viewCount: 0,
-      likeCount: 0,
+      goodCount: 0,
       commentCount: 0,
     }),
   },
@@ -110,8 +116,6 @@ export const NewPrototype: Story = {
       id: 2024,
       prototypeNm: 'My First Arduino Project',
       summary: 'A simple LED blinking project to learn Arduino basics.',
-      viewCount: 5,
-      likeCount: 1,
       commentCount: 0,
       createDate: '2024-12-18',
     }),
@@ -127,8 +131,6 @@ export const HighEngagement: Story = {
       prototypeNm: 'AI-Powered Robot Assistant',
       summary:
         'An advanced robotic assistant using machine learning for natural language processing and autonomous navigation.',
-      viewCount: 15420,
-      likeCount: 892,
       commentCount: 156,
       tags: ['AI', 'Robotics', 'Machine Learning', 'ROS'],
     }),
@@ -159,29 +161,4 @@ export const JapaneseContent: Story = {
       teamNm: '技術イノベーターズ',
     }),
   },
-};
-
-/**
- * Multiple cards in a list
- */
-export const MultipleCards: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <PrototypeCard prototype={createMockPrototype({ id: 1 })} />
-      <PrototypeCard
-        prototype={createMockPrototype({
-          id: 2,
-          prototypeNm: 'Smart Home Controller',
-          summary: 'Control your home devices with voice commands.',
-        })}
-      />
-      <PrototypeCard
-        prototype={createMockPrototype({
-          id: 3,
-          prototypeNm: 'Weather Station',
-          summary: 'Measure temperature, humidity, and pressure.',
-        })}
-      />
-    </div>
-  ),
 };

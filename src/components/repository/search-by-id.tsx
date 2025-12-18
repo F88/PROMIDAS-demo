@@ -37,9 +37,12 @@ export function SearchById({
           label="Prototype ID"
           type="number"
           value={searchId}
-          onChange={(e) => setSearchId(e.target.value)}
+          onChange={(e) => {
+            setSearchId(e.target.value);
+          }}
           placeholder="Enter Prototype ID"
           size="small"
+          slotProps={{ htmlInput: { min: 0, max: 99_999 } }}
           sx={{ maxWidth: 200 }}
         />
       </Stack>

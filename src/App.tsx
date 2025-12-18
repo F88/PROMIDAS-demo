@@ -26,14 +26,30 @@ import { resetRepository } from './lib/protopedia-repository';
 import './App.css';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
+/**
+ * Constants for snapshot configuration
+ */
+export const SNAPSHOT_LIMITS = {
+  MAX_LIMIT: 1000,
+  MIN_LIMIT: 1,
+  DEFAULT_LIMIT: 10,
+  MIN_OFFSET: 0,
+  DEFAULT_OFFSET: 0,
+} as const;
+
 function App() {
   const [searchId, setSearchId] = useState('1');
-  const [snapshotLimit, setSnapshotLimit] = useState('10');
-  const [snapshotOffset, setSnapshotOffset] = useState('0');
+  const [snapshotLimit, setSnapshotLimit] = useState(
+    SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString(),
+  );
+  const [snapshotOffset, setSnapshotOffset] = useState(
+    SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString(),
+  );
   const [snapshotUserNm, setSnapshotUserNm] = useState('');
   const [snapshotTagNm, setSnapshotTagNm] = useState('');
   const [snapshotEventNm, setSnapshotEventNm] = useState('');
   const [snapshotMaterialNm, setSnapshotMaterialNm] = useState('');
+  const [randomSampleSize, setRandomSampleSize] = useState('3');
   const [token, setTokenInput] = useState(getApiToken() || '');
 
   // Data flow visualization states
@@ -43,7 +59,7 @@ function App() {
   const [isDisplayActive, setIsDisplayActive] = useState(false);
 
   const {
-    prototype: randomPrototype,
+    prototypes: randomPrototypes,
     loading: randomLoading,
     error: randomError,
     fetchRandom,
@@ -198,8 +214,8 @@ function App() {
   };
 
   const handleResetSnapshotForm = () => {
-    setSnapshotLimit('10');
-    setSnapshotOffset('0');
+    setSnapshotLimit(SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString());
+    setSnapshotOffset(SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString());
     setSnapshotUserNm('');
     setSnapshotTagNm('');
     setSnapshotEventNm('');
@@ -208,9 +224,9 @@ function App() {
 
   const handleSetupSnapshot = async () => {
     let limit = parseInt(snapshotLimit) || 10;
-    if (limit > 100) {
-      limit = 100;
-      setSnapshotLimit('100');
+    if (limit > 1000) {
+      limit = 1000;
+      setSnapshotLimit(limit.toString());
     }
     const offset = parseInt(snapshotOffset) || 0;
     const params: ListPrototypesParams = { limit, offset };
@@ -234,9 +250,10 @@ function App() {
   };
 
   const handleFetchRandom = () => {
+    const size = parseInt(randomSampleSize) || 1;
     clearSearch();
     visualizeFlow(() => {
-      fetchRandom();
+      fetchRandom(size);
     }, 'get-from-snapshot');
   };
 
@@ -436,9 +453,11 @@ function App() {
               handleSetupSnapshot={handleSetupSnapshot}
               handleResetSnapshotForm={handleResetSnapshotForm}
               handleRefreshSnapshot={handleRefreshSnapshot}
-              randomPrototype={randomPrototype}
+              randomPrototypes={randomPrototypes}
               randomLoading={randomLoading}
               randomError={randomError}
+              randomSampleSize={randomSampleSize}
+              setRandomSampleSize={setRandomSampleSize}
               handleFetchRandom={handleFetchRandom}
               clearRandom={clearRandom}
               searchId={searchId}
@@ -471,7 +490,7 @@ function App() {
             />
           </Grid>
 
-          {!randomPrototype &&
+          {!randomPrototypes.length &&
             !searchPrototype &&
             !singleRandomPrototype &&
             !prototypeIds &&

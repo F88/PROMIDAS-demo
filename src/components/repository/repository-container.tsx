@@ -38,9 +38,11 @@ interface RepositoryContainerProps {
   handleRefreshSnapshot: () => void;
 
   // Random Prototype
-  randomPrototype: NormalizedPrototype | null;
+  randomPrototypes: NormalizedPrototype[];
   randomLoading: boolean;
   randomError: string | null;
+  randomSampleSize: string;
+  setRandomSampleSize: (value: string) => void;
   handleFetchRandom: () => void;
   clearRandom: () => void;
 
@@ -108,9 +110,11 @@ export function RepositoryContainer({
   handleSetupSnapshot,
   handleResetSnapshotForm,
   handleRefreshSnapshot,
-  randomPrototype,
+  randomPrototypes,
   randomLoading,
   randomError,
+  randomSampleSize,
+  setRandomSampleSize,
   handleFetchRandom,
   clearRandom,
   searchId,
@@ -238,13 +242,24 @@ export function RepositoryContainer({
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <RandomPrototype
-            randomPrototype={randomPrototype}
-            randomLoading={randomLoading}
-            randomError={randomError}
+          <PrototypeIds
+            prototypeIds={prototypeIds}
+            idsLoading={idsLoading}
+            idsError={idsError}
             stats={stats}
-            handleFetchRandom={handleFetchRandom}
-            clearRandom={clearRandom}
+            fetchIds={fetchIds}
+            clearIds={clearIds}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
+          <AllPrototypes
+            allPrototypes={allPrototypes}
+            allLoading={allLoading}
+            allError={allError}
+            stats={stats}
+            fetchAll={fetchAll}
+            clearAll={clearAll}
           />
         </Grid>
 
@@ -273,24 +288,15 @@ export function RepositoryContainer({
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <PrototypeIds
-            prototypeIds={prototypeIds}
-            idsLoading={idsLoading}
-            idsError={idsError}
+          <RandomPrototype
+            randomPrototypes={randomPrototypes}
+            randomLoading={randomLoading}
+            randomError={randomError}
+            randomSampleSize={randomSampleSize}
+            setRandomSampleSize={setRandomSampleSize}
             stats={stats}
-            fetchIds={fetchIds}
-            clearIds={clearIds}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <AllPrototypes
-            allPrototypes={allPrototypes}
-            allLoading={allLoading}
-            allError={allError}
-            stats={stats}
-            fetchAll={fetchAll}
-            clearAll={clearAll}
+            handleFetchRandom={handleFetchRandom}
+            clearRandom={clearRandom}
           />
         </Grid>
       </Grid>

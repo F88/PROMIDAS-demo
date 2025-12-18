@@ -1,33 +1,51 @@
-import { Stack, Alert } from '@mui/material';
-import { PrototypeCard } from '../common/prototype-card';
+import { Stack, Alert, TextField, Box, Typography, Chip } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 
 interface RandomPrototypeProps {
-  randomPrototype: NormalizedPrototype | null;
+  randomPrototypes: NormalizedPrototype[];
   randomLoading: boolean;
   randomError: string | null;
+  randomSampleSize: string;
+  setRandomSampleSize: (value: string) => void;
   stats: PrototypeInMemoryStats | null;
   handleFetchRandom: () => void;
   clearRandom: () => void;
 }
 
 export function RandomPrototype({
-  randomPrototype,
+  randomPrototypes,
   randomLoading,
   randomError,
+  randomSampleSize,
+  setRandomSampleSize,
   stats,
   handleFetchRandom,
   clearRandom,
 }: RandomPrototypeProps) {
   return (
     <SectionCard
-      title="getRandomSampleFromSnapshot()"
-      description="Get multiple random prototypes from snapshot"
+      title="getRandomSampleFromSnapshot(size)"
+      description="Get random samples from snapshot without duplicates"
       category="Query"
     >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <TextField
+          label="Sample Size"
+          type="number"
+          value={randomSampleSize}
+          onChange={(e) => {
+            setRandomSampleSize(e.target.value);
+          }}
+          fullWidth
+          size="small"
+          slotProps={{ htmlInput: { min: 1, max: 10 } }}
+          sx={{ maxWidth: 200 }}
+        />
+      </Stack>
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
           onClick={handleFetchRandom}
@@ -37,7 +55,7 @@ export function RandomPrototype({
           実行
         </ActionButton>
         <ActionButton
-          disabled={randomPrototype == null}
+          disabled={randomPrototypes.length === 0}
           onClick={clearRandom}
           variant="secondary"
         >
@@ -49,8 +67,34 @@ export function RandomPrototype({
           {randomError}
         </Alert>
       )}
-      {randomPrototype && !randomLoading && (
-        <PrototypeCard prototype={randomPrototype} />
+
+      {randomPrototypes.length > 0 && !randomLoading && (
+        <Box>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Total Prototypes: <strong>{randomPrototypes.length}</strong>
+            {randomPrototypes.length > 20 && (
+              <span style={{ color: '#666', marginLeft: '8px' }}>
+                (Showing first 20)
+              </span>
+            )}
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {randomPrototypes.slice(0, 20).map((prototype, index) => (
+              <PrototypeIdAndName
+                key={`${prototype.id}-${index}`}
+                id={prototype.id}
+                name={prototype.prototypeNm}
+              />
+            ))}
+            {randomPrototypes.length > 20 && (
+              <Chip
+                label={`+${randomPrototypes.length - 20} more`}
+                size="small"
+                color="primary"
+              />
+            )}
+          </Box>
+        </Box>
       )}
     </SectionCard>
   );

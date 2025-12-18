@@ -13,11 +13,11 @@ import { ValidationError } from '@f88/promidas/repository';
 import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 export function useRandomPrototype() {
-  const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
+  const [prototypes, setPrototypes] = useState<NormalizedPrototype[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRandom = async () => {
+  const fetchRandom = async (size: number = 1) => {
     setLoading(true);
     setError(null);
 
@@ -29,14 +29,7 @@ export function useRandomPrototype() {
       // Demo site: Log repository stats before fetching
       console.debug('[PROMIDAS Demo] fetchRandom: Current stats', stats);
 
-      // Setup snapshot if not initialized or expired
-      if (stats.size === 0 || stats.isExpired) {
-        // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
-        console.debug('[PROMIDAS Demo] fetchRandom: Setting up snapshot');
-        await repo.setupSnapshot({ offset: 0, limit: 100 });
-      }
-
-      const randomPrototypes = await repo.getRandomSampleFromSnapshot(1);
+      const randomPrototypes = await repo.getRandomSampleFromSnapshot(size);
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log fetched prototypes
@@ -47,9 +40,9 @@ export function useRandomPrototype() {
 
       if (randomPrototypes.length === 0) {
         setError('No prototypes available in snapshot');
-        setPrototype(null);
+        setPrototypes([]);
       } else {
-        setPrototype(randomPrototypes[0] as NormalizedPrototype);
+        setPrototypes(randomPrototypes as NormalizedPrototype[]);
       }
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
@@ -72,9 +65,9 @@ export function useRandomPrototype() {
   };
 
   const clear = () => {
-    setPrototype(null);
+    setPrototypes([]);
     setError(null);
   };
 
-  return { prototype, loading, error, fetchRandom, clear };
+  return { prototypes, loading, error, fetchRandom, clear };
 }

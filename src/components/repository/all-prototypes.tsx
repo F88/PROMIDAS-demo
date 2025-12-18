@@ -53,6 +53,11 @@ export function AllPrototypes({
         <Box>
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total Prototypes: <strong>{allPrototypes.length}</strong>
+            {allPrototypes.length > 20 && (
+              <span style={{ color: '#666', marginLeft: '8px' }}>
+                (Showing first 20)
+              </span>
+            )}
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {allPrototypes.slice(0, 20).map((proto) => (

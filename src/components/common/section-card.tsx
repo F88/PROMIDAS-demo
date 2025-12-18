@@ -34,7 +34,16 @@ export function SectionCard({
           sx={{ mb: 1 }}
         />
       )}
-      <Typography variant="h6" component="h3" gutterBottom fontWeight={600}>
+      <Typography
+        variant="h6"
+        component="h3"
+        gutterBottom
+        fontWeight={600}
+        sx={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+        }}
+      >
         {title}
       </Typography>
       {description && (

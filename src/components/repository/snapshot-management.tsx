@@ -1,5 +1,6 @@
 import { Stack, TextField, Grid, Alert } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SNAPSHOT_LIMITS } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 
@@ -46,19 +47,35 @@ export function SnapshotManagement({
 }: SnapshotManagementProps) {
   return (
     <SectionCard title="setupSnapshot() / refreshSnapshot()">
-      <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid size={{ xs: 6, sm: 4 }}>
+      <Grid
+        container
+        spacing={2}
+        // sx={{ mb: 2 }}
+      >
+        <Grid size={{ xs: 6, sm: 2 }}>
           <TextField
             label="Limit"
             type="number"
             value={snapshotLimit}
-            onChange={(e) => setSnapshotLimit(e.target.value)}
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 0;
+              setSnapshotLimit(
+                value > SNAPSHOT_LIMITS.MAX_LIMIT
+                  ? SNAPSHOT_LIMITS.MAX_LIMIT.toString()
+                  : e.target.value,
+              );
+            }}
             fullWidth
             size="small"
-            slotProps={{ htmlInput: { min: 1, max: 100 } }}
+            slotProps={{
+              htmlInput: {
+                min: SNAPSHOT_LIMITS.MIN_LIMIT,
+                max: SNAPSHOT_LIMITS.MAX_LIMIT,
+              },
+            }}
           />
         </Grid>
-        <Grid size={{ xs: 6, sm: 4 }}>
+        <Grid size={{ xs: 6, sm: 2 }}>
           <TextField
             label="Offset"
             type="number"
@@ -69,7 +86,14 @@ export function SnapshotManagement({
             slotProps={{ htmlInput: { min: 0 } }}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+      </Grid>
+      <Grid
+        container
+        //
+        spacing={2}
+        // sx={{ mb: 2 }}
+      >
+        <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
             label="User Name"
             type="text"
@@ -78,9 +102,10 @@ export function SnapshotManagement({
             placeholder="Filter by user"
             fullWidth
             size="small"
+            slotProps={{ htmlInput: { maxLength: 20 } }}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
             label="Tag Name"
             type="text"
@@ -89,9 +114,10 @@ export function SnapshotManagement({
             placeholder="Filter by tag"
             fullWidth
             size="small"
+            slotProps={{ htmlInput: { maxLength: 20 } }}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
             label="Event Name"
             type="text"
@@ -100,9 +126,10 @@ export function SnapshotManagement({
             placeholder="Filter by event"
             fullWidth
             size="small"
+            slotProps={{ htmlInput: { maxLength: 20 } }}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
             label="Material Name"
             type="text"
@@ -111,6 +138,7 @@ export function SnapshotManagement({
             placeholder="Filter by material"
             fullWidth
             size="small"
+            slotProps={{ htmlInput: { maxLength: 20 } }}
           />
         </Grid>
       </Grid>
