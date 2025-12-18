@@ -73,9 +73,13 @@ export function RandomPrototype({
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total Prototypes: <strong>{randomPrototypes.length}</strong>
             {randomPrototypes.length > 20 && (
-              <span style={{ color: '#666', marginLeft: '8px' }}>
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: 'text.secondary', ml: 1 }}
+              >
                 (Showing first 20)
-              </span>
+              </Typography>
             )}
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>

@@ -85,6 +85,11 @@ export const WithContent: Story = {
 };
 
 export const AllTypes: Story = {
+  args: {
+    type: 'repository',
+    label: 'All Types',
+    children: null,
+  },
   render: () => (
     <Stack spacing={3}>
       <ContainerWrapper type="fetcher" label="Fetcher">
