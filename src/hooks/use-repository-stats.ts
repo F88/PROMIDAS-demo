@@ -7,15 +7,19 @@
  * behavior to demo site users.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import {
   getProtopediaRepository,
   REPOSITORY_TTL_MS,
 } from '../lib/protopedia-repository';
+import { hasApiToken } from '../lib/token-storage';
 
 export function useRepositoryStats() {
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(() => {
+    if (!hasApiToken()) {
+      return null;
+    }
     try {
       const repo = getProtopediaRepository();
       return repo.getStats();
@@ -25,7 +29,11 @@ export function useRepositoryStats() {
     }
   });
 
-  const updateStats = () => {
+  const updateStats = useCallback(() => {
+    if (!hasApiToken()) {
+      setStats(null);
+      return;
+    }
     try {
       const repo = getProtopediaRepository();
       setStats(repo.getStats());
@@ -34,11 +42,15 @@ export function useRepositoryStats() {
       // Token not set yet
       setStats(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Schedule next update when TTL expires instead of polling
     const scheduleNextUpdate = () => {
+      if (!hasApiToken()) {
+        return undefined;
+      }
+
       try {
         const repo = getProtopediaRepository();
         const currentStats = repo.getStats();

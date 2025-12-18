@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { hasApiToken } from '../lib/token-storage';
 import type { ProtopediaInMemoryRepository } from '@f88/promidas';
 
 export type StoreConfig = ReturnType<ProtopediaInMemoryRepository['getConfig']>;
@@ -16,6 +17,13 @@ export function useConfig() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchConfig = () => {
+    if (!hasApiToken()) {
+      setError('API token not configured');
+      setConfig(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
