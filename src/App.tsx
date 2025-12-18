@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Grid, Link, Box } from '@mui/material';
+import { Container, Grid, Link, Box, Stack, Typography } from '@mui/material';
 import { useRandomPrototype } from './hooks/use-random-prototype';
 import { useRepositoryStats } from './hooks/use-repository-stats';
 import { useSnapshotManagement } from './hooks/use-snapshot-management';
@@ -15,7 +15,7 @@ import { RepositoryContainer } from './components/repository/repository-containe
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { ConfigContainer } from './components/config/config-container';
 import { TokenConfiguration } from './components/config/token-configuration';
-import { DataFlowIndicator } from './components/DataFlowIndicator';
+import { DataFlowIndicator } from './components/data-flow-indicator';
 import {
   hasApiToken,
   getApiToken,
@@ -260,42 +260,70 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <div>
-            <h1>PROMIDAS Demo</h1>
-            <p className="subtitle">
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Box
+        component="header"
+        sx={{
+          py: 3,
+          px: 2,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={2}
+          alignItems={{ xs: 'stretch', sm: 'center' }}
+          justifyContent="space-between"
+          sx={{ maxWidth: 1400, margin: '0 auto 1rem' }}
+        >
+          <Box
+            sx={{
+              flex: 1,
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
+          >
+            <Typography
+              variant="h3"
+              component="h1"
+              fontWeight={700}
+              sx={{ mb: 0.5 }}
+            >
+              PROMIDAS Demo
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
               ProtoPedia Resource Organized Management In-memory Data Access
               Store
-            </p>
-            <Box sx={{ mt: 1 }}>
-              <Link
-                href="https://f88.github.io/promidas/"
-                target="_blank"
-                rel="noopener noreferrer"
-                underline="hover"
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                  color: 'white',
-                  fontWeight: 500,
-                }}
-              >
-                📚 PROMIDAS とは
-              </Link>
-            </Box>
-          </div>
+            </Typography>
+            <Link
+              href="https://f88.github.io/promidas/"
+              target="_blank"
+              rel="noopener noreferrer"
+              underline="hover"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: 'white',
+                fontWeight: 500,
+              }}
+            >
+              📚 PROMIDAS とは
+            </Link>
+          </Box>
           <StatsDashboard stats={stats} config={repoConfig} />
-        </div>
+        </Stack>
         <DataFlowIndicator
           isFetcherActive={isFetcherActive}
           isStoreActive={isStoreActive}
           isRepositoryActive={isRepositoryActive}
           isDisplayActive={isDisplayActive}
         />
-      </header>
+      </Box>
 
       <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
         <Grid container spacing={3}>
@@ -417,19 +445,30 @@ function App() {
         </Grid>
       </Container>
 
-      <footer className="app-footer">
-        <p>
+      <Box
+        component="footer"
+        sx={{
+          py: 2,
+          px: 2,
+          mt: 'auto',
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+        }}
+      >
+        <Typography variant="body2">
           Powered by{' '}
-          <a
+          <Link
             href="https://github.com/F88/promidas"
             target="_blank"
             rel="noopener noreferrer"
+            sx={{ color: 'white', fontWeight: 600 }}
           >
             PROMIDAS
-          </a>
-        </p>
-      </footer>
-    </div>
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
   );
 }
 

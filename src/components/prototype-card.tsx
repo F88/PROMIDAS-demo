@@ -1,5 +1,5 @@
 import type { NormalizedPrototype } from '@f88/promidas/types';
-import './PrototypeCard.css';
+import './prototype-card.css';
 
 interface PrototypeCardProps {
   prototype: NormalizedPrototype;

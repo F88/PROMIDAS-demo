@@ -23,7 +23,10 @@ function StateChip({ state }: StatsChipProps) {
         label="Not Stored"
         color="default"
         size="small"
-        sx={{ fontWeight: 600 }}
+        sx={{
+          fontWeight: 600,
+          transition: 'all 0.3s ease-in-out',
+        }}
       />
     );
   }
@@ -33,6 +36,7 @@ function StateChip({ state }: StatsChipProps) {
       label={state === 'expired' ? 'Expired' : 'Stored'}
       color={state === 'expired' ? 'error' : 'success'}
       size="small"
+      sx={{ transition: 'all 0.3s ease-in-out' }}
     />
   );
 }
@@ -116,6 +120,7 @@ function StatItem({
               display: 'flex',
               alignItems: 'center',
               color: iconColor || 'text.secondary',
+              transition: 'color 0.3s ease-in-out',
             }}
           >
             {icon}
@@ -129,6 +134,7 @@ function StatItem({
           component="span"
           fontWeight={600}
           color="text.primary"
+          sx={{ transition: 'all 0.3s ease-in-out' }}
         >
           {value}
         </Typography>
@@ -138,7 +144,14 @@ function StatItem({
           variant="determinate"
           value={progressPercent}
           color={progressColor}
-          sx={{ height: 4, borderRadius: 2 }}
+          sx={{
+            height: 4,
+            borderRadius: 2,
+            transition: 'all 0.3s ease-in-out',
+            '& .MuiLinearProgress-bar': {
+              transition: 'transform 0.5s ease-in-out',
+            },
+          }}
         />
       )}
     </Box>
@@ -211,7 +224,17 @@ function StoredStatsContent({
 
   return (
     <Box
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        width: '100%',
+        animation: 'fadeIn 0.3s ease-in-out',
+        '@keyframes fadeIn': {
+          from: { opacity: 0, transform: 'translateY(-5px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
+      }}
     >
       <Box
         sx={{

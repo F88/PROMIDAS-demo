@@ -1,5 +1,5 @@
 import { Stack, TextField, Alert } from '@mui/material';
-import { PrototypeCard } from '../PrototypeCard';
+import { PrototypeCard } from '../prototype-card';
 import type { PrototypeInMemoryStats, Prototype } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
