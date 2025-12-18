@@ -213,3 +213,88 @@ export const LargeSizeAndLongTtl: Story = {
     },
   },
 };
+
+/**
+ * Very small cache with minimal data
+ */
+export const MinimalCache: Story = {
+  args: {
+    stats: createMockStats({
+      size: 1,
+      dataSizeBytes: 1024, // 1 KB
+      remainingTtlMs: 5000,
+    }),
+    config: mockConfig,
+  },
+};
+
+/**
+ * Maximum capacity reached
+ */
+export const MaxCapacity: Story = {
+  args: {
+    stats: createMockStats({
+      size: 50000,
+      dataSizeBytes: 10485760, // 10 MB (100%)
+    }),
+    config: mockConfig,
+  },
+};
+
+/**
+ * Nearly expired (critical TTL)
+ */
+export const CriticalTtl: Story = {
+  args: {
+    stats: createMockStats({
+      remainingTtlMs: 1000, // 1s (3.3%)
+    }),
+    config: mockConfig,
+  },
+};
+
+/**
+ * Fresh cache (just created)
+ */
+export const FreshCache: Story = {
+  args: {
+    stats: createMockStats({
+      cachedAt: new Date(),
+      remainingTtlMs: 30000, // 30s (100%)
+    }),
+    config: mockConfig,
+  },
+};
+
+/**
+ * Alternative log level configurations
+ */
+export const LogLevelDebug: Story = {
+  args: {
+    stats: createMockStats(),
+    config: {
+      ...mockConfig,
+      logLevel: 'debug',
+    },
+  },
+};
+
+export const LogLevelWarn: Story = {
+  args: {
+    stats: createMockStats(),
+    config: {
+      ...mockConfig,
+      logLevel: 'warn',
+    },
+  },
+};
+
+export const LogLevelError: Story = {
+  args: {
+    stats: createMockStats(),
+    config: {
+      ...mockConfig,
+      logLevel: 'error',
+    },
+  },
+};

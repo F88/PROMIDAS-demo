@@ -109,3 +109,36 @@ export const WithIcon: Story = {
     children: <>⚡ 実行</>,
   },
 };
+
+/**
+ * Full width button
+ */
+export const FullWidth: Story = {
+  args: {
+    children: '実行',
+    fullWidth: true,
+  },
+};
+
+/**
+ * Button with onClick handler demonstration
+ */
+export const WithClickHandler: Story = {
+  args: {
+    children: 'Click Me',
+    onClick: () => alert('Button clicked!'),
+  },
+};
+
+/**
+ * All button sizes comparison
+ */
+export const AllSizes: Story = {
+  render: () => (
+    <Stack spacing={2}>
+      <ActionButton size="small">Small Button</ActionButton>
+      <ActionButton size="medium">Medium Button</ActionButton>
+      <ActionButton size="large">Large Button</ActionButton>
+    </Stack>
+  ),
+};

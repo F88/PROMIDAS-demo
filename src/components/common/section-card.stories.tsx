@@ -108,3 +108,56 @@ export const MinimalContent: Story = {
     children: <Button variant="contained">Single Action</Button>,
   },
 };
+
+/**
+ * Section card with very long title
+ */
+export const LongTitle: Story = {
+  args: {
+    title: 'getRandomSampleFromSnapshotWithFiltersAndPaginationAndSorting()',
+    description: 'This method has a very long name',
+    category: 'Query',
+    children: <Button variant="contained">実行</Button>,
+  },
+};
+
+/**
+ * Section card without any children
+ */
+export const NoChildren: Story = {
+  args: {
+    title: 'Empty Section',
+    description: 'This section has no content yet',
+    category: 'Info',
+    children: null,
+  },
+};
+
+/**
+ * All category types
+ */
+export const AllCategories: Story = {
+  args: {
+    title: 'All Categories',
+    children: null,
+  },
+  render: () => (
+    <Stack spacing={2}>
+      <SectionCard title="Snapshot Category" category="Snapshot">
+        <p>Snapshot management operations</p>
+      </SectionCard>
+      <SectionCard title="Query Category" category="Query">
+        <p>Data retrieval operations</p>
+      </SectionCard>
+      <SectionCard title="Input Category" category="Input">
+        <p>User input forms</p>
+      </SectionCard>
+      <SectionCard title="Example Category" category="Example">
+        <p>Example content</p>
+      </SectionCard>
+      <SectionCard title="Info Category" category="Info">
+        <p>Information display</p>
+      </SectionCard>
+    </Stack>
+  ),
+};

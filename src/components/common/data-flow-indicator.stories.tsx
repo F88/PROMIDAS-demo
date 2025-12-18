@@ -93,3 +93,51 @@ export const DisplayActive: Story = {
     isDisplayActive: true,
   },
 };
+
+/**
+ * Progressive activation pattern
+ */
+export const ProgressiveActivation: Story = {
+  args: {
+    isFetcherActive: true,
+    isStoreActive: false,
+    isRepositoryActive: false,
+    isDisplayActive: false,
+  },
+};
+
+/**
+ * Only display is active (data visualization)
+ */
+export const OnlyDisplay: Story = {
+  args: {
+    isFetcherActive: false,
+    isStoreActive: false,
+    isRepositoryActive: false,
+    isDisplayActive: true,
+  },
+};
+
+/**
+ * Store and Repository active (no fetching, no display)
+ */
+export const StoreAndRepository: Story = {
+  args: {
+    isFetcherActive: false,
+    isStoreActive: true,
+    isRepositoryActive: true,
+    isDisplayActive: false,
+  },
+};
+
+/**
+ * Repository and Display active (query and display)
+ */
+export const RepositoryAndDisplay: Story = {
+  args: {
+    isFetcherActive: false,
+    isStoreActive: false,
+    isRepositoryActive: true,
+    isDisplayActive: true,
+  },
+};

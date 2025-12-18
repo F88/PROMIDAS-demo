@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Typography, Stack, Button } from '@mui/material';
+import { Typography, Stack, Button, TextField } from '@mui/material';
 import { ContainerWrapper } from './container-wrapper';
 
 const meta = {
@@ -106,4 +106,71 @@ export const AllTypes: Story = {
       </ContainerWrapper>
     </Stack>
   ),
+};
+
+/**
+ * Mix of active and inactive containers
+ */
+export const MixedStates: Story = {
+  args: {
+    type: 'repository',
+    label: 'Mixed States',
+    children: null,
+  },
+  render: () => (
+    <Stack spacing={3}>
+      <ContainerWrapper type="fetcher" label="Fetcher" isActive={true}>
+        <Typography>Active fetcher container</Typography>
+      </ContainerWrapper>
+      <ContainerWrapper type="store" label="Store" isActive={false}>
+        <Typography>Inactive store container</Typography>
+      </ContainerWrapper>
+      <ContainerWrapper type="repository" label="Repository" isActive={true}>
+        <Typography>Active repository container</Typography>
+      </ContainerWrapper>
+      <ContainerWrapper type="config" label="Config" isActive={false}>
+        <Typography>Inactive config container</Typography>
+      </ContainerWrapper>
+    </Stack>
+  ),
+};
+
+/**
+ * Container with no content
+ */
+export const EmptyContainer: Story = {
+  args: {
+    type: 'repository',
+    label: 'Empty Repository',
+    children: null,
+  },
+};
+
+/**
+ * Container with complex nested content
+ */
+export const ComplexContent: Story = {
+  args: {
+    type: 'repository',
+    label: 'Complex Repository',
+    children: (
+      <Stack spacing={2}>
+        <Typography variant="h6">setupSnapshot()</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Initialize the in-memory snapshot with filters
+        </Typography>
+        <Stack spacing={1}>
+          <TextField label="Limit" size="small" defaultValue="10" />
+          <TextField label="Offset" size="small" defaultValue="0" />
+          <TextField label="User Name" size="small" />
+          <TextField label="Tag Name" size="small" />
+        </Stack>
+        <Stack direction="row" spacing={1}>
+          <Button variant="contained">実行</Button>
+          <Button variant="outlined">リセット</Button>
+          <Button variant="text">クリア</Button>
+        </Stack>
+      </Stack>
+    ),
+  },
 };
