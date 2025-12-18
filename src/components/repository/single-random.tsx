@@ -1,27 +1,44 @@
-import { Stack, Alert } from '@mui/material';
+import { Stack, Alert, Typography } from '@mui/material';
 import { PrototypeCard } from '../common/prototype-card';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { getStoreState } from '../../utils/store-state-utils';
+import { useSingleRandom } from '../../hooks';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
 
 interface SingleRandomProps {
-  singleRandomPrototype: NormalizedPrototype | null;
-  singleRandomLoading: boolean;
-  singleRandomError: string | null;
   stats: PrototypeInMemoryStats | null;
-  fetchSingleRandom: () => void;
-  clearSingleRandom: () => void;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
 }
 
-export function SingleRandom({
-  singleRandomPrototype,
-  singleRandomLoading,
-  singleRandomError,
-  stats,
-  fetchSingleRandom,
-  clearSingleRandom,
-}: SingleRandomProps) {
+export function SingleRandom({ stats, visualizeFlow }: SingleRandomProps) {
+  const {
+    prototype: singleRandomPrototype,
+    loading: singleRandomLoading,
+    error: singleRandomError,
+    fetchSingleRandom,
+    clear: clearSingleRandom,
+    hasExecuted: singleRandomHasExecuted,
+  } = useSingleRandom();
+
+  const wrappedFetchSingleRandom = () => {
+    visualizeFlow(() => {
+      fetchSingleRandom();
+    }, 'get-from-snapshot');
+  };
+
+  const disabled = singleRandomLoading || getStoreState(stats) === 'not-stored';
+
   return (
     <SectionCard
       title="getRandomPrototypeFromSnapshot()"
@@ -30,8 +47,8 @@ export function SingleRandom({
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
-          onClick={fetchSingleRandom}
-          disabled={singleRandomLoading || !stats || stats.size === 0}
+          onClick={wrappedFetchSingleRandom}
+          disabled={disabled}
           loading={singleRandomLoading}
         >
           実行
@@ -49,6 +66,19 @@ export function SingleRandom({
           {singleRandomError}
         </Alert>
       )}
+      {singleRandomHasExecuted &&
+        !singleRandomPrototype &&
+        !singleRandomLoading &&
+        !singleRandomError && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ py: 2 }}
+          >
+            No results found
+          </Typography>
+        )}
       {singleRandomPrototype && !singleRandomLoading && (
         <PrototypeCard prototype={singleRandomPrototype} />
       )}

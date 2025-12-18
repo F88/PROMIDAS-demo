@@ -1,31 +1,51 @@
 import { Stack, Alert, TextField, Box, Typography, Chip } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
+import { getStoreState } from '../../utils/store-state-utils';
+import { useState } from 'react';
+import { useRandomPrototype } from '../../hooks';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
 
 interface RandomPrototypeProps {
-  randomPrototypes: NormalizedPrototype[];
-  randomLoading: boolean;
-  randomError: string | null;
-  randomSampleSize: string;
-  setRandomSampleSize: (value: string) => void;
   stats: PrototypeInMemoryStats | null;
-  handleFetchRandom: () => void;
-  clearRandom: () => void;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
 }
 
 export function RandomPrototype({
-  randomPrototypes,
-  randomLoading,
-  randomError,
-  randomSampleSize,
-  setRandomSampleSize,
   stats,
-  handleFetchRandom,
-  clearRandom,
+  visualizeFlow,
 }: RandomPrototypeProps) {
+  const [randomSampleSize, setRandomSampleSize] = useState('3');
+
+  const {
+    prototypes: randomPrototypes,
+    loading: randomLoading,
+    error: randomError,
+    fetchRandom,
+    clear: clearRandom,
+    hasExecuted: randomHasExecuted,
+  } = useRandomPrototype();
+
+  const handleFetchRandom = () => {
+    const size = parseInt(randomSampleSize) || 1;
+    visualizeFlow(() => {
+      fetchRandom(size);
+    }, 'get-from-snapshot');
+  };
+
+  const disabled = randomLoading || getStoreState(stats) === 'not-stored';
+
   return (
     <SectionCard
       title="getRandomSampleFromSnapshot(size)"
@@ -34,6 +54,7 @@ export function RandomPrototype({
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
+          disabled={disabled}
           label="Sample Size"
           type="number"
           value={randomSampleSize}
@@ -49,13 +70,13 @@ export function RandomPrototype({
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
           onClick={handleFetchRandom}
-          disabled={randomLoading || !stats || stats.size === 0}
+          disabled={disabled}
           loading={randomLoading}
         >
           実行
         </ActionButton>
         <ActionButton
-          disabled={randomPrototypes.length === 0}
+          disabled={disabled || randomPrototypes.length === 0}
           onClick={clearRandom}
           variant="secondary"
         >
@@ -67,6 +88,20 @@ export function RandomPrototype({
           {randomError}
         </Alert>
       )}
+
+      {randomHasExecuted &&
+        randomPrototypes.length === 0 &&
+        !randomLoading &&
+        !randomError && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ py: 2 }}
+          >
+            No results found
+          </Typography>
+        )}
 
       {randomPrototypes.length > 0 && !randomLoading && (
         <Box>

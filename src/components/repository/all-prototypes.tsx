@@ -1,27 +1,43 @@
 import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import type { NormalizedPrototype } from '@f88/promidas/types';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
+import { getStoreState } from '../../utils/store-state-utils';
+import { useAllPrototypes } from '../../hooks';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
 
 interface AllPrototypesProps {
-  allPrototypes: NormalizedPrototype[] | null;
-  allLoading: boolean;
-  allError: string | null;
   stats: PrototypeInMemoryStats | null;
-  fetchAll: () => void;
-  clearAll: () => void;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
 }
 
-export function AllPrototypes({
-  allPrototypes,
-  allLoading,
-  allError,
-  stats,
-  fetchAll,
-  clearAll,
-}: AllPrototypesProps) {
+export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
+  const {
+    prototypes: allPrototypes,
+    loading: allLoading,
+    error: allError,
+    fetchAll,
+    clear: clearAll,
+  } = useAllPrototypes();
+
+  const wrappedFetchAll = () => {
+    visualizeFlow(() => {
+      fetchAll();
+    }, 'get-from-snapshot');
+  };
+
+  const disabled = allLoading || getStoreState(stats) === 'not-stored';
+
   return (
     <SectionCard
       title="getAllFromSnapshot()"
@@ -30,8 +46,8 @@ export function AllPrototypes({
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
-          onClick={fetchAll}
-          disabled={allLoading || !stats || stats.size === 0}
+          onClick={wrappedFetchAll}
+          disabled={disabled}
           loading={allLoading}
         >
           実行

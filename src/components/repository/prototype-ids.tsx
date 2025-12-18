@@ -3,24 +3,41 @@ import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
+import { getStoreState } from '../../utils/store-state-utils';
+import { usePrototypeIds } from '../../hooks';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
 
 interface PrototypeIdsProps {
-  prototypeIds: readonly number[] | null;
-  idsLoading: boolean;
-  idsError: string | null;
   stats: PrototypeInMemoryStats | null;
-  fetchIds: () => void;
-  clearIds: () => void;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
 }
 
-export function PrototypeIds({
-  prototypeIds,
-  idsLoading,
-  idsError,
-  stats,
-  fetchIds,
-  clearIds,
-}: PrototypeIdsProps) {
+export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
+  const {
+    ids: prototypeIds,
+    loading: idsLoading,
+    error: idsError,
+    fetchIds,
+    clear: clearIds,
+  } = usePrototypeIds();
+
+  const wrappedFetchIds = () => {
+    visualizeFlow(() => {
+      fetchIds();
+    }, 'get-from-snapshot');
+  };
+
+  const disabled = idsLoading || getStoreState(stats) === 'not-stored';
+
   return (
     <SectionCard
       title="getPrototypeIdsFromSnapshot()"
@@ -29,8 +46,8 @@ export function PrototypeIds({
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
-          onClick={fetchIds}
-          disabled={idsLoading || !stats || stats.size === 0}
+          onClick={wrappedFetchIds}
+          disabled={disabled}
           loading={idsLoading}
         >
           実行

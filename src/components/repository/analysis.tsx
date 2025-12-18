@@ -2,24 +2,41 @@ import { Stack, Alert, Typography, Box } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { getStoreState } from '../../utils/store-state-utils';
+import { usePrototypeAnalysis } from '../../hooks';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
 
 interface AnalysisProps {
-  analysis: { min: number | null; max: number | null } | null;
-  analysisLoading: boolean;
-  analysisError: string | null;
   stats: PrototypeInMemoryStats | null;
-  analyze: () => void;
-  clearAnalysis: () => void;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
 }
 
-export function Analysis({
-  analysis,
-  analysisLoading,
-  analysisError,
-  stats,
-  analyze,
-  clearAnalysis,
-}: AnalysisProps) {
+export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
+  const {
+    analysis,
+    loading: analysisLoading,
+    error: analysisError,
+    analyze,
+    clear: clearAnalysis,
+  } = usePrototypeAnalysis();
+
+  const wrappedAnalyze = () => {
+    visualizeFlow(() => {
+      analyze();
+    }, 'get-from-snapshot');
+  };
+
+  const disabled = analysisLoading || getStoreState(stats) === 'not-stored';
+
   return (
     <SectionCard
       title="analyzePrototypes()"
@@ -28,8 +45,8 @@ export function Analysis({
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
-          onClick={analyze}
-          disabled={analysisLoading || !stats || stats.size === 0}
+          onClick={wrappedAnalyze}
+          disabled={disabled}
           loading={analysisLoading}
         >
           実行

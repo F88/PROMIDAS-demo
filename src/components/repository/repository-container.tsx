@@ -8,144 +8,117 @@ import { SingleRandom } from './single-random';
 import { PrototypeIds } from './prototype-ids';
 import { AllPrototypes } from './all-prototypes';
 import { Analysis } from './analysis';
+import { GetConfig } from '../store/get-config';
+import { GetStats } from '../store/get-stats';
+import { useState } from 'react';
+import { useSnapshotManagement } from '../../hooks';
+import { SNAPSHOT_LIMITS } from '../../App';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import type { NormalizedPrototype } from '@f88/promidas/types';
+import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+import type { StoreConfig } from '../../hooks/use-config';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
 
 interface RepositoryContainerProps {
   isActive?: boolean;
-
-  // Snapshot Management
-  snapshotLimit: string;
-  setSnapshotLimit: (value: string) => void;
-  snapshotOffset: string;
-  setSnapshotOffset: (value: string) => void;
-  snapshotUserNm: string;
-  setSnapshotUserNm: (value: string) => void;
-  snapshotTagNm: string;
-  setSnapshotTagNm: (value: string) => void;
-  snapshotEventNm: string;
-  setSnapshotEventNm: (value: string) => void;
-  snapshotMaterialNm: string;
-  setSnapshotMaterialNm: (value: string) => void;
-  setupLoading: boolean;
-  refreshLoading: boolean;
-  setupSuccess: string | null;
-  setupError: string | null;
-  refreshSuccess: string | null;
-  refreshError: string | null;
-  handleSetupSnapshot: () => void;
-  handleResetSnapshotForm: () => void;
-  handleRefreshSnapshot: () => void;
-
-  // Random Prototype
-  randomPrototypes: NormalizedPrototype[];
-  randomLoading: boolean;
-  randomError: string | null;
-  randomSampleSize: string;
-  setRandomSampleSize: (value: string) => void;
-  handleFetchRandom: () => void;
-  clearRandom: () => void;
-
-  // Search By ID
-  searchId: string;
-  setSearchId: (value: string) => void;
-  searchPrototype: NormalizedPrototype | null;
-  searchLoading: boolean;
-  searchError: string | null;
-  handleSearch: () => void;
-  clearSearch: () => void;
-
-  // Single Random
-  singleRandomPrototype: NormalizedPrototype | null;
-  singleRandomLoading: boolean;
-  singleRandomError: string | null;
-  fetchSingleRandom: () => void;
-  clearSingleRandom: () => void;
-
-  // Prototype IDs
-  prototypeIds: readonly number[] | null;
-  idsLoading: boolean;
-  idsError: string | null;
-  fetchIds: () => void;
-  clearIds: () => void;
-
-  // All Prototypes
-  allPrototypes: NormalizedPrototype[] | null;
-  allLoading: boolean;
-  allError: string | null;
-  fetchAll: () => void;
-  clearAll: () => void;
-
-  // Analysis
-  analysis: { min: number | null; max: number | null } | null;
-  analysisLoading: boolean;
-  analysisError: string | null;
-  analyze: () => void;
-  clearAnalysis: () => void;
-
-  // Common
   stats: PrototypeInMemoryStats | null;
+  fetchStats: () => void;
+  config: StoreConfig | null;
+  configLoading: boolean;
+  configError: string | null;
+  fetchConfig: () => void;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
 }
 
 export function RepositoryContainer({
   isActive = false,
-  snapshotLimit,
-  setSnapshotLimit,
-  snapshotOffset,
-  setSnapshotOffset,
-  snapshotUserNm,
-  setSnapshotUserNm,
-  snapshotTagNm,
-  setSnapshotTagNm,
-  snapshotEventNm,
-  setSnapshotEventNm,
-  snapshotMaterialNm,
-  setSnapshotMaterialNm,
-  setupLoading,
-  refreshLoading,
-  setupSuccess,
-  setupError,
-  refreshSuccess,
-  refreshError,
-  handleSetupSnapshot,
-  handleResetSnapshotForm,
-  handleRefreshSnapshot,
-  randomPrototypes,
-  randomLoading,
-  randomError,
-  randomSampleSize,
-  setRandomSampleSize,
-  handleFetchRandom,
-  clearRandom,
-  searchId,
-  setSearchId,
-  searchPrototype,
-  searchLoading,
-  searchError,
-  handleSearch,
-  clearSearch,
-  singleRandomPrototype,
-  singleRandomLoading,
-  singleRandomError,
-  fetchSingleRandom,
-  clearSingleRandom,
-  prototypeIds,
-  idsLoading,
-  idsError,
-  fetchIds,
-  clearIds,
-  allPrototypes,
-  allLoading,
-  allError,
-  fetchAll,
-  clearAll,
-  analysis,
-  analysisLoading,
-  analysisError,
-  analyze,
-  clearAnalysis,
   stats,
+  fetchStats,
+  configLoading,
+  fetchConfig,
+  visualizeFlow,
 }: RepositoryContainerProps) {
+  // Snapshot Management State
+  const [snapshotLimit, setSnapshotLimit] = useState(
+    SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString(),
+  );
+  const [snapshotOffset, setSnapshotOffset] = useState(
+    SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString(),
+  );
+  const [snapshotUserNm, setSnapshotUserNm] = useState('');
+  const [snapshotTagNm, setSnapshotTagNm] = useState('');
+  const [snapshotEventNm, setSnapshotEventNm] = useState('');
+  const [snapshotMaterialNm, setSnapshotMaterialNm] = useState('');
+
+  // Hooks
+  const {
+    setupLoading,
+    refreshLoading,
+    setupError,
+    setupSuccess,
+    refreshError,
+    refreshSuccess,
+    setupSnapshot,
+    refreshSnapshot,
+  } = useSnapshotManagement();
+
+  // Event Handlers
+  const handleResetSnapshotForm = () => {
+    setSnapshotLimit(SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString());
+    setSnapshotOffset(SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString());
+    setSnapshotUserNm('');
+    setSnapshotTagNm('');
+    setSnapshotEventNm('');
+    setSnapshotMaterialNm('');
+  };
+
+  const handleSetupSnapshot = async () => {
+    let limit = parseInt(snapshotLimit) || 10;
+    if (limit > 1000) {
+      limit = 1000;
+      setSnapshotLimit(limit.toString());
+    }
+    const offset = parseInt(snapshotOffset) || 0;
+    const params: ListPrototypesParams = { limit, offset };
+
+    if (snapshotUserNm) params.userNm = snapshotUserNm;
+    if (snapshotTagNm) params.tagNm = snapshotTagNm;
+    if (snapshotEventNm) params.eventNm = snapshotEventNm;
+    if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
+
+    await visualizeFlow(async () => {
+      await setupSnapshot(params);
+      fetchStats();
+    }, 'forced-fetch');
+  };
+
+  const handleRefreshSnapshot = async () => {
+    await visualizeFlow(async () => {
+      await refreshSnapshot();
+      fetchStats();
+    }, 'forced-fetch');
+  };
+
+  const wrappedFetchConfig = () => {
+    visualizeFlow(() => {
+      fetchConfig();
+    }, 'get-store-info');
+  };
+
+  const wrappedUpdateStats = () => {
+    visualizeFlow(() => {
+      fetchStats();
+    }, 'get-store-info');
+  };
+
   return (
     <ContainerWrapper type="repository" label="Repository" isActive={isActive}>
       {/* Management Operations */}
@@ -193,6 +166,18 @@ export function RepositoryContainer({
         />
       </Stack>
 
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <GetConfig
+            configLoading={configLoading}
+            fetchConfig={wrappedFetchConfig}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <GetStats fetchStats={wrappedUpdateStats} />
+        </Grid>
+      </Grid>
+
       {/* Analysis Operations */}
       <Typography
         variant="h6"
@@ -212,14 +197,7 @@ export function RepositoryContainer({
         </Typography>
       </Typography>
 
-      <Analysis
-        analysis={analysis}
-        analysisLoading={analysisLoading}
-        analysisError={analysisError}
-        stats={stats}
-        analyze={analyze}
-        clearAnalysis={clearAnalysis}
-      />
+      <Analysis stats={stats} visualizeFlow={visualizeFlow} />
 
       {/* Query Operations */}
       <Typography
@@ -242,62 +220,23 @@ export function RepositoryContainer({
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <PrototypeIds
-            prototypeIds={prototypeIds}
-            idsLoading={idsLoading}
-            idsError={idsError}
-            stats={stats}
-            fetchIds={fetchIds}
-            clearIds={clearIds}
-          />
+          <PrototypeIds stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <AllPrototypes
-            allPrototypes={allPrototypes}
-            allLoading={allLoading}
-            allError={allError}
-            stats={stats}
-            fetchAll={fetchAll}
-            clearAll={clearAll}
-          />
+          <AllPrototypes stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <SearchById
-            searchId={searchId}
-            setSearchId={setSearchId}
-            searchPrototype={searchPrototype}
-            searchLoading={searchLoading}
-            searchError={searchError}
-            stats={stats}
-            handleSearch={handleSearch}
-            clearSearch={clearSearch}
-          />
+          <SearchById stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <SingleRandom
-            singleRandomPrototype={singleRandomPrototype}
-            singleRandomLoading={singleRandomLoading}
-            singleRandomError={singleRandomError}
-            stats={stats}
-            fetchSingleRandom={fetchSingleRandom}
-            clearSingleRandom={clearSingleRandom}
-          />
+          <SingleRandom stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, xl: 4 }}>
-          <RandomPrototype
-            randomPrototypes={randomPrototypes}
-            randomLoading={randomLoading}
-            randomError={randomError}
-            randomSampleSize={randomSampleSize}
-            setRandomSampleSize={setRandomSampleSize}
-            stats={stats}
-            handleFetchRandom={handleFetchRandom}
-            clearRandom={clearRandom}
-          />
+          <RandomPrototype stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
       </Grid>
     </ContainerWrapper>
