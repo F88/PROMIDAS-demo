@@ -12,7 +12,9 @@ import type { NormalizedPrototype } from '@f88/promidas/types';
 import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 export function useAllPrototypes() {
-  const [prototypes, setPrototypes] = useState<NormalizedPrototype[]>([]);
+  const [prototypes, setPrototypes] = useState<NormalizedPrototype[] | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +52,7 @@ export function useAllPrototypes() {
   };
 
   const clear = () => {
-    setPrototypes([]);
+    setPrototypes(null);
     setError(null);
   };
 

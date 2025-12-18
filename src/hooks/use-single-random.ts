@@ -12,10 +12,12 @@ export function useSingleRandom() {
   const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasExecuted, setHasExecuted] = useState(false);
 
   const fetchSingleRandom = async () => {
     setLoading(true);
     setError(null);
+    setHasExecuted(true);
 
     try {
       const repo = getProtopediaRepository();
@@ -26,11 +28,7 @@ export function useSingleRandom() {
         prototypeName: result?.prototypeNm,
       });
 
-      if (result) {
-        setPrototype(result);
-      } else {
-        setError('No prototypes available in snapshot');
-      }
+      setPrototype(result);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Unknown error occurred';
@@ -45,7 +43,8 @@ export function useSingleRandom() {
   const clear = () => {
     setPrototype(null);
     setError(null);
+    setHasExecuted(false);
   };
 
-  return { prototype, loading, error, fetchSingleRandom, clear };
+  return { prototype, loading, error, fetchSingleRandom, clear, hasExecuted };
 }

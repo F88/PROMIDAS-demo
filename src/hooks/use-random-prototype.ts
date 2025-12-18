@@ -16,10 +16,12 @@ export function useRandomPrototype() {
   const [prototypes, setPrototypes] = useState<NormalizedPrototype[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasExecuted, setHasExecuted] = useState(false);
 
   const fetchRandom = async (size: number = 1) => {
     setLoading(true);
     setError(null);
+    setHasExecuted(true);
 
     try {
       const repo = getProtopediaRepository();
@@ -38,12 +40,7 @@ export function useRandomPrototype() {
         randomPrototypes,
       );
 
-      if (randomPrototypes.length === 0) {
-        setError('No prototypes available in snapshot');
-        setPrototypes([]);
-      } else {
-        setPrototypes(randomPrototypes as NormalizedPrototype[]);
-      }
+      setPrototypes(randomPrototypes as NormalizedPrototype[]);
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
@@ -67,7 +64,8 @@ export function useRandomPrototype() {
   const clear = () => {
     setPrototypes([]);
     setError(null);
+    setHasExecuted(false);
   };
 
-  return { prototypes, loading, error, fetchRandom, clear };
+  return { prototypes, loading, error, fetchRandom, clear, hasExecuted };
 }
