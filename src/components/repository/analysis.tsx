@@ -1,7 +1,7 @@
-import { Stack, Alert, Typography, Box } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { Stack, Alert, Typography, Box } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface AnalysisProps {
   analysis: { min: number | null; max: number | null } | null;
@@ -54,7 +54,7 @@ export function Analysis({
               Minimum ID:
             </Typography>
             <Typography variant="body2" fontWeight={500}>
-              {analysis.min !== null ? analysis.min : "N/A"}
+              {analysis.min !== null ? analysis.min : 'N/A'}
             </Typography>
           </Box>
           <Box>
@@ -62,7 +62,7 @@ export function Analysis({
               Maximum ID:
             </Typography>
             <Typography variant="body2" fontWeight={500}>
-              {analysis.max !== null ? analysis.max : "N/A"}
+              {analysis.max !== null ? analysis.max : 'N/A'}
             </Typography>
           </Box>
         </Stack>

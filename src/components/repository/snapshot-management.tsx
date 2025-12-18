@@ -1,7 +1,7 @@
-import { Stack, TextField, Grid, Alert } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { Stack, TextField, Grid, Alert } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface SnapshotManagementProps {
   snapshotLimit: string;

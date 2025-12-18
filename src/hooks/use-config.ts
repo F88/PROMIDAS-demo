@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
-import type { ProtopediaInMemoryRepository } from "@f88/promidas";
+import { useState } from 'react';
+import { getProtopediaRepository } from '../lib/protopedia-repository';
+import type { ProtopediaInMemoryRepository } from '@f88/promidas';
 
-export type StoreConfig = ReturnType<ProtopediaInMemoryRepository["getConfig"]>;
+export type StoreConfig = ReturnType<ProtopediaInMemoryRepository['getConfig']>;
 
 /**
  * Custom hook for retrieving repository configuration.
@@ -23,7 +23,7 @@ export function useConfig() {
       const repo = getProtopediaRepository();
       const result = repo.getConfig();
 
-      console.debug("[useConfig] Fetched repository config", {
+      console.debug('[useConfig] Fetched repository config', {
         ttlMs: result.ttlMs,
         maxDataSizeBytes: result.maxDataSizeBytes,
       });
@@ -31,8 +31,8 @@ export function useConfig() {
       setConfig(result);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Unknown error occurred";
-      console.error("[useConfig] Error fetching config", err);
+        err instanceof Error ? err.message : 'Unknown error occurred';
+      console.error('[useConfig] Error fetching config', err);
       setError(message);
       setConfig(null);
     } finally {

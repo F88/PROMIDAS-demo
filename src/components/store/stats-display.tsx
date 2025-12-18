@@ -1,6 +1,6 @@
-import { Box, Typography, Stack, Chip } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { SectionCard } from "../common/section-card";
+import { Box, Typography, Stack, Chip } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SectionCard } from '../common/section-card';
 
 interface StatsDisplayProps {
   stats: PrototypeInMemoryStats | null;
@@ -40,7 +40,7 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
             <Typography variant="body2" fontWeight={500}>
               {stats.cachedAt
                 ? new Date(stats.cachedAt).toLocaleString()
-                : "Not cached"}
+                : 'Not cached'}
             </Typography>
           </Box>
           <Box>
@@ -48,8 +48,8 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
               Status:
             </Typography>
             <Chip
-              label={stats.isExpired ? "Expired" : "Valid"}
-              color={stats.isExpired ? "error" : "success"}
+              label={stats.isExpired ? 'Expired' : 'Valid'}
+              color={stats.isExpired ? 'error' : 'success'}
               size="small"
             />
           </Box>
@@ -60,7 +60,7 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
             <Typography variant="body2" fontWeight={500}>
               {stats.remainingTtlMs > 0
                 ? `${(stats.remainingTtlMs / 1000).toFixed(1)} seconds`
-                : "Expired"}
+                : 'Expired'}
             </Typography>
           </Box>
           <Box>
@@ -76,8 +76,8 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
               Refresh Status:
             </Typography>
             <Chip
-              label={stats.refreshInFlight ? "In Progress" : "Idle"}
-              color={stats.refreshInFlight ? "warning" : "default"}
+              label={stats.refreshInFlight ? 'In Progress' : 'Idle'}
+              color={stats.refreshInFlight ? 'warning' : 'default'}
               size="small"
             />
           </Box>

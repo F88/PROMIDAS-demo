@@ -1,5 +1,5 @@
-import { Box, Typography, Chip } from "@mui/material";
-import type { ReactNode } from "react";
+import { Box, Typography, Chip } from '@mui/material';
+import type { ReactNode } from 'react';
 
 interface SectionCardProps {
   title: string;
@@ -19,10 +19,10 @@ export function SectionCard({
       sx={{
         p: 3,
         mb: 3,
-        backgroundColor: "background.paper",
+        backgroundColor: 'background.paper',
         borderRadius: 2,
         border: 1,
-        borderColor: "divider",
+        borderColor: 'divider',
       }}
     >
       {category && (

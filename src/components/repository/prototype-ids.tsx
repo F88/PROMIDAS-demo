@@ -1,7 +1,7 @@
-import { Stack, Alert, Typography, Box, Chip } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface PrototypeIdsProps {
   prototypeIds: readonly number[] | null;
@@ -52,7 +52,7 @@ export function PrototypeIds({
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total IDs: <strong>{prototypeIds.length}</strong>
           </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {prototypeIds.slice(0, 50).map((id) => (
               <Chip key={id} label={id} size="small" variant="outlined" />
             ))}

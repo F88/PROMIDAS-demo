@@ -7,9 +7,9 @@
  * behavior to demo site users.
  */
 
-import { useState } from "react";
-import type { NormalizedPrototype } from "@f88/promidas/types";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
+import { useState } from 'react';
+import type { NormalizedPrototype } from '@f88/promidas/types';
+import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 export function useAllPrototypes() {
   const [prototypes, setPrototypes] = useState<NormalizedPrototype[]>([]);
@@ -22,7 +22,7 @@ export function useAllPrototypes() {
 
     try {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
-      console.debug("[PROMIDAS Demo] fetchAll: Fetching all prototypes");
+      console.debug('[PROMIDAS Demo] fetchAll: Fetching all prototypes');
 
       const repo = getProtopediaRepository();
       const all = await repo.getAllFromSnapshot();
@@ -31,17 +31,17 @@ export function useAllPrototypes() {
       // Demo site: Log fetched prototypes count
       console.debug(
         `[PROMIDAS Demo] fetchAll: Fetched ${all.length} prototypes`,
-        all
+        all,
       );
 
       setPrototypes([...all] as NormalizedPrototype[]);
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
-      console.error("[PROMIDAS Demo] fetchAll failed:", err);
+      console.error('[PROMIDAS Demo] fetchAll failed:', err);
 
       const message =
-        err instanceof Error ? err.message : "Failed to fetch all prototypes";
+        err instanceof Error ? err.message : 'Failed to fetch all prototypes';
       setError(message);
       setPrototypes([]);
     } finally {

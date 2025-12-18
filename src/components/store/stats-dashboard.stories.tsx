@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { StatsDashboard } from "./stats-dashboard";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import type { StoreConfig } from "../../hooks/use-config";
+import type { Meta, StoryObj } from '@storybook/react';
+import { StatsDashboard } from './stats-dashboard';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { StoreConfig } from '../../hooks/use-config';
 
 const meta = {
-  title: "Components/StatsDashboard",
+  title: 'Components/StatsDashboard',
   component: StatsDashboard,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof StatsDashboard>;
 
 export default meta;
@@ -18,14 +18,15 @@ type Story = StoryObj<typeof meta>;
 const mockConfig: StoreConfig = {
   ttlMs: 30000,
   maxDataSizeBytes: 10485760, // 10 MB
+  logLevel: 'info',
 };
 
 const createMockStats = (
-  overrides?: Partial<PrototypeInMemoryStats>
+  overrides?: Partial<PrototypeInMemoryStats>,
 ): PrototypeInMemoryStats => ({
   size: 100,
   dataSizeBytes: 1048576, // 1 MB
-  cachedAt: Date.now() - 5000,
+  cachedAt: new Date(Date.now() - 5000),
   remainingTtlMs: 25000,
   isExpired: false,
   refreshInFlight: false,
@@ -105,5 +106,19 @@ export const NoConfig: Story = {
   args: {
     stats: createMockStats(),
     config: null,
+  },
+};
+
+export const LargeSizeAndLongTtl: Story = {
+  args: {
+    stats: createMockStats({
+      size: 10000,
+      remainingTtlMs: 900000, // 900s remaining
+    }),
+    config: {
+      ttlMs: 1000000, // 1000s
+      maxDataSizeBytes: 10485760,
+      logLevel: 'info',
+    },
   },
 };

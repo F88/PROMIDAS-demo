@@ -1,6 +1,6 @@
-import { Box, Typography, Stack, Alert } from "@mui/material";
-import { SectionCard } from "../common/section-card";
-import type { StoreConfig } from "../../hooks/use-config";
+import { Box, Typography, Stack, Alert } from '@mui/material';
+import { SectionCard } from '../common/section-card';
+import type { StoreConfig } from '../../hooks/use-config';
 
 interface ConfigDisplayProps {
   repoConfig: StoreConfig | null;
@@ -59,7 +59,7 @@ export function ConfigDisplay({
               Log Level:
             </Typography>
             <Typography variant="body2" fontWeight={500}>
-              {repoConfig.logLevel || "info"}
+              {repoConfig.logLevel || 'info'}
             </Typography>
           </Box>
         </Stack>

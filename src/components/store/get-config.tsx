@@ -1,5 +1,5 @@
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface GetConfigProps {
   configLoading: boolean;

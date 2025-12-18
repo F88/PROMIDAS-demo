@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
+import { useState } from 'react';
+import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 /**
  * Custom hook for retrieving a single random prototype from the current snapshot.
@@ -20,7 +20,7 @@ export function useSingleRandom() {
       const repo = getProtopediaRepository();
       const result = await repo.getRandomPrototypeFromSnapshot();
 
-      console.debug("[useSingleRandom] Fetched single random prototype", {
+      console.debug('[useSingleRandom] Fetched single random prototype', {
         prototypeId: result?.id,
         prototypeName: result?.prototypeNm,
       });
@@ -28,12 +28,12 @@ export function useSingleRandom() {
       if (result) {
         setPrototype(result);
       } else {
-        setError("No prototypes available in snapshot");
+        setError('No prototypes available in snapshot');
       }
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Unknown error occurred";
-      console.error("[useSingleRandom] Error fetching single random", err);
+        err instanceof Error ? err.message : 'Unknown error occurred';
+      console.error('[useSingleRandom] Error fetching single random', err);
       setError(message);
       setPrototype(null);
     } finally {

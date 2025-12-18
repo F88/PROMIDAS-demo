@@ -1,40 +1,40 @@
-import { useState, useEffect } from "react";
-import { Container, Grid, Link, Box } from "@mui/material";
-import { useRandomPrototype } from "./hooks/use-random-prototype";
-import { useRepositoryStats } from "./hooks/use-repository-stats";
-import { useSnapshotManagement } from "./hooks/use-snapshot-management";
-import { usePrototypeSearch } from "./hooks/use-prototype-search";
-import { usePrototypeIds } from "./hooks/use-prototype-ids";
-import { useSingleRandom } from "./hooks/use-single-random";
-import { useConfig } from "./hooks/use-config";
-import { useAllPrototypes } from "./hooks/use-all-prototypes";
-import { usePrototypeAnalysis } from "./hooks/use-prototype-analysis";
-import { StoreContainer } from "./components/store/store-container";
-import { StatsDashboard } from "./components/store/stats-dashboard";
-import { RepositoryContainer } from "./components/repository/repository-container";
-import { FetcherContainer } from "./components/fetcher/fetcher-container";
-import { ConfigContainer } from "./components/config/config-container";
-import { TokenConfiguration } from "./components/config/token-configuration";
-import { DataFlowIndicator } from "./components/DataFlowIndicator";
+import { useState, useEffect } from 'react';
+import { Container, Grid, Link, Box } from '@mui/material';
+import { useRandomPrototype } from './hooks/use-random-prototype';
+import { useRepositoryStats } from './hooks/use-repository-stats';
+import { useSnapshotManagement } from './hooks/use-snapshot-management';
+import { usePrototypeSearch } from './hooks/use-prototype-search';
+import { usePrototypeIds } from './hooks/use-prototype-ids';
+import { useSingleRandom } from './hooks/use-single-random';
+import { useConfig } from './hooks/use-config';
+import { useAllPrototypes } from './hooks/use-all-prototypes';
+import { usePrototypeAnalysis } from './hooks/use-prototype-analysis';
+import { StoreContainer } from './components/store/store-container';
+import { StatsDashboard } from './components/store/stats-dashboard';
+import { RepositoryContainer } from './components/repository/repository-container';
+import { FetcherContainer } from './components/fetcher/fetcher-container';
+import { ConfigContainer } from './components/config/config-container';
+import { TokenConfiguration } from './components/config/token-configuration';
+import { DataFlowIndicator } from './components/DataFlowIndicator';
 import {
   hasApiToken,
   getApiToken,
   setApiToken,
   removeApiToken,
-} from "./lib/token-storage";
-import { resetRepository } from "./lib/protopedia-repository";
-import "./App.css";
-import type { ListPrototypesParams } from "protopedia-api-v2-client";
+} from './lib/token-storage';
+import { resetRepository } from './lib/protopedia-repository';
+import './App.css';
+import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
 function App() {
-  const [searchId, setSearchId] = useState("7917");
-  const [snapshotLimit, setSnapshotLimit] = useState("10");
-  const [snapshotOffset, setSnapshotOffset] = useState("0");
-  const [snapshotUserNm, setSnapshotUserNm] = useState("");
-  const [snapshotTagNm, setSnapshotTagNm] = useState("");
-  const [snapshotEventNm, setSnapshotEventNm] = useState("");
-  const [snapshotMaterialNm, setSnapshotMaterialNm] = useState("");
-  const [token, setTokenInput] = useState(getApiToken() || "");
+  const [searchId, setSearchId] = useState('7917');
+  const [snapshotLimit, setSnapshotLimit] = useState('10');
+  const [snapshotOffset, setSnapshotOffset] = useState('0');
+  const [snapshotUserNm, setSnapshotUserNm] = useState('');
+  const [snapshotTagNm, setSnapshotTagNm] = useState('');
+  const [snapshotEventNm, setSnapshotEventNm] = useState('');
+  const [snapshotMaterialNm, setSnapshotMaterialNm] = useState('');
+  const [token, setTokenInput] = useState(getApiToken() || '');
 
   // Data flow visualization states
   const [isFetcherActive, setIsFetcherActive] = useState(false);
@@ -143,19 +143,19 @@ function App() {
   };
 
   const handleResetSnapshotForm = () => {
-    setSnapshotLimit("10");
-    setSnapshotOffset("0");
-    setSnapshotUserNm("");
-    setSnapshotTagNm("");
-    setSnapshotEventNm("");
-    setSnapshotMaterialNm("");
+    setSnapshotLimit('10');
+    setSnapshotOffset('0');
+    setSnapshotUserNm('');
+    setSnapshotTagNm('');
+    setSnapshotEventNm('');
+    setSnapshotMaterialNm('');
   };
 
   const handleSetupSnapshot = async () => {
     let limit = parseInt(snapshotLimit) || 10;
     if (limit > 100) {
       limit = 100;
-      setSnapshotLimit("100");
+      setSnapshotLimit('100');
     }
     const offset = parseInt(snapshotOffset) || 0;
     const params: ListPrototypesParams = { limit, offset };
@@ -250,10 +250,10 @@ function App() {
   };
 
   const handleDeleteToken = () => {
-    if (confirm("トークンを削除してよろしいですか？")) {
+    if (confirm('トークンを削除してよろしいですか？')) {
       removeApiToken();
       resetRepository();
-      setTokenInput("");
+      setTokenInput('');
       handleTokenChange();
     }
   };
@@ -275,10 +275,10 @@ function App() {
                 rel="noopener noreferrer"
                 underline="hover"
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
+                  display: 'inline-flex',
+                  alignItems: 'center',
                   gap: 0.5,
-                  color: "white",
+                  color: 'white',
                   fontWeight: 500,
                 }}
               >
@@ -418,7 +418,7 @@ function App() {
 
       <footer className="app-footer">
         <p>
-          Powered by{" "}
+          Powered by{' '}
           <a
             href="https://github.com/F88/promidas"
             target="_blank"

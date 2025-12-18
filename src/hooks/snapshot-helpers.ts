@@ -10,7 +10,7 @@ import type {
   SnapshotOperationFailure,
   SnapshotOperationResult,
   SnapshotOperationSuccess,
-} from "@f88/promidas/repository";
+} from '@f88/promidas/repository';
 
 /**
  * Log the result of a snapshot operation for demo site debugging.
@@ -24,17 +24,17 @@ import type {
  */
 export function logFetchResult(
   operationName: string,
-  result: SnapshotOperationResult
+  result: SnapshotOperationResult,
 ): void {
   if (result.ok) {
     console.debug(
       `[PROMIDAS Demo] ${operationName} succeeded`,
-      result as SnapshotOperationSuccess
+      result as SnapshotOperationSuccess,
     );
   } else {
     console.error(
       `[PROMIDAS Demo] ${operationName} failed`,
-      result as SnapshotOperationResult
+      result as SnapshotOperationResult,
     );
   }
 }
@@ -50,7 +50,7 @@ export function logFetchResult(
  */
 export function handleSnapshotOperationError(
   result: SnapshotOperationResult,
-  setError: (error: string) => void
+  setError: (error: string) => void,
 ): void {
   const error = result as SnapshotOperationFailure;
   const message = JSON.stringify(error);

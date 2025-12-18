@@ -1,9 +1,9 @@
-import { ConfigDisplay } from "./config-display";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { GetStats } from "./get-stats";
-import { GetConfig } from "./get-config";
-import { StatsDisplay } from "./stats-display";
-import type { StoreConfig } from "../../hooks/use-config";
+import { ConfigDisplay } from './config-display';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { GetStats } from './get-stats';
+import { GetConfig } from './get-config';
+import { StatsDisplay } from './stats-display';
+import type { StoreConfig } from '../../hooks/use-config';
 
 interface StoreContainerProps {
   stats: PrototypeInMemoryStats | null;
@@ -27,7 +27,7 @@ export function StoreContainer({
   return (
     <div
       className={`container-wrapper store-container ${
-        isActive ? "active" : ""
+        isActive ? 'active' : ''
       }`}
     >
       <span className="container-label">Store</span>

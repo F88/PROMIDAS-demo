@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
+import { useState } from 'react';
+import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 /**
  * Custom hook for retrieving all prototype IDs from the current snapshot.
@@ -20,7 +20,7 @@ export function usePrototypeIds() {
       const repo = getProtopediaRepository();
       const result = await repo.getPrototypeIdsFromSnapshot();
 
-      console.debug("[usePrototypeIds] Fetched prototype IDs", {
+      console.debug('[usePrototypeIds] Fetched prototype IDs', {
         count: result.length,
         sample: result.slice(0, 10),
       });
@@ -28,8 +28,8 @@ export function usePrototypeIds() {
       setIds(result);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Unknown error occurred";
-      console.error("[usePrototypeIds] Error fetching IDs", err);
+        err instanceof Error ? err.message : 'Unknown error occurred';
+      console.error('[usePrototypeIds] Error fetching IDs', err);
       setError(message);
       setIds(null);
     } finally {

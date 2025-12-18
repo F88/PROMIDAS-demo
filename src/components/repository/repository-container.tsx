@@ -1,13 +1,13 @@
-import { SetupSnapshot } from "./setup-snapshot";
-import { RefreshSnapshot } from "./refresh-snapshot";
-import { RandomPrototype } from "./random-prototype";
-import { SearchById } from "./search-by-id";
-import { SingleRandom } from "./single-random";
-import { PrototypeIds } from "./prototype-ids";
-import { AllPrototypes } from "./all-prototypes";
-import { Analysis } from "./analysis";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import type { NormalizedPrototype } from "@f88/promidas/types";
+import { SetupSnapshot } from './setup-snapshot';
+import { RefreshSnapshot } from './refresh-snapshot';
+import { RandomPrototype } from './random-prototype';
+import { SearchById } from './search-by-id';
+import { SingleRandom } from './single-random';
+import { PrototypeIds } from './prototype-ids';
+import { AllPrototypes } from './all-prototypes';
+import { Analysis } from './analysis';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { NormalizedPrototype } from '@f88/promidas/types';
 
 interface RepositoryContainerProps {
   isActive?: boolean;
@@ -137,7 +137,7 @@ export function RepositoryContainer({
   return (
     <div
       className={`container-wrapper repository-container ${
-        isActive ? "active" : ""
+        isActive ? 'active' : ''
       }`}
     >
       <span className="container-label">Repository</span>

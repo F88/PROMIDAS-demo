@@ -314,11 +314,11 @@
   min-width: 120px;
 }
 
-.form-group input[type="number"] {
+.form-group input[type='number'] {
   width: 120px;
 }
 
-.form-group input[type="text"] {
+.form-group input[type='text'] {
   width: 180px;
 }
 
@@ -550,7 +550,9 @@
     border-color: #e5e7eb;
   }
   50% {
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6), 0 0 40px rgba(102, 126, 234, 0.4);
+    box-shadow:
+      0 0 20px rgba(102, 126, 234, 0.6),
+      0 0 40px rgba(102, 126, 234, 0.4);
     border-color: #667eea;
   }
   100% {
@@ -720,7 +722,8 @@
 /* ========== Data Flow Indicator ========== */
 
 @keyframes indicatorPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }

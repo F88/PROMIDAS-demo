@@ -5,7 +5,7 @@
  * This can be used to group configuration settings and controls.
  */
 
-import { Box } from "@mui/material";
+import { Box } from '@mui/material';
 
 interface ConfigContainerProps {
   isActive?: boolean;
@@ -19,7 +19,7 @@ export function ConfigContainer({
   return (
     <div
       className={`container-wrapper config-container ${
-        isActive ? "active" : ""
+        isActive ? 'active' : ''
       }`}
     >
       <span className="container-label">Config</span>

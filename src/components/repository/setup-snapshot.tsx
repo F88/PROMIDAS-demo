@@ -1,6 +1,6 @@
-import { Stack, TextField, Grid, Alert } from "@mui/material";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { Stack, TextField, Grid, Alert } from '@mui/material';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface SetupSnapshotProps {
   snapshotLimit: string;

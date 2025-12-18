@@ -7,10 +7,10 @@
  * behavior to demo site users.
  */
 
-import { useState } from "react";
-import type { NormalizedPrototype } from "@f88/promidas/types";
-import { ValidationError } from "@f88/promidas/repository";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
+import { useState } from 'react';
+import type { NormalizedPrototype } from '@f88/promidas/types';
+import { ValidationError } from '@f88/promidas/repository';
+import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 export function usePrototypeSearch() {
   const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
@@ -44,12 +44,12 @@ export function usePrototypeSearch() {
 
       if (err instanceof ValidationError) {
         const message = `Validation error${
-          err.field ? ` in ${err.field}` : ""
+          err.field ? ` in ${err.field}` : ''
         }: ${err.message}`;
         setError(message);
       } else {
         const message =
-          err instanceof Error ? err.message : "Failed to search prototype";
+          err instanceof Error ? err.message : 'Failed to search prototype';
         setError(message);
       }
       setPrototype(null);

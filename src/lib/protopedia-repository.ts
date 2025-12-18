@@ -1,12 +1,12 @@
-import { PromidasRepositoryBuilder } from "@f88/promidas";
+import { PromidasRepositoryBuilder } from '@f88/promidas';
 import type {
   ProtopediaInMemoryRepository,
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
-} from "@f88/promidas";
-import { getApiToken } from "./token-storage";
-import type { LogLevel } from "@f88/promidas/logger";
-import type { ProtopediaApiCustomClientConfig } from "@f88/promidas/fetcher";
+} from '@f88/promidas';
+import { getApiToken } from './token-storage';
+import type { LogLevel } from '@f88/promidas/logger';
+import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
 
 // Repository configuration constants
 // export const REPOSITORY_TTL_MS = 1_000 * 30; // 30 seconds
@@ -20,11 +20,11 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
     const token = getApiToken();
 
     if (!token) {
-      throw new Error("API token is not set. Please configure it in Settings.");
+      throw new Error('API token is not set. Please configure it in Settings.');
     }
 
     // For demo site, set log level to debug to help with troubleshooting
-    const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = "debug";
+    const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = 'debug';
 
     const storeConfig: PrototypeInMemoryStoreConfig = {
       ttlMs: REPOSITORY_TTL_MS,
@@ -53,7 +53,7 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
           // NOTE: X-ProtoPedia-API-Client also fails CORS (tested 2025-12-17)
           // Custom headers require server-side CORS configuration
           const headers = new Headers(init?.headers);
-          headers.delete("x-client-user-agent");
+          headers.delete('x-client-user-agent');
           // Keep all other headers including Authorization
           return globalThis.fetch(url, { ...init, headers });
         },
@@ -74,7 +74,7 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
 export function resetRepository(): void {
   if (repository) {
     // Cleanup event listeners if repository has dispose method
-    if ("dispose" in repository && typeof repository.dispose === "function") {
+    if ('dispose' in repository && typeof repository.dispose === 'function') {
       repository.dispose();
     }
   }

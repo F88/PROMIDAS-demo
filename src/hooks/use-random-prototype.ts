@@ -7,10 +7,10 @@
  * behavior to demo site users.
  */
 
-import { useState } from "react";
-import type { NormalizedPrototype } from "@f88/promidas/types";
-import { ValidationError } from "@f88/promidas/repository";
-import { getProtopediaRepository } from "../lib/protopedia-repository";
+import { useState } from 'react';
+import type { NormalizedPrototype } from '@f88/promidas/types';
+import { ValidationError } from '@f88/promidas/repository';
+import { getProtopediaRepository } from '../lib/protopedia-repository';
 
 export function useRandomPrototype() {
   const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
@@ -27,12 +27,12 @@ export function useRandomPrototype() {
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log repository stats before fetching
-      console.debug("[PROMIDAS Demo] fetchRandom: Current stats", stats);
+      console.debug('[PROMIDAS Demo] fetchRandom: Current stats', stats);
 
       // Setup snapshot if not initialized or expired
       if (stats.size === 0 || stats.isExpired) {
         // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
-        console.debug("[PROMIDAS Demo] fetchRandom: Setting up snapshot");
+        console.debug('[PROMIDAS Demo] fetchRandom: Setting up snapshot');
         await repo.setupSnapshot({ offset: 0, limit: 100 });
       }
 
@@ -41,12 +41,12 @@ export function useRandomPrototype() {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log fetched prototypes
       console.debug(
-        "[PROMIDAS Demo] fetchRandom: Fetched prototypes",
-        randomPrototypes
+        '[PROMIDAS Demo] fetchRandom: Fetched prototypes',
+        randomPrototypes,
       );
 
       if (randomPrototypes.length === 0) {
-        setError("No prototypes available in snapshot");
+        setError('No prototypes available in snapshot');
         setPrototype(null);
       } else {
         setPrototype(randomPrototypes[0] as NormalizedPrototype);
@@ -54,16 +54,16 @@ export function useRandomPrototype() {
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
-      console.error("[PROMIDAS Demo] fetchRandom failed:", err);
+      console.error('[PROMIDAS Demo] fetchRandom failed:', err);
 
       if (err instanceof ValidationError) {
         const message = `Validation error${
-          err.field ? ` in ${err.field}` : ""
+          err.field ? ` in ${err.field}` : ''
         }: ${err.message}`;
         setError(message);
       } else {
         const message =
-          err instanceof Error ? err.message : "Failed to fetch prototype";
+          err instanceof Error ? err.message : 'Failed to fetch prototype';
         setError(message);
       }
     } finally {

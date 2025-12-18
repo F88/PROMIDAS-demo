@@ -1,8 +1,8 @@
-import { Stack, Alert, Typography, Box, Chip } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import type { NormalizedPrototype } from "@f88/promidas/types";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { NormalizedPrototype } from '@f88/promidas/types';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface AllPrototypesProps {
   allPrototypes: NormalizedPrototype[] | null;
@@ -53,7 +53,7 @@ export function AllPrototypes({
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total Prototypes: <strong>{allPrototypes.length}</strong>
           </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {allPrototypes.slice(0, 20).map((proto) => (
               <Chip
                 key={proto.id}

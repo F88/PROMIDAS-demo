@@ -7,12 +7,12 @@
  * behavior to demo site users.
  */
 
-import { useState, useEffect } from "react";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
+import { useState, useEffect } from 'react';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
 import {
   getProtopediaRepository,
   REPOSITORY_TTL_MS,
-} from "../lib/protopedia-repository";
+} from '../lib/protopedia-repository';
 
 export function useRepositoryStats() {
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(() => {
@@ -20,7 +20,7 @@ export function useRepositoryStats() {
       const repo = getProtopediaRepository();
       return repo.getStats();
     } catch (err) {
-      console.error("[PROMIDAS Demo] useRepositoryStats init failed:", err);
+      console.error('[PROMIDAS Demo] useRepositoryStats init failed:', err);
       return null;
     }
   });
@@ -30,7 +30,7 @@ export function useRepositoryStats() {
       const repo = getProtopediaRepository();
       setStats(repo.getStats());
     } catch (err) {
-      console.error("[PROMIDAS Demo] useRepositoryStats update failed:", err);
+      console.error('[PROMIDAS Demo] useRepositoryStats update failed:', err);
       // Token not set yet
       setStats(null);
     }
@@ -44,7 +44,7 @@ export function useRepositoryStats() {
         const currentStats = repo.getStats();
 
         if (
-          typeof currentStats.cachedAt === "number" &&
+          typeof currentStats.cachedAt === 'number' &&
           !currentStats.isExpired
         ) {
           // Calculate time until expiration
@@ -61,8 +61,8 @@ export function useRepositoryStats() {
         }
       } catch (err) {
         console.error(
-          "[PROMIDAS Demo] scheduling next stats update failed:",
-          err
+          '[PROMIDAS Demo] scheduling next stats update failed:',
+          err,
         );
       }
       return undefined;

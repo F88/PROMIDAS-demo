@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   TextField,
   IconButton,
@@ -6,10 +6,10 @@ import {
   Stack,
   Typography,
   Link,
-} from "@mui/material";
-import { Visibility, VisibilityOff, Save, Delete } from "@mui/icons-material";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+} from '@mui/material';
+import { Visibility, VisibilityOff, Save, Delete } from '@mui/icons-material';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface TokenConfigurationProps {
   token: string;
@@ -36,7 +36,7 @@ export function TokenConfiguration({
     >
       <TextField
         fullWidth
-        type={showToken ? "text" : "password"}
+        type={showToken ? 'text' : 'password'}
         value={token}
         onChange={(e) => setToken(e.target.value)}
         placeholder="Enter your ProtoPedia API token"
@@ -49,7 +49,7 @@ export function TokenConfiguration({
                 <IconButton
                   onClick={() => setShowToken(!showToken)}
                   edge="end"
-                  aria-label={showToken ? "Hide token" : "Show token"}
+                  aria-label={showToken ? 'Hide token' : 'Show token'}
                   size="small"
                 >
                   {showToken ? <VisibilityOff /> : <Visibility />}
@@ -78,14 +78,14 @@ export function TokenConfiguration({
         )}
       </Stack>
       <Typography variant="body2" color="text.secondary">
-        トークンは{" "}
+        トークンは{' '}
         <Link
           href="https://protopedia.net/settings/application"
           target="_blank"
           rel="noopener noreferrer"
         >
           ProtoPedia Settings
-        </Link>{" "}
+        </Link>{' '}
         で確認できます
       </Typography>
     </SectionCard>

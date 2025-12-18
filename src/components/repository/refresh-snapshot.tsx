@@ -1,7 +1,7 @@
-import { Stack } from "@mui/material";
-import type { PrototypeInMemoryStats } from "@f88/promidas";
-import { SectionCard } from "../common/section-card";
-import { ActionButton } from "../common/action-button";
+import { Stack } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
 
 interface RefreshSnapshotProps {
   snapshotLoading: boolean;
