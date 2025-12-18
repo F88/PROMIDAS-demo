@@ -1,5 +1,6 @@
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
+import { useDownloadProgress } from '../../hooks/use-download-progress';
 
 /**
  * Fetcher Container
@@ -7,21 +8,91 @@ import { ContainerWrapper } from '../common/container-wrapper';
  * Visualizes API fetch operations.
  * This container highlights when data is being fetched from the ProtoPedia API.
  */
+export function FetcherContainer() {
+  const progressLog = useDownloadProgress();
+  const latestProgress = progressLog[progressLog.length - 1];
+  const isActive =
+    latestProgress &&
+    latestProgress.status !== 'idle' &&
+    latestProgress.status !== 'completed';
 
-interface FetcherContainerProps {
-  isActive?: boolean;
-}
+  const formatBytes = (bytes?: number) => {
+    if (bytes === undefined) return 'N/A';
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  };
 
-export function FetcherContainer({ isActive = false }: FetcherContainerProps) {
+  /**
+   * Format a single log entry for display
+   *
+   * @see * https://raw.githubusercontent.com/F88/promidas/refs/heads/main/lib/fetcher/docs/DESIGN.md
+   */
+  const formatLogEntry = (progress: (typeof progressLog)[0]) => {
+    const time = new Date(progress.timestamp).toLocaleTimeString('ja-JP', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      fractionalSecondDigits: 3,
+    });
+
+    // https://raw.githubusercontent.com/F88/promidas/refs/heads/main/lib/fetcher/docs/DESIGN.md
+    switch (progress.status) {
+      case 'idle':
+        return `[${time}] Ready to fetch`;
+      case 'started':
+        return `[${time}] 🚀 Started: ${progress.limit} items, ~${formatBytes(progress.estimatedBytes)}, prepare: ${progress.prepareTimeMs}ms`;
+      case 'in-progress':
+        return `[${time}] 📡 Progress: ${progress.percentage}% (estimated) (${formatBytes(progress.receivedBytes)} / ~${formatBytes(progress.estimatedBytes)})`;
+      case 'completed':
+        return `[${time}] ✅ Completed: ${formatBytes(progress.receivedBytes)} (estimated ~${formatBytes(progress.estimatedBytes)}), download: ${progress.downloadTimeMs}ms, total: ${progress.totalTimeMs}ms`;
+      default:
+        return `[${time}] Unknown status`;
+    }
+  };
+
   return (
     <ContainerWrapper type="fetcher" label="Fetcher" isActive={isActive}>
-      <Typography
-        variant="body2"
-        color={isActive ? 'success.main' : 'text.secondary'}
-        align="center"
-      >
-        {isActive ? '📡 Fetching data from API...' : 'Ready to fetch'}
-      </Typography>
+      <Box sx={{ width: '100%' }}>
+        {progressLog.length === 0 ? (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
+          >
+            Ready to fetch
+          </Typography>
+        ) : (
+          <Box
+            sx={{
+              fontFamily: 'monospace',
+              fontSize: '0.75rem',
+            }}
+          >
+            {progressLog.map((progress, index) => (
+              <Typography
+                key={index}
+                variant="body2"
+                color={
+                  progress.status === 'completed'
+                    ? 'success.main'
+                    : progress.status === 'started'
+                      ? 'warning.main'
+                      : progress.status === 'in-progress'
+                        ? 'info.main'
+                        : 'text.secondary'
+                }
+                sx={{
+                  fontFamily: 'monospace',
+                  fontSize: '0.75rem',
+                  lineHeight: 1.5,
+                }}
+              >
+                {formatLogEntry(progress)}
+              </Typography>
+            ))}
+          </Box>
+        )}
+      </Box>
     </ContainerWrapper>
   );
 }
