@@ -7,6 +7,7 @@ import type {
 import { getApiToken } from './token-storage';
 import type { LogLevel } from '@f88/promidas/logger';
 import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
+import { emitDownloadProgress } from '../hooks/use-download-progress';
 
 // Repository configuration constants
 // export const REPOSITORY_TTL_MS = 1_000 * 30; // 30 seconds
@@ -59,6 +60,49 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
         },
       },
       progressLog: true, // Enable progress logging for download tracking
+      progressCallback: {
+        onStart: (estimatedTotal, limit, prepareTime) => {
+          console.debug('[Download Progress] Started', {
+            estimatedBytes: estimatedTotal,
+            limit,
+            prepareTimeMs: Math.round(prepareTime * 1000),
+          });
+          emitDownloadProgress({
+            status: 'started',
+            estimatedBytes: estimatedTotal,
+            limit,
+            prepareTimeMs: Math.round(prepareTime * 1000),
+          });
+        },
+        onProgress: (received, total, percentage) => {
+          console.debug('[Download Progress] In progress', {
+            receivedBytes: received,
+            totalBytes: total,
+            percentage,
+          });
+          emitDownloadProgress({
+            status: 'in-progress',
+            receivedBytes: received,
+            estimatedBytes: total,
+            percentage,
+          });
+        },
+        onComplete: (received, estimatedTotal, downloadTime, totalTime) => {
+          console.debug('[Download Progress] Completed', {
+            receivedBytes: received,
+            estimatedBytes: estimatedTotal,
+            downloadTimeMs: Math.round(downloadTime * 1000),
+            totalTimeMs: Math.round(totalTime * 1000),
+          });
+          emitDownloadProgress({
+            status: 'completed',
+            receivedBytes: received,
+            estimatedBytes: estimatedTotal,
+            downloadTimeMs: Math.round(downloadTime * 1000),
+            totalTimeMs: Math.round(totalTime * 1000),
+          });
+        },
+      },
     };
 
     repository = new PromidasRepositoryBuilder()

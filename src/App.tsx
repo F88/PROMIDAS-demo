@@ -14,7 +14,7 @@ import {
   removeApiToken,
   setApiToken,
 } from './lib/token-storage';
-import { useRepositoryStats, useConfig } from './hooks';
+import { useRepositoryStats, useConfig, useRepositoryEvents } from './hooks';
 
 /**
  * Constants for snapshot configuration
@@ -80,6 +80,23 @@ function App() {
     error: configError,
     fetchConfig,
   } = useConfig();
+
+  // Listen to repository events for real-time fetch visualization
+  useRepositoryEvents({
+    onSnapshotStarted: () => {
+      console.debug('[Repository Event] Snapshot Started');
+      setIsFetcherActive(true);
+    },
+    onSnapshotCompleted: (stats) => {
+      console.debug('[Repository Event] Snapshot Completed', stats);
+      setIsFetcherActive(false);
+      updateStats();
+    },
+    onSnapshotFailed: () => {
+      console.debug('[Repository Event] Snapshot Failed');
+      setIsFetcherActive(false);
+    },
+  });
 
   // Initialize config and stats on mount
   useEffect(() => {
@@ -238,7 +255,7 @@ function App() {
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <FetcherContainer isActive={isFetcherActive} />
+            <FetcherContainer />
           </Grid>
 
           <Grid size={{ xs: 12 }}>
