@@ -16,10 +16,10 @@ export function FetcherContainer() {
     latestProgress.status !== 'idle' &&
     latestProgress.status !== 'completed';
 
-  const formatBytes = (bytes?: number) => {
-    if (bytes === undefined) return 'N/A';
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  };
+  // const formatBytes = (bytes?: number) => {
+  //   if (bytes === undefined) return 'N/A';
+  //   return `${(bytes / 1024).toFixed(1)} KB`;
+  // };
 
   /**
    * Format a single log entry for display
