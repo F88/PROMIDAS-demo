@@ -38,15 +38,33 @@ export function FetcherContainer() {
     switch (progress.status) {
       case 'idle':
         return `[${time}] Ready to fetch`;
-      case 'started':
-        return `[${time}] 🚀 Started: ${progress.limit} items, ~${formatBytes(progress.estimatedBytes)}, prepare: ${progress.prepareTimeMs}ms`;
-      case 'in-progress': {
-        const percentageStr = progress.percentage !== undefined ? progress.percentage.toFixed(1) : 'N/A';
-        const incrementStr = progress.increment !== undefined ? `, +${progress.increment}` : '';
-        return `[${time}] 📡 Downloading: ${percentageStr}% (${progress.receivedBytes ?? 0} / ${progress.estimatedBytes ?? 0} bytes${incrementStr})`;
+      case 'started': {
+        const prepareTimeS =
+          progress.prepareTimeMs !== undefined
+            ? (progress.prepareTimeMs / 1000).toFixed(2)
+            : 'N/A';
+        return `[${time}] 🚀 Download starting (limit=${progress.limit}, estimated ~${progress.estimatedBytes ?? 0} bytes) (prepared in ${prepareTimeS}s)`;
       }
-      case 'completed':
-        return `[${time}] ✅ Completed: ${formatBytes(progress.receivedBytes)} (estimated ~${formatBytes(progress.estimatedBytes)}), download: ${progress.downloadTimeMs}ms, total: ${progress.totalTimeMs}ms`;
+      case 'in-progress': {
+        const percentageStr =
+          progress.percentage !== undefined
+            ? progress.percentage.toFixed(1)
+            : 'N/A';
+        const incrementStr =
+          progress.increment !== undefined ? `, +${progress.increment}` : '';
+        return `[${time}] 📡 Download progress: ${percentageStr}% (${progress.receivedBytes ?? 0} / ${progress.estimatedBytes ?? 0} bytes${incrementStr})`;
+      }
+      case 'completed': {
+        const downloadTimeS =
+          progress.downloadTimeMs !== undefined
+            ? (progress.downloadTimeMs / 1000).toFixed(2)
+            : 'N/A';
+        const totalTimeS =
+          progress.totalTimeMs !== undefined
+            ? (progress.totalTimeMs / 1000).toFixed(2)
+            : 'N/A';
+        return `[${time}] ✅ Download complete: ${progress.receivedBytes ?? 0} bytes received (estimated ${progress.estimatedBytes ?? 0} bytes) in ${downloadTimeS}s (total: ${totalTimeS}s)`;
+      }
       default:
         return `[${time}] Unknown status`;
     }
