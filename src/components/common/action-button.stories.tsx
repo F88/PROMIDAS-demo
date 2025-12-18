@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import { ActionButton } from './action-button';
 
 const meta = {
-  title: 'Components/Common/ActionButton',
+  title: 'Common/ActionButton',
   component: ActionButton,
   parameters: {
     layout: 'centered',

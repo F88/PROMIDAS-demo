@@ -56,7 +56,7 @@ export function SetupSnapshot({
             onChange={(e) => setSnapshotLimit(e.target.value)}
             fullWidth
             size="small"
-            slotProps={{ htmlInput: { min: 1, max: 100 } }}
+            slotProps={{ htmlInput: { min: 1, max: 1_000 } }}
           />
         </Grid>
         <Grid size={{ xs: 6, sm: 4 }}>

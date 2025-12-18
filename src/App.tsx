@@ -27,7 +27,7 @@ import './App.css';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
 function App() {
-  const [searchId, setSearchId] = useState('7917');
+  const [searchId, setSearchId] = useState('1');
   const [snapshotLimit, setSnapshotLimit] = useState('10');
   const [snapshotOffset, setSnapshotOffset] = useState('0');
   const [snapshotUserNm, setSnapshotUserNm] = useState('');

@@ -4,7 +4,7 @@ import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { StoreConfig } from '../../hooks/use-config';
 
 const meta = {
-  title: 'Components/Common/StatsDashboard',
+  title: 'Common/StatsDashboard',
   component: StatsDashboard,
   parameters: {
     layout: 'centered',

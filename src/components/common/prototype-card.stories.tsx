@@ -1,9 +1,36 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { NormalizedPrototype } from '@f88/promidas/types';
-import type { PrototypeCard } from './prototype-card';
+import { PrototypeCard } from './prototype-card';
+
+/**
+ * Helper function to create mock prototype data
+ */
+function createMockPrototype(
+  overrides?: Partial<NormalizedPrototype>,
+): NormalizedPrototype {
+  return {
+    id: 1001,
+    prototypeNm: 'IoT Temperature Monitor',
+    summary:
+      'A smart temperature monitoring system using Arduino and cloud integration for real-time data tracking.',
+    mainUrl: 'https://protopedia.net/prototype/1001',
+    workImgPath: '/images/prototype-1001.jpg',
+    createDate: '2024-01-15',
+    releaseFlg: 1,
+    status: 1,
+    statusNm: 'Published',
+    thumbnailUrl: 'https://protopedia.net/thumbnails/1001.jpg',
+    viewCount: 1250,
+    likeCount: 42,
+    commentCount: 8,
+    tags: ['IoT', 'Arduino', 'Cloud'],
+    teamNm: 'Tech Innovators',
+    ...overrides,
+  };
+}
 
 const meta = {
-  title: 'Components/Common/PrototypeCard',
+  title: 'Common/PrototypeCard',
   component: PrototypeCard,
   parameters: {
     layout: 'padded',
@@ -14,133 +41,147 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockPrototype = (
-  overrides?: Partial<NormalizedPrototype>,
-): NormalizedPrototype => ({
-  id: 7917,
-  createDate: '2024-01-01T00:00:00Z',
-  releaseFlg: 1,
-  status: 1,
-  prototypeNm: 'Sample Prototype',
-  summary: 'This is a sample prototype showcasing various features.',
-  freeComment: '',
-  systemDescription: '',
-  users: ['user1'],
-  teamNm: 'Innovation Team',
-  tags: ['AI', 'IoT', 'Web'],
-  materials: [],
-  events: [],
-  awards: [],
-  mainUrl: 'https://protopedia.net/prototype/7917',
-  viewCount: 1234,
-  goodCount: 56,
-  commentCount: 12,
-  ...overrides,
-});
-
+/**
+ * Default prototype card with all information
+ */
 export const Default: Story = {
   args: {
     prototype: createMockPrototype(),
   },
 };
 
-export const WithoutTeam: Story = {
-  args: {
-    prototype: createMockPrototype({
-      teamNm: undefined,
-    }),
-  },
-};
-
+/**
+ * Card without summary text
+ */
 export const WithoutSummary: Story = {
   args: {
     prototype: createMockPrototype({
-      summary: undefined,
+      summary: '',
     }),
   },
 };
 
-export const WithoutTags: Story = {
-  args: {
-    prototype: createMockPrototype({
-      tags: [],
-    }),
-  },
-};
-
-export const WithoutUrl: Story = {
-  args: {
-    prototype: createMockPrototype({
-      mainUrl: undefined,
-    }),
-  },
-};
-
-export const MinimalData: Story = {
-  args: {
-    prototype: createMockPrototype({
-      teamNm: undefined,
-      summary: undefined,
-      tags: [],
-      mainUrl: undefined,
-      viewCount: 0,
-      goodCount: 0,
-      commentCount: 0,
-    }),
-  },
-};
-
+/**
+ * Card with long title
+ */
 export const LongTitle: Story = {
   args: {
     prototype: createMockPrototype({
       prototypeNm:
-        'This is a Very Long Prototype Name That Should Wrap Properly in the Card Layout',
+        'Advanced IoT-Based Temperature and Humidity Monitoring System with Real-Time Cloud Integration and Mobile App Support',
     }),
   },
 };
 
+/**
+ * Card with long summary
+ */
 export const LongSummary: Story = {
   args: {
     prototype: createMockPrototype({
       summary:
-        'This is a very long summary text that demonstrates how the prototype card handles lengthy descriptions. It should wrap properly and maintain good readability even with multiple lines of text content. The card design should accommodate various content lengths gracefully.',
+        'This is a comprehensive IoT solution that combines multiple sensors, cloud computing, and machine learning algorithms to provide accurate environmental monitoring. The system features real-time data collection, advanced analytics, predictive maintenance capabilities, and seamless integration with existing infrastructure. It supports multiple communication protocols and can be easily scaled to accommodate growing business needs.',
     }),
   },
 };
 
-export const ManyTags: Story = {
+/**
+ * Card with minimal data
+ */
+export const MinimalData: Story = {
   args: {
     prototype: createMockPrototype({
-      tags: [
-        'AI',
-        'IoT',
-        'Web',
-        'Mobile',
-        'Cloud',
-        'Blockchain',
-        'AR/VR',
-        'Big Data',
-      ],
-    }),
-  },
-};
-
-export const HighEngagement: Story = {
-  args: {
-    prototype: createMockPrototype({
-      viewCount: 98765,
-      goodCount: 4321,
-      commentCount: 987,
-    }),
-  },
-};
-
-export const NewPrototype: Story = {
-  args: {
-    prototype: createMockPrototype({
-      viewCount: 5,
-      goodCount: 1,
+      summary: '',
+      tags: [],
+      teamNm: '',
+      viewCount: 0,
+      likeCount: 0,
       commentCount: 0,
     }),
   },
+};
+
+/**
+ * Card for a new prototype with low engagement
+ */
+export const NewPrototype: Story = {
+  args: {
+    prototype: createMockPrototype({
+      id: 2024,
+      prototypeNm: 'My First Arduino Project',
+      summary: 'A simple LED blinking project to learn Arduino basics.',
+      viewCount: 5,
+      likeCount: 1,
+      commentCount: 0,
+      createDate: '2024-12-18',
+    }),
+  },
+};
+
+/**
+ * Card for a popular prototype with high engagement
+ */
+export const HighEngagement: Story = {
+  args: {
+    prototype: createMockPrototype({
+      prototypeNm: 'AI-Powered Robot Assistant',
+      summary:
+        'An advanced robotic assistant using machine learning for natural language processing and autonomous navigation.',
+      viewCount: 15420,
+      likeCount: 892,
+      commentCount: 156,
+      tags: ['AI', 'Robotics', 'Machine Learning', 'ROS'],
+    }),
+  },
+};
+
+/**
+ * Card with very short title and summary
+ */
+export const ShortContent: Story = {
+  args: {
+    prototype: createMockPrototype({
+      prototypeNm: 'LED',
+      summary: 'Simple LED project.',
+    }),
+  },
+};
+
+/**
+ * Card with Japanese text
+ */
+export const JapaneseContent: Story = {
+  args: {
+    prototype: createMockPrototype({
+      prototypeNm: '温度センサーモニタリングシステム',
+      summary:
+        'Arduinoとクラウド連携を使用したリアルタイムデータ追跡のためのスマート温度監視システムです。',
+      teamNm: '技術イノベーターズ',
+    }),
+  },
+};
+
+/**
+ * Multiple cards in a list
+ */
+export const MultipleCards: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <PrototypeCard prototype={createMockPrototype({ id: 1 })} />
+      <PrototypeCard
+        prototype={createMockPrototype({
+          id: 2,
+          prototypeNm: 'Smart Home Controller',
+          summary: 'Control your home devices with voice commands.',
+        })}
+      />
+      <PrototypeCard
+        prototype={createMockPrototype({
+          id: 3,
+          prototypeNm: 'Weather Station',
+          summary: 'Measure temperature, humidity, and pressure.',
+        })}
+      />
+    </div>
+  ),
 };

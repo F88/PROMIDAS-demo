@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { PrototypeIdAndName } from './prototype-id-and-name';
 
 const meta = {
-  title: 'Components/Common/PrototypeIdAndName',
+  title: 'Common/PrototypeIdAndName',
   component: PrototypeIdAndName,
   parameters: {
     layout: 'padded',

@@ -3,7 +3,7 @@ import { Typography, Stack, Button } from '@mui/material';
 import { ContainerWrapper } from './container-wrapper';
 
 const meta = {
-  title: 'Components/Common/ContainerWrapper',
+  title: 'Common/ContainerWrapper',
   component: ContainerWrapper,
   parameters: {
     layout: 'padded',

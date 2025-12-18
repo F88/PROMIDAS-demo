@@ -3,7 +3,7 @@ import { Stack, Button, TextField } from '@mui/material';
 import { SectionCard } from './section-card';
 
 const meta = {
-  title: 'Components/Common/SectionCard',
+  title: 'Common/SectionCard',
   component: SectionCard,
   parameters: {
     layout: 'padded',
