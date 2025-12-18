@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Chip } from '@mui/material';
+import { Typography, Stack } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 

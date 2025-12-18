@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Alert } from '@mui/material';
+import { Typography, Stack, Alert } from '@mui/material';
 import { SectionCard } from '../common/section-card';
 import type { StoreConfig } from '../../hooks/use-config';
 
