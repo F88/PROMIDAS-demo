@@ -1,4 +1,8 @@
 import { Box, Typography, Chip, Stack, LinearProgress } from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import StorageIcon from "@mui/icons-material/Storage";
+import TimerIcon from "@mui/icons-material/Timer";
+import MemoryIcon from "@mui/icons-material/Memory";
 import type { PrototypeInMemoryStats } from "@f88/promidas";
 import type { StoreConfig } from "../../hooks/use-config";
 import { getStoreState, type StoreState } from "../../utils/store-state-utils";
@@ -68,6 +72,8 @@ interface StatItemProps {
   value: string | number;
   progressPercent?: number;
   progressColor?: "success" | "warning" | "error";
+  icon?: React.ReactNode;
+  iconColor?: string;
 }
 
 function getTtlProgressColor(
@@ -86,7 +92,14 @@ function getMemoryProgressColor(
   return "error";
 }
 
-function StatItem({ label, value, progressPercent, progressColor }: StatItemProps) {
+function StatItem({
+  label,
+  value,
+  progressPercent,
+  progressColor,
+  icon,
+  iconColor,
+}: StatItemProps) {
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -96,6 +109,18 @@ function StatItem({ label, value, progressPercent, progressColor }: StatItemProp
           mb: progressPercent !== undefined ? 0.5 : 0,
         }}
       >
+        {icon && (
+          <Box
+            sx={{
+              mr: 0.5,
+              display: "flex",
+              alignItems: "center",
+              color: iconColor || "text.secondary",
+            }}
+          >
+            {icon}
+          </Box>
+        )}
         <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
           {label}:
         </Typography>
@@ -128,7 +153,11 @@ function formatBytes(bytes: number): string {
   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${units[i]}`;
 }
 
-function StoredStatsContent({ storeState, stats, config }: StoredStatsContentProps) {
+function StoredStatsContent({
+  storeState,
+  stats,
+  config,
+}: StoredStatsContentProps) {
   const ttlDisplay = config
     ? (() => {
         const remainingSec = (stats.remainingTtlMs / 1000).toFixed(1);
@@ -145,9 +174,10 @@ function StoredStatsContent({ storeState, stats, config }: StoredStatsContentPro
     ? (stats.remainingTtlMs / config.ttlMs) * 100
     : undefined;
 
-  const ttlProgressColor = ttlRemainingPercent !== undefined
-    ? getTtlProgressColor(ttlRemainingPercent)
-    : undefined;
+  const ttlProgressColor =
+    ttlRemainingPercent !== undefined
+      ? getTtlProgressColor(ttlRemainingPercent)
+      : undefined;
 
   const memoryDisplay = config
     ? (() => {
@@ -165,9 +195,10 @@ function StoredStatsContent({ storeState, stats, config }: StoredStatsContentPro
     ? (stats.dataSizeBytes / config.maxDataSizeBytes) * 100
     : undefined;
 
-  const memoryProgressColor = memoryUsagePercent !== undefined
-    ? getMemoryProgressColor(memoryUsagePercent)
-    : undefined;
+  const memoryProgressColor =
+    memoryUsagePercent !== undefined
+      ? getMemoryProgressColor(memoryUsagePercent)
+      : undefined;
 
   const cachedAtDisplay =
     stats.cachedAt !== null
@@ -179,7 +210,9 @@ function StoredStatsContent({ storeState, stats, config }: StoredStatsContentPro
       : "N/A";
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -196,8 +229,18 @@ function StoredStatsContent({ storeState, stats, config }: StoredStatsContentPro
           )}
         </Stack>
         <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-          <StatItem label="Cached" value={cachedAtDisplay} />
-          <StatItem label="Size" value={stats.size} />
+          <StatItem
+            label="Cached"
+            value={cachedAtDisplay}
+            icon={<AccessTimeIcon sx={{ fontSize: 16 }} />}
+            iconColor="info.main"
+          />
+          <StatItem
+            label="Size"
+            value={stats.size.toLocaleString()}
+            icon={<StorageIcon sx={{ fontSize: 16 }} />}
+            iconColor="primary.main"
+          />
         </Stack>
       </Box>
       <StatItem
@@ -205,13 +248,23 @@ function StoredStatsContent({ storeState, stats, config }: StoredStatsContentPro
         value={ttlDisplay}
         progressPercent={ttlRemainingPercent}
         progressColor={ttlProgressColor}
+        icon={<TimerIcon sx={{ fontSize: 16 }} />}
+        iconColor={
+          ttlProgressColor ? `${ttlProgressColor}.main` : "text.secondary"
+        }
       />
       {config && (
         <StatItem
-          label="Memory"
+          label="Mem"
           value={memoryDisplay}
           progressPercent={memoryUsagePercent}
           progressColor={memoryProgressColor}
+          icon={<MemoryIcon sx={{ fontSize: 16 }} />}
+          iconColor={
+            memoryProgressColor
+              ? `${memoryProgressColor}.main`
+              : "text.secondary"
+          }
         />
       )}
     </Box>
