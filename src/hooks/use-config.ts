@@ -18,7 +18,7 @@ export function useConfig() {
 
   const fetchConfig = () => {
     if (!hasApiToken()) {
-      setError('API token not configured');
+      // Don't set error for demo site UX - just do nothing
       setConfig(null);
       setLoading(false);
       return;

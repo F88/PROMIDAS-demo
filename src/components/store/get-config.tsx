@@ -1,5 +1,6 @@
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { hasApiToken } from '../../lib/token-storage';
 
 interface GetConfigProps {
   configLoading: boolean;
@@ -7,6 +8,8 @@ interface GetConfigProps {
 }
 
 export function GetConfig({ configLoading, fetchConfig }: GetConfigProps) {
+  const disabled = hasApiToken() === false;
+
   return (
     <SectionCard
       title="getConfig()"
@@ -14,8 +17,8 @@ export function GetConfig({ configLoading, fetchConfig }: GetConfigProps) {
       category="Store"
     >
       <ActionButton
+        disabled={disabled}
         onClick={fetchConfig}
-        disabled={configLoading}
         loading={configLoading}
         size="small"
       >
