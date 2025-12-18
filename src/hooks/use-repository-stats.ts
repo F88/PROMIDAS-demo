@@ -84,7 +84,7 @@ export function useRepositoryStats() {
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, []);
+  }, [updateStats]);
 
   const clearStats = () => {
     setStats(null);
