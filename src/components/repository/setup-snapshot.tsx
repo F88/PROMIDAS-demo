@@ -2,6 +2,7 @@ import { Stack, TextField, Grid, Alert } from '@mui/material';
 import { SNAPSHOT_LIMITS } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { clampNumericInput } from '../../utils/number-utils';
 
 interface SetupSnapshotProps {
   snapshotLimit: string;
@@ -55,11 +56,12 @@ export function SetupSnapshot({
             type="number"
             value={snapshotLimit}
             onChange={(e) => {
-              const value = parseInt(e.target.value) || 0;
               setSnapshotLimit(
-                value > SNAPSHOT_LIMITS.MAX_LIMIT
-                  ? SNAPSHOT_LIMITS.MAX_LIMIT.toString()
-                  : e.target.value,
+                clampNumericInput(
+                  e.target.value,
+                  SNAPSHOT_LIMITS.MIN_LIMIT,
+                  SNAPSHOT_LIMITS.MAX_LIMIT,
+                ),
               );
             }}
             fullWidth

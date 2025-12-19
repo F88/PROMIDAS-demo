@@ -7,19 +7,23 @@ import { DataFlowIndicator } from './data-flow-indicator';
 interface AppHeaderProps {
   stats: PrototypeInMemoryStats | null;
   config: StoreConfig | null;
-  isFetcherActive: boolean;
-  isStoreActive: boolean;
-  isRepositoryActive: boolean;
-  isDisplayActive: boolean;
+  dataFlowIndicator: {
+    isFetcherActive: boolean;
+    isStoreActive: boolean;
+    isRepositoryActive: boolean;
+    isDisplayActive: boolean;
+  };
 }
 
 export function AppHeader({
   stats,
   config,
-  isFetcherActive,
-  isStoreActive,
-  isRepositoryActive,
-  isDisplayActive,
+  dataFlowIndicator: {
+    isFetcherActive,
+    isStoreActive,
+    isRepositoryActive,
+    isDisplayActive,
+  },
 }: AppHeaderProps) {
   return (
     <Box

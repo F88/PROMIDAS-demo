@@ -40,10 +40,12 @@ export const Default: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -54,10 +56,12 @@ export const NoData: Story = {
   args: {
     stats: null,
     config: null,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -68,10 +72,12 @@ export const AllActive: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: true,
-    isStoreActive: true,
-    isRepositoryActive: true,
-    isDisplayActive: true,
+    dataFlowIndicator: {
+      isFetcherActive: true,
+      isStoreActive: true,
+      isRepositoryActive: true,
+      isDisplayActive: true,
+    },
   },
 };
 
@@ -82,10 +88,12 @@ export const FetcherActive: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: true,
-    isStoreActive: false,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: true,
+      isStoreActive: false,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -96,10 +104,12 @@ export const StoreActive: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: true,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: true,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -110,10 +120,12 @@ export const RepositoryActive: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: true,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: true,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -124,10 +136,12 @@ export const DisplayActive: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: false,
-    isDisplayActive: true,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: false,
+      isDisplayActive: true,
+    },
   },
 };
 
@@ -138,10 +152,12 @@ export const FetcherAndStoreActive: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: true,
-    isStoreActive: true,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: true,
+      isStoreActive: true,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -152,10 +168,12 @@ export const RepositoryAndDisplay: Story = {
   args: {
     stats: createMockStats(),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: true,
-    isDisplayActive: true,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: true,
+      isDisplayActive: true,
+    },
   },
 };
 
@@ -168,10 +186,12 @@ export const LowTtl: Story = {
       remainingTtlMs: 5000, // 5s (16.7%)
     }),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };
 
@@ -185,9 +205,11 @@ export const Expired: Story = {
       isExpired: true,
     }),
     config: mockConfig,
-    isFetcherActive: false,
-    isStoreActive: false,
-    isRepositoryActive: false,
-    isDisplayActive: false,
+    dataFlowIndicator: {
+      isFetcherActive: false,
+      isStoreActive: false,
+      isRepositoryActive: false,
+      isDisplayActive: false,
+    },
   },
 };

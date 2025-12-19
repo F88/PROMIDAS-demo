@@ -14,14 +14,20 @@ import {
   removeApiToken,
   setApiToken,
 } from './lib/token-storage';
-import { useRepositoryStats, useConfig, useRepositoryEvents } from './hooks';
+import {
+  useRepositoryStats,
+  useConfig,
+  useRepositoryEvents,
+  useDownloadProgress,
+} from './hooks';
 
 /**
  * Constants for snapshot configuration
  */
 export const SNAPSHOT_LIMITS = {
-  MAX_LIMIT: 1000,
-  MIN_LIMIT: 1,
+  // MAX_LIMIT: 1_000,
+  MAX_LIMIT: 10_000,
+  MIN_LIMIT: 0,
   DEFAULT_LIMIT: 10,
   MIN_OFFSET: 0,
   DEFAULT_OFFSET: 0,
@@ -85,18 +91,36 @@ function App() {
   useRepositoryEvents({
     onSnapshotStarted: () => {
       console.debug('[Repository Event] Snapshot Started');
-      setIsFetcherActive(true);
+      setIsRepositoryActive(true);
+      setIsStoreActive(true);
     },
     onSnapshotCompleted: (stats) => {
       console.debug('[Repository Event] Snapshot Completed', stats);
-      setIsFetcherActive(false);
+      setIsRepositoryActive(false);
+      setIsStoreActive(false);
       updateStats();
     },
     onSnapshotFailed: () => {
       console.debug('[Repository Event] Snapshot Failed');
-      setIsFetcherActive(false);
+      setIsRepositoryActive(false);
+      setIsStoreActive(false);
     },
   });
+
+  // Control Fetcher active state based on download progress
+  const downloadProgress = useDownloadProgress();
+  useEffect(() => {
+    const latestProgress = downloadProgress[downloadProgress.length - 1];
+    if (!latestProgress) {
+      setIsFetcherActive(false);
+      return;
+    }
+
+    const isActive =
+      latestProgress.status === 'started' ||
+      latestProgress.status === 'in-progress';
+    setIsFetcherActive(isActive);
+  }, [downloadProgress]);
 
   // Initialize config and stats on mount
   useEffect(() => {
@@ -121,6 +145,10 @@ function App() {
     operation: () => Promise<void> | void,
     sequence: FlowStep[],
   ) => {
+    // Temporarily disabled - real-time events handle visualization now
+    await operation();
+    return;
+
     const delays: Record<FlowStep, number> = {
       fetcher: 300,
       store: 600,
@@ -232,10 +260,12 @@ function App() {
       <AppHeader
         stats={stats}
         config={repoConfig}
-        isFetcherActive={isFetcherActive}
-        isStoreActive={isStoreActive}
-        isRepositoryActive={isRepositoryActive}
-        isDisplayActive={isDisplayActive}
+        dataFlowIndicator={{
+          isFetcherActive,
+          isStoreActive,
+          isRepositoryActive,
+          isDisplayActive,
+        }}
       />
 
       <PromidasInfoSection />

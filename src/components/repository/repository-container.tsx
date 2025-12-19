@@ -81,11 +81,7 @@ export function RepositoryContainer({
   };
 
   const handleSetupSnapshot = async () => {
-    let limit = parseInt(snapshotLimit) || 10;
-    if (limit > 1000) {
-      limit = 1000;
-      setSnapshotLimit(limit.toString());
-    }
+    const limit = parseInt(snapshotLimit) || 10;
     const offset = parseInt(snapshotOffset) || 0;
     const params: ListPrototypesParams = { limit, offset };
 
