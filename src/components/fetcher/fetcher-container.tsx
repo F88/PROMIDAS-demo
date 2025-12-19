@@ -43,7 +43,7 @@ export function FetcherContainer() {
           progress.prepareTimeMs !== undefined
             ? (progress.prepareTimeMs / 1000).toFixed(2)
             : 'N/A';
-        return `[${time}] 🚀 Download starting (limit=${progress.limit}, estimated ~${progress.estimatedBytes ?? 0} bytes) (prepared in ${prepareTimeS}s)`;
+        return `[${time}] 🚀 Download starting (limit=${progress.limit}, ${progress.estimatedBytes ?? 0} bytes (estimated)) (prepared in ${prepareTimeS}s)`;
       }
       case 'in-progress': {
         const percentageStr =
