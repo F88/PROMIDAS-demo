@@ -20,6 +20,18 @@ import {
   useRepositoryEvents,
   useDownloadProgress,
 } from './hooks';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+
+function isCacheAliveForTtlPolling(
+  stats: PrototypeInMemoryStats | null,
+): stats is PrototypeInMemoryStats {
+  return (
+    stats !== null &&
+    stats.cachedAt !== null &&
+    stats.isExpired === false &&
+    stats.remainingTtlMs > 0
+  );
+}
 
 /**
  * Constants for snapshot configuration
@@ -131,12 +143,29 @@ function App() {
 
   // Periodically update stats to show remaining TTL changes
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      updateStats();
-    }, 1_000); // Update every 1 seconds
+    if (!isCacheAliveForTtlPolling(stats)) {
+      return;
+    }
 
-    return () => clearInterval(intervalId);
-  }, [updateStats]);
+    const expiryBufferMs = 100;
+
+    const expiryTimeoutId = window.setTimeout(() => {
+      updateStats();
+    }, stats.remainingTtlMs + expiryBufferMs);
+
+    if (stats.remainingTtlMs < 1_000) {
+      return () => window.clearTimeout(expiryTimeoutId);
+    }
+
+    const intervalId = window.setInterval(() => {
+      updateStats();
+    }, 1_000); // Update every 1 second
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.clearTimeout(expiryTimeoutId);
+    };
+  }, [stats, updateStats]);
 
   // Visualize data flow with flexible step control
   type FlowStep = 'fetcher' | 'store' | 'repository' | 'display';
