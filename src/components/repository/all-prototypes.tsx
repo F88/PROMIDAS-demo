@@ -1,0 +1,102 @@
+import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { SectionCard } from '../common/section-card';
+import { ActionButton } from '../common/action-button';
+import { PrototypeIdAndName } from '../common/prototype-id-and-name';
+import { getStoreState } from '../../utils/store-state-utils';
+import { useAllPrototypes } from '../../hooks';
+
+type FlowPattern =
+  | 'get-store-info'
+  | 'get-from-snapshot'
+  | 'fetch-individual'
+  | 'forced-fetch'
+  | 'simple-display';
+
+interface AllPrototypesProps {
+  stats: PrototypeInMemoryStats | null;
+  visualizeFlow: (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => Promise<void>;
+}
+
+export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
+  const {
+    prototypes: allPrototypes,
+    loading: allLoading,
+    error: allError,
+    fetchAll,
+    clear: clearAll,
+  } = useAllPrototypes();
+
+  const wrappedFetchAll = () => {
+    visualizeFlow(() => {
+      fetchAll();
+    }, 'get-from-snapshot');
+  };
+
+  const disabled = allLoading || getStoreState(stats) === 'not-stored';
+
+  return (
+    <SectionCard
+      title="getAllFromSnapshot()"
+      description="Retrieve all prototypes from snapshot"
+      category="Query"
+    >
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <ActionButton
+          onClick={wrappedFetchAll}
+          disabled={disabled}
+          loading={allLoading}
+        >
+          実行
+        </ActionButton>
+        <ActionButton
+          disabled={allPrototypes == null}
+          onClick={clearAll}
+          variant="secondary"
+        >
+          クリア
+        </ActionButton>
+      </Stack>
+      {allError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {allError}
+        </Alert>
+      )}
+      {allPrototypes && !allLoading && (
+        <Box>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Total Prototypes: <strong>{allPrototypes.length}</strong>
+            {allPrototypes.length > 20 && (
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: 'text.secondary', ml: 1 }}
+              >
+                (Showing first 20)
+              </Typography>
+            )}
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {allPrototypes.slice(0, 20).map((proto) => (
+              <PrototypeIdAndName
+                key={proto.id}
+                id={proto.id}
+                name={proto.prototypeNm}
+              />
+            ))}
+            {allPrototypes.length > 20 && (
+              <Chip
+                label={`+${allPrototypes.length - 20} more`}
+                size="small"
+                color="primary"
+              />
+            )}
+          </Box>
+        </Box>
+      )}
+    </SectionCard>
+  );
+}

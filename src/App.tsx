@@ -1,330 +1,389 @@
-import { useState } from "react";
+import { Box, Container, Grid, Link, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import './App.css';
+import { AppHeader } from './components/common/app-header';
+import { ConfigContainer } from './components/config/config-container';
+import { TokenConfiguration } from './components/config/token-configuration';
+import { FetcherContainer } from './components/fetcher/fetcher-container';
+import { RepositoryContainer } from './components/repository/repository-container';
+import { StoreContainer } from './components/store/store-container';
+import { resetRepository } from './lib/protopedia-repository';
 import {
-  useRandomPrototype,
+  getApiToken,
+  hasApiToken,
+  removeApiToken,
+  setApiToken,
+} from './lib/token-storage';
+import {
   useRepositoryStats,
-  useSnapshotManagement,
-  usePrototypeSearch,
-} from "./hooks/usePrototype";
-import { PrototypeCard } from "./components/PrototypeCard";
-import { Settings } from "./components/Settings";
-import { hasApiToken } from "./lib/token-storage";
-import "./App.css";
-import type { ListPrototypesParams } from "protopedia-api-v2-client";
+  useConfig,
+  useRepositoryEvents,
+  useDownloadProgress,
+} from './hooks';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+
+function isCacheAliveForTtlPolling(
+  stats: PrototypeInMemoryStats | null,
+): stats is PrototypeInMemoryStats {
+  return (
+    stats !== null &&
+    stats.cachedAt !== null &&
+    stats.isExpired === false &&
+    stats.remainingTtlMs > 0
+  );
+}
+
+/**
+ * Constants for snapshot configuration
+ */
+export const SNAPSHOT_LIMITS = {
+  // MAX_LIMIT: 1_000,
+  MAX_LIMIT: 10_000,
+  MIN_LIMIT: 0,
+  DEFAULT_LIMIT: 10,
+  MIN_OFFSET: 0,
+  DEFAULT_OFFSET: 0,
+} as const;
+
+/**
+ * PromidasInfoSection - Display link to PROMIDAS documentation
+ */
+function PromidasInfoSection() {
+  return (
+    <Box
+      sx={{
+        py: 4,
+        px: 2,
+        textAlign: 'center',
+        backgroundColor: 'rgba(52, 131, 75, 0.7)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        color: 'white',
+      }}
+    >
+      <Link
+        href="https://f88.github.io/promidas/"
+        target="_blank"
+        rel="noopener noreferrer"
+        underline="hover"
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 0.5,
+          color: 'white',
+          fontWeight: 500,
+          fontSize: '1.1rem',
+        }}
+      >
+        📚 PROMIDAS とは
+      </Link>
+    </Box>
+  );
+}
 
 function App() {
-  const [showSettings, setShowSettings] = useState(!hasApiToken());
-  const [searchId, setSearchId] = useState("7917");
-  const [snapshotLimit, setSnapshotLimit] = useState("10");
-  const [snapshotOffset, setSnapshotOffset] = useState("0");
-  const [snapshotUserNm, setSnapshotUserNm] = useState("");
-  const [snapshotTagNm, setSnapshotTagNm] = useState("");
-  const [snapshotEventNm, setSnapshotEventNm] = useState("");
-  const [snapshotMaterialNm, setSnapshotMaterialNm] = useState("");
+  const [token, setTokenInput] = useState(getApiToken() || '');
 
-  const {
-    prototype: randomPrototype,
-    loading: randomLoading,
-    error: randomError,
-    fetchRandom,
-    clear: clearRandom,
-  } = useRandomPrototype();
+  // Data flow visualization states
+  const [isFetcherActive, setIsFetcherActive] = useState(false);
+  const [isStoreActive, setIsStoreActive] = useState(false);
+  const [isRepositoryActive, setIsRepositoryActive] = useState(false);
+  const [isDisplayActive, setIsDisplayActive] = useState(false);
+
   const { stats, updateStats } = useRepositoryStats();
   const {
-    loading: snapshotLoading,
-    error: snapshotError,
-    success: snapshotSuccess,
-    setupSnapshot,
-    refreshSnapshot,
-  } = useSnapshotManagement();
-  const {
-    prototype: searchPrototype,
-    loading: searchLoading,
-    error: searchError,
-    searchById,
-    clear: clearSearch,
-  } = usePrototypeSearch();
+    config: repoConfig,
+    loading: configLoading,
+    error: configError,
+    fetchConfig,
+  } = useConfig();
 
-  const handleSetupSnapshot = async () => {
-    let limit = parseInt(snapshotLimit) || 10;
-    if (limit > 100) {
-      limit = 100;
-      setSnapshotLimit("100");
+  // Listen to repository events for real-time fetch visualization
+  useRepositoryEvents({
+    onSnapshotStarted: () => {
+      console.debug('[Repository Event] Snapshot Started');
+      setIsRepositoryActive(true);
+      setIsStoreActive(true);
+    },
+    onSnapshotCompleted: (stats) => {
+      console.debug('[Repository Event] Snapshot Completed', stats);
+      setIsRepositoryActive(false);
+      setIsStoreActive(false);
+      updateStats();
+    },
+    onSnapshotFailed: () => {
+      console.debug('[Repository Event] Snapshot Failed');
+      setIsRepositoryActive(false);
+      setIsStoreActive(false);
+    },
+  });
+
+  // Control Fetcher active state based on download progress
+  const downloadProgress = useDownloadProgress();
+  useEffect(() => {
+    const latestProgress = downloadProgress[downloadProgress.length - 1];
+    if (!latestProgress) {
+      setIsFetcherActive(false);
+      return;
     }
-    const offset = parseInt(snapshotOffset) || 0;
-    const params: ListPrototypesParams = { limit, offset };
 
-    if (snapshotUserNm) params.userNm = snapshotUserNm;
-    if (snapshotTagNm) params.tagNm = snapshotTagNm;
-    if (snapshotEventNm) params.eventNm = snapshotEventNm;
-    if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
+    const isActive =
+      latestProgress.status === 'started' ||
+      latestProgress.status === 'in-progress';
+    setIsFetcherActive(isActive);
+  }, [downloadProgress]);
 
-    await setupSnapshot(params);
+  // Initialize config and stats on mount
+  useEffect(() => {
+    fetchConfig();
     updateStats();
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleRefreshSnapshot = async () => {
-    await refreshSnapshot();
-    updateStats();
-  };
-
-  const handleFetchRandom = () => {
-    clearSearch();
-    fetchRandom();
-  };
-
-  const handleSearch = () => {
-    const id = parseInt(searchId);
-    if (!isNaN(id)) {
-      searchById(id);
+  // Periodically update stats to show remaining TTL changes
+  useEffect(() => {
+    if (!isCacheAliveForTtlPolling(stats)) {
+      return;
     }
+
+    const expiryBufferMs = 100;
+
+    const expiryTimeoutId = window.setTimeout(() => {
+      updateStats();
+    }, stats.remainingTtlMs + expiryBufferMs);
+
+    if (stats.remainingTtlMs < 1_000) {
+      return () => window.clearTimeout(expiryTimeoutId);
+    }
+
+    const intervalId = window.setInterval(() => {
+      updateStats();
+    }, 1_000); // Update every 1 second
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.clearTimeout(expiryTimeoutId);
+    };
+  }, [stats, updateStats]);
+
+  // Visualize data flow with flexible step control
+  type FlowStep = 'fetcher' | 'store' | 'repository' | 'display';
+
+  const visualizeDataFlow = async (
+    operation: () => Promise<void> | void,
+    sequence: FlowStep[],
+  ) => {
+    // Temporarily disabled - real-time events handle visualization now
+    await operation();
+    return;
+
+    const delays: Record<FlowStep, number> = {
+      fetcher: 300,
+      store: 600,
+      repository: 400,
+      display: 1000,
+    };
+
+    const setters: Record<FlowStep, (active: boolean) => void> = {
+      fetcher: setIsFetcherActive,
+      store: setIsStoreActive,
+      repository: setIsRepositoryActive,
+      display: setIsDisplayActive,
+    };
+
+    let operationExecuted = false;
+
+    for (const step of sequence) {
+      setters[step](true);
+
+      // Execute operation on the first step
+      if (!operationExecuted) {
+        await operation();
+        operationExecuted = true;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delays[step]));
+      setters[step](false);
+    }
+  };
+
+  // Convenience wrapper for common flow patterns
+  type FlowPattern =
+    | 'get-store-info'
+    | 'get-from-snapshot'
+    | 'fetch-individual'
+    | 'forced-fetch'
+    | 'simple-display';
+
+  const visualizeFlow = async (
+    operation: () => Promise<void> | void,
+    pattern: FlowPattern,
+  ) => {
+    const patterns: Record<FlowPattern, FlowStep[]> = {
+      // Repository gets Store info (config/stats) and returns to Display
+      'get-store-info': ['repository', 'store', 'repository', 'display'],
+      // Repository gets data from snapshot in Store, returns to Display
+      'get-from-snapshot': ['repository', 'store', 'repository', 'display'],
+      // Repository checks Store (miss), fetches individual via Fetcher, saves to Store, returns to Display
+      'fetch-individual': [
+        'repository',
+        'store',
+        'fetcher',
+        'repository',
+        'store',
+        'display',
+      ],
+      // Repository forces fetch via Fetcher, saves to Store (success/fail), returns to Display
+      'forced-fetch': [
+        'repository',
+        'fetcher',
+        'repository',
+        'store',
+        'repository',
+        'display',
+      ],
+      // Simple display without data flow (for UI-only operations)
+      'simple-display': ['display'],
+    };
+
+    return visualizeDataFlow(operation, patterns[pattern]);
+  };
+
+  const wrappedFetchConfig = () => {
+    visualizeFlow(() => {
+      fetchConfig();
+    }, 'get-store-info');
+  };
+
+  const wrappedUpdateStats = () => {
+    visualizeFlow(() => {
+      updateStats();
+    }, 'get-store-info');
   };
 
   const handleTokenChange = () => {
-    // Clear all prototypes and refresh stats
-    clearRandom();
-    clearSearch();
+    // Refresh stats after token change
     updateStats();
   };
 
+  const handleSaveToken = () => {
+    if (token.trim()) {
+      setApiToken(token.trim());
+      resetRepository();
+      handleTokenChange();
+    }
+  };
+
+  const handleDeleteToken = () => {
+    if (confirm('トークンを削除してよろしいですか？')) {
+      removeApiToken();
+      resetRepository();
+      setTokenInput('');
+      handleTokenChange();
+    }
+  };
+
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>PROMIDAS Demo</h1>
-        <p className="subtitle">
-          ProtoPedia Resource Organized Management In-memory Data Access Store
-        </p>
-        <button
-          onClick={() => setShowSettings(true)}
-          className="settings-button"
-          aria-label="Settings"
-        >
-          ⚙️ Settings
-        </button>
-      </header>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AppHeader
+        stats={stats}
+        config={repoConfig}
+        dataFlowIndicator={{
+          isFetcherActive,
+          isStoreActive,
+          isRepositoryActive,
+          isDisplayActive,
+        }}
+      />
 
-      <main className="app-main">
-        {/* Stats Display */}
-        {stats && (
-          <div className="stats-card">
-            <h3>Repository Stats</h3>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-label">Snapshot Size:</span>
-                <span className="stat-value">{stats.size} prototypes</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Cached At:</span>
-                <span className="stat-value">
-                  {stats.cachedAt
-                    ? new Date(stats.cachedAt).toLocaleString()
-                    : "Not cached"}
-                </span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Status:</span>
-                <span
-                  className={`stat-value ${
-                    stats.isExpired ? "expired" : "valid"
-                  }`}
-                >
-                  {stats.isExpired ? "Expired" : "Valid"}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
+      <PromidasInfoSection />
 
-        {/* Snapshot Management */}
-        <div className="snapshot-controls">
-          <h3>Snapshot Management</h3>
-          <div className="snapshot-form">
-            <div className="form-group">
-              <label htmlFor="snapshot-limit">Limit:</label>
-              <input
-                id="snapshot-limit"
-                type="number"
-                value={snapshotLimit}
-                onChange={(e) => setSnapshotLimit(e.target.value)}
-                min="1"
-                max="100"
+      <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ConfigContainer>
+              <TokenConfiguration
+                token={token}
+                setToken={setTokenInput}
+                hasToken={hasApiToken()}
+                onSaveToken={handleSaveToken}
+                onDeleteToken={handleDeleteToken}
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-offset">Offset:</label>
-              <input
-                id="snapshot-offset"
-                type="number"
-                value={snapshotOffset}
-                onChange={(e) => setSnapshotOffset(e.target.value)}
-                min="0"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-user">User Name:</label>
-              <input
-                id="snapshot-user"
-                type="text"
-                value={snapshotUserNm}
-                onChange={(e) => setSnapshotUserNm(e.target.value)}
-                placeholder="Filter by user"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-tag">Tag Name:</label>
-              <input
-                id="snapshot-tag"
-                type="text"
-                value={snapshotTagNm}
-                onChange={(e) => setSnapshotTagNm(e.target.value)}
-                placeholder="Filter by tag"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-event">Event Name:</label>
-              <input
-                id="snapshot-event"
-                type="text"
-                value={snapshotEventNm}
-                onChange={(e) => setSnapshotEventNm(e.target.value)}
-                placeholder="Filter by event"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="snapshot-material">Material Name:</label>
-              <input
-                id="snapshot-material"
-                type="text"
-                value={snapshotMaterialNm}
-                onChange={(e) => setSnapshotMaterialNm(e.target.value)}
-                placeholder="Filter by material"
-              />
-            </div>
-            <button
-              onClick={handleSetupSnapshot}
-              disabled={snapshotLoading}
-              className="action-button"
-            >
-              {snapshotLoading ? "Loading..." : "Setup Snapshot"}
-            </button>
-            <button
-              onClick={handleRefreshSnapshot}
-              disabled={snapshotLoading || !stats || stats.size === 0}
-              className="action-button secondary"
-            >
-              {snapshotLoading ? "Loading..." : "Refresh Snapshot"}
-            </button>
-          </div>
-          {snapshotSuccess && (
-            <div className="success-message">{snapshotSuccess}</div>
-          )}
-          {snapshotError && (
-            <div className="error-message">{snapshotError}</div>
-          )}
-        </div>
+            </ConfigContainer>
+          </Grid>
 
-        {/* Random Prototype */}
-        <div className="controls-section">
-          <h3>Random Prototype</h3>
-          <div className="controls">
-            <button
-              onClick={handleFetchRandom}
-              disabled={randomLoading || !stats || stats.size === 0}
-              className="fetch-button"
-            >
-              {randomLoading ? "Loading..." : "Show Random Prototype"}
-            </button>
-            {randomPrototype && (
-              <button onClick={clearRandom} className="action-button secondary">
-                Clear
-              </button>
-            )}
-          </div>
-          {randomError && (
-            <div className="error-message">
-              <p>Error: {randomError}</p>
-            </div>
-          )}
-          {randomPrototype && !randomLoading && (
-            <PrototypeCard prototype={randomPrototype} />
-          )}
-        </div>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FetcherContainer />
+          </Grid>
 
-        {/* Search by ID */}
-        <div className="controls-section">
-          <h3>Search by ID</h3>
-          <div className="search-controls">
-            <input
-              type="number"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
-              placeholder="Enter Prototype ID"
-              className="search-input"
+          <Grid size={{ xs: 12 }}>
+            <StoreContainer
+              isActive={isStoreActive}
+              stats={stats}
+              fetchStats={wrappedUpdateStats}
+              config={repoConfig}
+              configLoading={configLoading}
+              configError={configError}
+              fetchConfig={wrappedFetchConfig}
             />
-            <button
-              onClick={handleSearch}
-              disabled={
-                searchLoading || !searchId || !stats || stats.size === 0
-              }
-              className="fetch-button"
-            >
-              {searchLoading ? "Searching..." : "Search"}
-            </button>
-            {searchPrototype && (
-              <button onClick={clearSearch} className="action-button secondary">
-                Clear
-              </button>
-            )}
-          </div>
-          {searchError && (
-            <div className="error-message">
-              <p>Error: {searchError}</p>
-            </div>
-          )}
-          {searchPrototype && !searchLoading && (
-            <PrototypeCard prototype={searchPrototype} />
-          )}
-        </div>
+          </Grid>
 
-        {!randomPrototype &&
-          !searchPrototype &&
-          !randomLoading &&
-          !searchLoading &&
-          stats &&
-          stats.size > 0 && (
-            <div className="empty-state">
-              <p>
-                Click "Show Random Prototype" or enter an ID and click "Search"
-              </p>
-            </div>
+          <Grid size={{ xs: 12 }}>
+            <RepositoryContainer
+              isActive={isRepositoryActive}
+              stats={stats}
+              fetchStats={updateStats}
+              config={repoConfig}
+              configLoading={configLoading}
+              configError={configError}
+              fetchConfig={fetchConfig}
+              visualizeFlow={visualizeFlow}
+            />
+          </Grid>
+
+          {(!stats || stats.size === 0) && (
+            <Grid size={{ xs: 12 }}>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  padding: '3rem 1rem',
+                  color: '#666',
+                }}
+              >
+                <Typography>
+                  No snapshot loaded. Please setup a snapshot first.
+                </Typography>
+              </Box>
+            </Grid>
           )}
+        </Grid>
+      </Container>
 
-        {(!stats || stats.size === 0) && !snapshotLoading && (
-          <div className="empty-state">
-            <p>No snapshot loaded. Please setup a snapshot first.</p>
-          </div>
-        )}
-      </main>
-
-      <footer className="app-footer">
-        <p>
-          Powered by{" "}
-          <a
+      <Box
+        component="footer"
+        sx={{
+          py: 2,
+          px: 2,
+          mt: 'auto',
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+        }}
+      >
+        <Typography variant="body2">
+          Powered by{' '}
+          <Link
             href="https://github.com/F88/promidas"
             target="_blank"
             rel="noopener noreferrer"
+            sx={{ color: 'white', fontWeight: 600 }}
           >
             PROMIDAS
-          </a>
-        </p>
-      </footer>
-
-      {showSettings && (
-        <Settings
-          onClose={() => setShowSettings(false)}
-          onTokenChange={handleTokenChange}
-        />
-      )}
-    </div>
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
   );
 }
 

@@ -10,11 +10,33 @@ PROMIDASの`createProtopediaInMemoryRepository`を利用して、ProtoPedia API�
 
 ## 技術スタック
 
-- **React** - UIライブラリ
-- **TypeScript** - 型安全な開発
-- **Vite** - 高速ビルドツール
-- **Vitest** - テストフレームワーク
+### Core
+
+- **React 19** - UIライブラリ
+- **TypeScript 5.9** - 型安全な開発
+- **Vite 7** - 高速ビルドツール
+
+### UI Framework
+
+- **Material-UI (MUI) 7** - Reactコンポーネントライブラリ
+- **Emotion** - CSS-in-JS
+
+### Data Management
+
 - **PROMIDAS** - ProtoPediaデータ管理ライブラリ
+- **ProtoPedia API v2 Client** - APIクライアント
+
+### Testing & Documentation
+
+- **Vitest 4** - テストフレームワーク
+- **Testing Library** - Reactコンポーネントテスト
+- **Storybook 10** - UIコンポーネントドキュメント
+
+### Code Quality
+
+- **Prettier** - コードフォーマッター
+- **ESLint 9** - 静的解析
+- **TypeScript ESLint** - TypeScript用Lintルール
 
 ## セットアップ
 
@@ -38,7 +60,7 @@ npm run dev
 
 1. [ProtoPedia設定ページ](https://protopedia.net/settings/application)でAPIトークンを取得
 2. 設定画面の入力欄にトークンを貼り付け
-3. "Save Token"ボタンをクリック
+3. "Save"ボタンをクリック
 
 トークンはブラウザのLocalStorageに保存されます。設定画面は右上の⚙️ボタンからいつでも開けます。
 
