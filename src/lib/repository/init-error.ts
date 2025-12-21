@@ -252,7 +252,7 @@ export function resolveRepositoryInitFailure(
 
   if (category === 'CORS_ERROR') {
     hints.push(
-      'Browser CORS may block custom headers. This demo deletes x-client-user-agent to avoid preflight failures.',
+      'Browser CORS may block custom headers. PROMIDAS v0.13.0 removes x-client-user-agent in browser runtimes to avoid preflight failures.',
     );
   }
 
