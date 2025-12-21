@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 
 /**
  * Custom hook for retrieving all prototype IDs from the current snapshot.

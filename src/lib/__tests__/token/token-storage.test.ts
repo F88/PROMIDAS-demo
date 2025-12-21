@@ -4,7 +4,7 @@ import {
   setApiToken,
   removeApiToken,
   hasApiToken,
-} from './token-storage';
+} from '../../token/token-storage';
 
 describe('token-storage', () => {
   beforeEach(() => {

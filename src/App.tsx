@@ -7,13 +7,13 @@ import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
-import { resetRepository } from './lib/protopedia-repository';
+import { resetRepository } from './lib/repository/protopedia-repository';
 import {
   getApiToken,
   hasApiToken,
   removeApiToken,
   setApiToken,
-} from './lib/token-storage';
+} from './lib/token/token-storage';
 import {
   useRepositoryStats,
   useConfig,

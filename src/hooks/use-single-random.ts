@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 
 /**

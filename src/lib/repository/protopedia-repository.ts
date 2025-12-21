@@ -1,0 +1,54 @@
+import { PromidasRepositoryBuilder } from '@f88/promidas';
+import type { ProtopediaInMemoryRepository } from '@f88/promidas';
+import { getApiToken } from '../token/token-storage';
+import type { LogLevel } from '@f88/promidas/logger';
+import { createRepositoryConfigs } from './repository-config';
+import { resolveRepositoryInitFailure } from './init-error';
+
+export { REPOSITORY_MAX_DATA_SIZE, REPOSITORY_TTL_MS } from './constants';
+
+let repository: ProtopediaInMemoryRepository | null = null;
+
+export function getProtopediaRepository(): ProtopediaInMemoryRepository {
+  if (!repository) {
+    const token = getApiToken();
+
+    if (!token) {
+      throw new Error('API token is not set. Please configure it in Settings.');
+    }
+
+    // For demo site, set log level to debug to help with troubleshooting
+    const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = 'debug';
+
+    const { storeConfig, repositoryConfig, apiClientConfig } =
+      createRepositoryConfigs(token, LOG_LEVEL_FOR_DEMO_SITE);
+
+    try {
+      repository = new PromidasRepositoryBuilder()
+        .setStoreConfig(storeConfig)
+        .setApiClientConfig(apiClientConfig)
+        .setRepositoryConfig(repositoryConfig)
+        .build();
+    } catch (error) {
+      resolveRepositoryInitFailure({
+        error,
+        token,
+        storeConfig,
+        repositoryConfig,
+        apiClientConfig,
+      });
+    }
+  }
+
+  return repository;
+}
+
+export function resetRepository(): void {
+  if (repository) {
+    // Cleanup event listeners if repository has dispose method
+    if ('dispose' in repository && typeof repository.dispose === 'function') {
+      repository.dispose();
+    }
+  }
+  repository = null;
+}
