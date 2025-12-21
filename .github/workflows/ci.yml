@@ -15,7 +15,7 @@ permissions:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v6
@@ -29,6 +29,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --include=optional
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
 
       - name: List dependencies
         run: npm --loglevel notice list #default level
