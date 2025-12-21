@@ -104,7 +104,16 @@ function categorizeRepositoryInitError(
   }
 
   if (error instanceof PromidasStoreConfigurationError) {
-    return 'STORE_MAX_DATA_SIZE_EXCEEDED';
+    const messageLower = errorMessage.toLowerCase();
+
+    if (
+      messageLower.includes('maxdatasizebytes') &&
+      messageLower.includes('must be <=')
+    ) {
+      return 'STORE_MAX_DATA_SIZE_EXCEEDED';
+    }
+
+    return 'STORE_ERROR';
   }
 
   if (error instanceof SizeEstimationError) {
