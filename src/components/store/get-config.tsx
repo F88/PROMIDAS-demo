@@ -1,6 +1,6 @@
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
-import { hasApiToken } from '../../lib/token-storage';
+import { hasApiToken } from '../../lib/token/token-storage';
 
 interface GetConfigProps {
   configLoading: boolean;

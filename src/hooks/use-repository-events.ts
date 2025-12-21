@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
-import { hasApiToken } from '../lib/token-storage';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { hasApiToken } from '../lib/token/token-storage';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 

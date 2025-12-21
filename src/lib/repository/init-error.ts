@@ -1,0 +1,313 @@
+import type {
+  ProtopediaInMemoryRepositoryConfig,
+  PrototypeInMemoryStoreConfig,
+} from '@f88/promidas';
+import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
+import {
+  ConfigurationError as PromidasStoreConfigurationError,
+  DataSizeExceededError,
+  LIMIT_DATA_SIZE_BYTES,
+  SizeEstimationError,
+  StoreError,
+} from '@f88/promidas/store';
+import { REPOSITORY_MAX_DATA_SIZE, REPOSITORY_TTL_MS } from './constants';
+
+export type RepositoryInitErrorCategory =
+  | 'STORE_MAX_DATA_SIZE_EXCEEDED'
+  | 'STORE_SIZE_ESTIMATION_FAILED'
+  | 'STORE_ERROR'
+  | 'MISSING_TOKEN'
+  | 'NETWORK_ERROR'
+  | 'CORS_ERROR'
+  | 'UNKNOWN';
+
+export type RepositoryInitDiagnostics = {
+  category: RepositoryInitErrorCategory;
+  message: string;
+  constants: {
+    REPOSITORY_TTL_MS: number;
+    REPOSITORY_MAX_DATA_SIZE: number;
+    LIMIT_DATA_SIZE_BYTES: number;
+  };
+  effectiveConfig: {
+    storeConfig: PrototypeInMemoryStoreConfig;
+    repositoryConfig: ProtopediaInMemoryRepositoryConfig;
+    apiClientConfig: {
+      progressLog: boolean;
+      hasCustomFetch: boolean;
+      tokenPresent: boolean;
+      tokenLength: number;
+    };
+  };
+  runtime: {
+    isBrowser: boolean;
+    userAgent?: string;
+  };
+  hints: string[];
+};
+
+export type RepositoryInitErrorResolverInput = {
+  error: unknown;
+  token: string;
+  storeConfig: PrototypeInMemoryStoreConfig;
+  repositoryConfig: ProtopediaInMemoryRepositoryConfig;
+  apiClientConfig: ProtopediaApiCustomClientConfig;
+};
+
+function formatBytes(bytes: number): string {
+  const mib = bytes / 1024 / 1024;
+
+  if (Number.isFinite(mib)) {
+    return `${bytes} bytes (${mib.toFixed(2)} MiB)`;
+  }
+
+  return `${bytes} bytes`;
+}
+
+function normalizeErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return `Unknown error: ${String(error)}`;
+}
+
+function safeStringify(value: unknown): string {
+  const seen = new WeakSet<object>();
+
+  return JSON.stringify(
+    value,
+    (_key, currentValue) => {
+      if (typeof currentValue === 'bigint') {
+        return String(currentValue);
+      }
+
+      if (typeof currentValue === 'object' && currentValue !== null) {
+        if (seen.has(currentValue)) {
+          return '[Circular]';
+        }
+        seen.add(currentValue);
+      }
+
+      return currentValue;
+    },
+    2,
+  );
+}
+
+function categorizeRepositoryInitError(
+  error: unknown,
+  errorMessage: string,
+): RepositoryInitErrorCategory {
+  if (error instanceof DataSizeExceededError) {
+    return 'STORE_MAX_DATA_SIZE_EXCEEDED';
+  }
+
+  if (error instanceof PromidasStoreConfigurationError) {
+    const messageLower = errorMessage.toLowerCase();
+
+    if (
+      messageLower.includes('maxdatasizebytes') &&
+      messageLower.includes('must be <=')
+    ) {
+      return 'STORE_MAX_DATA_SIZE_EXCEEDED';
+    }
+
+    return 'STORE_ERROR';
+  }
+
+  if (error instanceof SizeEstimationError) {
+    return 'STORE_SIZE_ESTIMATION_FAILED';
+  }
+
+  if (error instanceof StoreError) {
+    return 'STORE_ERROR';
+  }
+
+  const messageLower = errorMessage.toLowerCase();
+
+  if (
+    messageLower.includes('maxdatasizebytes') &&
+    messageLower.includes('must be <=')
+  ) {
+    return 'STORE_MAX_DATA_SIZE_EXCEEDED';
+  }
+
+  if (messageLower.includes('api token is not set')) {
+    return 'MISSING_TOKEN';
+  }
+
+  if (
+    messageLower.includes('failed to fetch') ||
+    messageLower.includes('networkerror') ||
+    messageLower.includes('network error')
+  ) {
+    return 'NETWORK_ERROR';
+  }
+
+  if (
+    messageLower.includes('cors') ||
+    messageLower.includes('blocked by cors')
+  ) {
+    return 'CORS_ERROR';
+  }
+
+  return 'UNKNOWN';
+}
+
+export class RepositoryConfigurationError extends Error {
+  public override readonly name = 'RepositoryConfigurationError';
+
+  public readonly diagnostics: RepositoryInitDiagnostics;
+
+  public constructor(
+    message: string,
+    diagnostics: RepositoryInitDiagnostics,
+    options?: { cause?: unknown },
+  ) {
+    super(message);
+
+    this.diagnostics = diagnostics;
+
+    if (options?.cause !== undefined) {
+      (this as unknown as { cause: unknown }).cause = options.cause;
+    }
+  }
+}
+
+export function resolveRepositoryInitFailure(
+  input: RepositoryInitErrorResolverInput,
+): never {
+  const { error, token, storeConfig, repositoryConfig, apiClientConfig } =
+    input;
+
+  const errorMessage = normalizeErrorMessage(error);
+  const category = categorizeRepositoryInitError(error, errorMessage);
+
+  const isBrowser =
+    typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  const userAgent =
+    typeof globalThis.navigator !== 'undefined'
+      ? globalThis.navigator.userAgent
+      : undefined;
+
+  const hints: string[] = [];
+
+  if (category === 'STORE_MAX_DATA_SIZE_EXCEEDED') {
+    const maxDataSizeBytes = storeConfig.maxDataSizeBytes;
+
+    if (error instanceof DataSizeExceededError) {
+      hints.push(
+        `Snapshot data size (${formatBytes(
+          error.dataSizeBytes,
+        )}) exceeds configured maxDataSizeBytes (${formatBytes(
+          error.maxDataSizeBytes,
+        )}).`,
+      );
+    }
+
+    hints.push(
+      `Reduce storeConfig.maxDataSizeBytes to <= LIMIT_DATA_SIZE_BYTES (${formatBytes(
+        LIMIT_DATA_SIZE_BYTES,
+      )}).`,
+    );
+
+    if (
+      typeof maxDataSizeBytes === 'number' &&
+      maxDataSizeBytes > LIMIT_DATA_SIZE_BYTES
+    ) {
+      hints.push(
+        `Current maxDataSizeBytes is intentionally above the limit (${formatBytes(
+          maxDataSizeBytes,
+        )}).`,
+      );
+    }
+  }
+
+  if (
+    category === 'STORE_SIZE_ESTIMATION_FAILED' &&
+    error instanceof SizeEstimationError
+  ) {
+    hints.push(
+      'Snapshot size estimation failed. This can happen with circular references or unsupported values (e.g. BigInt) in the stored data.',
+    );
+
+    if (error.cause) {
+      hints.push(
+        `Estimation error cause: ${normalizeErrorMessage(error.cause)}`,
+      );
+    }
+  }
+
+  if (category === 'STORE_ERROR' && error instanceof StoreError) {
+    hints.push(`Store error: ${error.name}`);
+    hints.push(`Store dataState: ${error.dataState}`);
+
+    if (error instanceof DataSizeExceededError) {
+      hints.push(
+        `DataSizeExceededError details: dataSizeBytes=${error.dataSizeBytes}, maxDataSizeBytes=${error.maxDataSizeBytes}`,
+      );
+    }
+  }
+
+  if (category === 'CORS_ERROR') {
+    hints.push(
+      'Browser CORS may block custom headers. This demo deletes x-client-user-agent to avoid preflight failures.',
+    );
+  }
+
+  if (category === 'NETWORK_ERROR') {
+    hints.push('Check connectivity and ProtoPedia API availability.');
+    hints.push(
+      'If running on GitHub Pages, verify the API endpoint allows your origin.',
+    );
+  }
+
+  if (hints.length === 0) {
+    hints.push('Inspect diagnostics for configuration mismatches.');
+  }
+
+  const diagnostics: RepositoryInitDiagnostics = {
+    category,
+    message: errorMessage,
+    constants: {
+      REPOSITORY_TTL_MS,
+      REPOSITORY_MAX_DATA_SIZE,
+      LIMIT_DATA_SIZE_BYTES,
+    },
+    effectiveConfig: {
+      storeConfig,
+      repositoryConfig,
+      apiClientConfig: {
+        progressLog: apiClientConfig.progressLog ?? false,
+        hasCustomFetch:
+          typeof apiClientConfig.protoPediaApiClientOptions?.fetch ===
+          'function',
+        tokenPresent: token.length > 0,
+        tokenLength: token.length,
+      },
+    },
+    runtime: {
+      isBrowser,
+      userAgent,
+    },
+    hints,
+  };
+
+  console.error('[PROMIDAS Demo] Repository initialization failed', {
+    diagnostics,
+    error,
+    stack: error instanceof Error ? error.stack : undefined,
+  });
+
+  const detailsText = safeStringify(diagnostics);
+
+  throw new RepositoryConfigurationError(
+    `Failed to initialize PROMIDAS repository.\n` +
+      `Category: ${category}\n` +
+      `Message: ${errorMessage}\n` +
+      `Diagnostics: ${detailsText}`,
+    diagnostics,
+    { cause: error },
+  );
+}

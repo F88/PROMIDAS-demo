@@ -8,7 +8,7 @@
  */
 
 import { useState } from 'react';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 
 export function usePrototypeAnalysis() {
   const [analysis, setAnalysis] = useState<{

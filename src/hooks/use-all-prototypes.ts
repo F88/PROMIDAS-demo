@@ -9,7 +9,7 @@
 
 import { useState } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 
 export function useAllPrototypes() {
   const [prototypes, setPrototypes] = useState<NormalizedPrototype[] | null>(

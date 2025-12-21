@@ -23,7 +23,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@f88/promidas": "github:f88/promidas#v0.11.0",
+    "@f88/promidas": "github:f88/promidas#9e263398585ac4dbb5c09621cf50ebb9761fa38a",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "react": "^19.2.3",
@@ -38,7 +38,7 @@
     "@storybook/react-vite": "^10.1.10",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
-    "@types/node": "^24.10.2",
+    "@types/node": "^22.0.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",

@@ -12,8 +12,8 @@ import type { PrototypeInMemoryStats } from '@f88/promidas';
 import {
   getProtopediaRepository,
   REPOSITORY_TTL_MS,
-} from '../lib/protopedia-repository';
-import { hasApiToken } from '../lib/token-storage';
+} from '../lib/repository/protopedia-repository';
+import { hasApiToken } from '../lib/token/token-storage';
 
 export function useRepositoryStats() {
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(() => {

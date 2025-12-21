@@ -10,7 +10,7 @@
 import { useState } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { ValidationError } from '@f88/promidas/repository';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 
 export function usePrototypeSearch() {
   const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);

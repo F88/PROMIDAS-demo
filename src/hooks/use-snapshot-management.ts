@@ -14,7 +14,7 @@ import {
   type SnapshotOperationResult,
 } from '@f88/promidas/repository';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
-import { getProtopediaRepository } from '../lib/protopedia-repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 import {
   logFetchResult,
   handleSnapshotOperationError,
