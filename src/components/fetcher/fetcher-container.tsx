@@ -1,6 +1,7 @@
 import { Typography, Box } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { useDownloadProgress } from '../../hooks/use-download-progress';
+import { getApiToken } from '../../lib/token/token-storage';
 
 /**
  * Fetcher Container
@@ -80,7 +81,7 @@ export function FetcherContainer() {
             align="center"
             sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
           >
-            Ready to fetch
+            {getApiToken() ? 'No fetch operations yet.' : 'No API token set.'}
           </Typography>
         ) : (
           <Box
