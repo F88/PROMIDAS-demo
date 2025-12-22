@@ -31,7 +31,7 @@ export function ConfigDisplay({
           align="center"
           sx={{ py: 2 }}
         >
-          <b>getConfig()</b> を実行してください
+          NO DATA
         </Typography>
       )}
       {repoConfig && !configLoading && (

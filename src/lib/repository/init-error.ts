@@ -56,7 +56,7 @@ export type RepositoryInitDiagnostics = {
 
 export type RepositoryInitErrorResolverInput = {
   error: unknown;
-  token: string;
+  token: string | null;
   storeConfig: PrototypeInMemoryStoreConfig;
   repositoryConfig: ProtopediaInMemoryRepositoryConfig;
   apiClientConfig: ProtopediaApiCustomClientConfig;
@@ -141,7 +141,10 @@ function categorizeRepositoryInitError(
     return 'STORE_MAX_DATA_SIZE_EXCEEDED';
   }
 
-  if (messageLower.includes('api token is not set')) {
+  if (
+    messageLower.includes('api token is not set') ||
+    messageLower.includes('missing protopedia_api_v2_token')
+  ) {
     return 'MISSING_TOKEN';
   }
 
@@ -263,6 +266,15 @@ export function resolveRepositoryInitFailure(
     }
   }
 
+  if (category === 'MISSING_TOKEN') {
+    hints.push(
+      'APIトークンが未設定または空です。Settings画面でProtoPedia API v2のトークンを設定してください。',
+    );
+    hints.push(
+      'This is a demo site - you can explore the UI even without a token, but API operations will fail.',
+    );
+  }
+
   if (category === 'CORS_ERROR') {
     hints.push(
       'Browser CORS may block custom headers. PROMIDAS v0.13.0 removes x-client-user-agent in browser runtimes to avoid preflight failures.',
@@ -296,8 +308,8 @@ export function resolveRepositoryInitFailure(
         hasCustomFetch:
           typeof apiClientConfig.protoPediaApiClientOptions?.fetch ===
           'function',
-        tokenPresent: token.length > 0,
-        tokenLength: token.length,
+        tokenPresent: token != null && token?.length > 0,
+        tokenLength: token?.length ?? 0,
       },
     },
     runtime: {

@@ -83,18 +83,6 @@ describe('protopedia-repository', () => {
     mocks.build.mockReset();
   });
 
-  describe('token handling', () => {
-    it('throws when token is missing', () => {
-      mocks.getApiToken.mockReturnValue(null);
-
-      expect(() => getProtopediaRepository()).toThrow(
-        'API token is not set. Please configure it in Settings.',
-      );
-
-      expect(mocks.build).not.toHaveBeenCalled();
-    });
-  });
-
   describe('singleton lifecycle', () => {
     it('returns a singleton instance until reset', () => {
       mocks.getApiToken.mockReturnValue('token');

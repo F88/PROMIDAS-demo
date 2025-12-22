@@ -20,7 +20,7 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
           align="center"
           sx={{ py: 2 }}
         >
-          <b>setupSnapshot()</b> を実行してください
+          NO DATA
         </Typography>
       )}
       {stats && (

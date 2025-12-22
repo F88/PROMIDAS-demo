@@ -23,11 +23,11 @@ let repository: ProtopediaInMemoryRepository | null = null;
  */
 export function getProtopediaRepository(): ProtopediaInMemoryRepository {
   if (!repository) {
-    const token = getApiToken();
+    const token: string | null = getApiToken();
 
-    if (!token) {
-      throw new Error('API token is not set. Please configure it in Settings.');
-    }
+    // if (!token) {
+    //   throw new Error('API token is not set. Please configure it in Settings.');
+    // }
 
     // For demo site, set log level to debug to help with troubleshooting
     const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = 'debug';

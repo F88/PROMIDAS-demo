@@ -26,7 +26,7 @@ type CreateRepositoryConfigResult = {
  * Creates PROMIDAS configuration objects used to build the repository.
  */
 export function createRepositoryConfigs(
-  token: string,
+  token: string | null,
   logLevel: LogLevel,
 ): CreateRepositoryConfigResult {
   const storeConfig: PrototypeInMemoryStoreConfig = {
