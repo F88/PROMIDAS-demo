@@ -53,9 +53,11 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
       <Stack
         direction="row"
         spacing={1}
-        sx={{
-          mb: 2,
-        }}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
       >
         <ActionButton
           onClick={wrappedAnalyze}
@@ -78,34 +80,41 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
         </Alert>
       )}
       {analysis && !analysisLoading && (
-        <Table size="small">
-          <TableBody>
-            <TableRow>
-              <TableCell
-                component="th"
-                scope="row"
-                sx={{ color: 'text.secondary', fontWeight: 400 }}
-              >
-                Minimum ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 500 }}>
-                {analysis.min !== null ? analysis.min : 'N/A'}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell
-                component="th"
-                scope="row"
-                sx={{ color: 'text.secondary', fontWeight: 400 }}
-              >
-                Maximum ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 500 }}>
-                {analysis.max !== null ? analysis.max : 'N/A'}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <>
+          <Table
+            size="small"
+            sx={{
+              mt: 2,
+            }}
+          >
+            <TableBody>
+              <TableRow>
+                <TableCell
+                  component="th"
+                  scope="row"
+                  sx={{ color: 'text.secondary', fontWeight: 400 }}
+                >
+                  Minimum ID
+                </TableCell>
+                <TableCell sx={{ fontWeight: 500 }}>
+                  {analysis.min !== null ? analysis.min : 'N/A'}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell
+                  component="th"
+                  scope="row"
+                  sx={{ color: 'text.secondary', fontWeight: 400 }}
+                >
+                  Maximum ID
+                </TableCell>
+                <TableCell sx={{ fontWeight: 500 }}>
+                  {analysis.max !== null ? analysis.max : 'N/A'}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </>
       )}
     </SectionCard>
   );

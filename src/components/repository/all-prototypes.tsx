@@ -74,7 +74,11 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
         </Alert>
       )}
       {allPrototypes && !allLoading && (
-        <Box>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total Prototypes:{' '}
             <strong>{allPrototypes.length.toLocaleString()}</strong>

@@ -119,7 +119,11 @@ export function RandomPrototype({
         )}
 
       {randomPrototypes.length > 0 && !randomLoading && (
-        <Box>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total Prototypes:{' '}
             <strong>{randomPrototypes.length.toLocaleString()}</strong>

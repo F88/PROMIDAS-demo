@@ -74,7 +74,11 @@ export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
         </Alert>
       )}
       {prototypeIds && !idsLoading && (
-        <Box>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
           <Typography variant="body2" sx={{ mb: 1 }}>
             Total IDs: <strong>{prototypeIds.length.toLocaleString()}</strong>
             {prototypeIds.length > 20 && (

@@ -1,4 +1,4 @@
-import { Stack, TextField, Alert } from '@mui/material';
+import { Stack, TextField, Alert, Box } from '@mui/material';
 import { PrototypeCard } from '../common/prototype-card';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
@@ -78,11 +78,9 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
       <Stack
         direction="row"
         spacing={1}
-        sx={
-          {
-            // mb: 2,
-          }
-        }
+        sx={{
+          mt: 2,
+        }}
       >
         <ActionButton
           onClick={handleSearch}
@@ -100,12 +98,21 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
         </ActionButton>
       </Stack>
       {searchError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mt: 2,
+          }}
+        >
           {searchError}
         </Alert>
       )}
       {searchPrototype && !searchLoading && (
-        <PrototypeCard prototype={searchPrototype} />
+        <>
+          <Box sx={{ mt: 2 }}>
+            <PrototypeCard prototype={searchPrototype} />
+          </Box>
+        </>
       )}
     </SectionCard>
   );

@@ -1,4 +1,4 @@
-import { Stack, Alert, Typography } from '@mui/material';
+import { Stack, Alert, Typography, Box } from '@mui/material';
 import { PrototypeCard } from '../common/prototype-card';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
@@ -88,7 +88,15 @@ export function SingleRandom({ stats, visualizeFlow }: SingleRandomProps) {
           </Typography>
         )}
       {singleRandomPrototype && !singleRandomLoading && (
-        <PrototypeCard prototype={singleRandomPrototype} />
+        <>
+          <Box
+            sx={{
+              mt: 2,
+            }}
+          >
+            <PrototypeCard prototype={singleRandomPrototype} />
+          </Box>
+        </>
       )}
     </SectionCard>
   );
