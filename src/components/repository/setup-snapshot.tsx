@@ -4,6 +4,7 @@ import { SNAPSHOT_LIMITS } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { clampNumericInput } from '../../utils/number-utils';
+import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils';
 
 interface SetupSnapshotProps {
   snapshotLimit: string;
@@ -45,11 +46,12 @@ export function SetupSnapshot({
   handleResetSnapshotForm,
 }: SetupSnapshotProps) {
   const [areFiltersExpanded, setAreFiltersExpanded] = useState(false);
+  const localizedSnapshotError = localizeSnapshotOperationError(snapshotError);
 
   return (
     <SectionCard
       title="setupSnapshot()"
-      description="Initialize snapshot with filtering options"
+      description="Snapshotを初期化"
       category="Snapshot"
     >
       <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -184,8 +186,8 @@ export function SetupSnapshot({
         </Alert>
       )}
       {snapshotError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {snapshotError}
+        <Alert severity="error" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
+          {localizedSnapshotError}
         </Alert>
       )}
     </SectionCard>
