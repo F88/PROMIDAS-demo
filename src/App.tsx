@@ -416,7 +416,7 @@ function App() {
         <Typography variant="body2">
           Powered by{' '}
           <Link
-            href="https://github.com/F88/promidas"
+            href="https://f88.github.io/promidas/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{ color: 'white', fontWeight: 600 }}
