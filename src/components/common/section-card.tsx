@@ -17,9 +17,10 @@ export function SectionCard({
   return (
     <Box
       sx={{
-        p: 3,
-        mb: 3,
+        p: 2,
+        // mb: 3,
         backgroundColor: 'background.paper',
+        // backgroundColor: 'orange',
         borderRadius: 2,
         border: 1,
         borderColor: 'divider',
@@ -47,7 +48,13 @@ export function SectionCard({
         {title}
       </Typography>
       {description && (
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            mb: 1,
+          }}
+        >
           {description}
         </Typography>
       )}
