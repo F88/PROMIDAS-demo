@@ -301,7 +301,14 @@ function App() {
 
       <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 6,
+              lg: 4,
+            }}
+          >
             <ConfigContainer>
               <TokenConfiguration
                 token={token}
@@ -313,7 +320,14 @@ function App() {
             </ConfigContainer>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 6,
+              lg: 8,
+            }}
+          >
             <FetcherContainer />
           </Grid>
 
