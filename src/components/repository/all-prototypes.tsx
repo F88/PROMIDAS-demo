@@ -41,7 +41,7 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
   return (
     <SectionCard
       title="getAllFromSnapshot()"
-      description="Retrieve all prototypes from snapshot"
+      description="全てのPrototypeを取得"
       category="Query"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -68,14 +68,15 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
       {allPrototypes && !allLoading && (
         <Box>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Total Prototypes: <strong>{allPrototypes.length}</strong>
+            Total Prototypes:{' '}
+            <strong>{allPrototypes.length.toLocaleString()}</strong>
             {allPrototypes.length > 20 && (
               <Typography
                 component="span"
                 variant="body2"
                 sx={{ color: 'text.secondary', ml: 1 }}
               >
-                (Showing first 20)
+                (最初の20件)
               </Typography>
             )}
           </Typography>
@@ -89,7 +90,7 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
             ))}
             {allPrototypes.length > 20 && (
               <Chip
-                label={`+${allPrototypes.length - 20} more`}
+                label={`+${(allPrototypes.length - 20).toLocaleString()} more`}
                 size="small"
                 color="primary"
               />

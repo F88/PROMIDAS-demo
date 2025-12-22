@@ -40,7 +40,7 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
   return (
     <SectionCard
       title="analyzePrototypes()"
-      description="Extract min/max ID range from snapshot"
+      description="Snapshotを分析"
       category="Analysis"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>

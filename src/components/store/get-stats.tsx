@@ -12,7 +12,7 @@ export function GetStats({ fetchStats }: GetStatsProps) {
   return (
     <SectionCard
       title="getStats()"
-      description="Get current snapshot statistics and cache status"
+      description="Storeの状態を取得"
       category="Store"
     >
       <ActionButton disabled={disabled} onClick={fetchStats} size="small">

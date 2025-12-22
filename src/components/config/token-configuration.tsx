@@ -31,7 +31,7 @@ export function TokenConfiguration({
   return (
     <SectionCard
       title="API Token"
-      description="Configure your ProtoPedia API token for authenticated requests"
+      description="ProtoPedia APIトークンを設定"
       category="Authentication"
     >
       <TextField
@@ -39,7 +39,7 @@ export function TokenConfiguration({
         type={showToken ? 'text' : 'password'}
         value={token}
         onChange={(e) => setToken(e.target.value)}
-        placeholder="Enter your ProtoPedia API token"
+        placeholder="ProtoPedia APIトークン"
         size="small"
         sx={{ mb: 2 }}
         slotProps={{

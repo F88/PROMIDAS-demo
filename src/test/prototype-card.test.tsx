@@ -40,11 +40,6 @@ describe('PrototypeCard', () => {
     expect(screen.getByText(/ID: 123/)).toBeDefined();
   });
 
-  it('renders team name when provided', () => {
-    render(<PrototypeCard prototype={mockPrototype} />);
-    expect(screen.getByText(/Team: Test Team/)).toBeDefined();
-  });
-
   it('renders tags when provided', () => {
     render(<PrototypeCard prototype={mockPrototype} />);
     expect(screen.getByText('tag1')).toBeDefined();

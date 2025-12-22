@@ -355,22 +355,6 @@ function App() {
               visualizeFlow={visualizeFlow}
             />
           </Grid>
-
-          {(!stats || stats.size === 0) && (
-            <Grid size={{ xs: 12 }}>
-              <Box
-                sx={{
-                  textAlign: 'center',
-                  padding: '3rem 1rem',
-                  color: '#666',
-                }}
-              >
-                <Typography>
-                  No snapshot loaded. Please setup a snapshot first.
-                </Typography>
-              </Box>
-            </Grid>
-          )}
         </Grid>
       </Container>
 

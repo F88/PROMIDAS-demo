@@ -2,6 +2,7 @@ import { Stack, Alert } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
+import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils';
 
 interface RefreshSnapshotProps {
   snapshotLoading: boolean;
@@ -18,10 +19,12 @@ export function RefreshSnapshot({
   stats,
   handleRefreshSnapshot,
 }: RefreshSnapshotProps) {
+  const localizedSnapshotError = localizeSnapshotOperationError(snapshotError);
+
   return (
     <SectionCard
       title="refreshSnapshot()"
-      description="Update snapshot with latest data"
+      description="Snapshotを更新"
       category="Snapshot"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -39,8 +42,8 @@ export function RefreshSnapshot({
         </Alert>
       )}
       {snapshotError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {snapshotError}
+        <Alert severity="error" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
+          {localizedSnapshotError}
         </Alert>
       )}
     </SectionCard>
