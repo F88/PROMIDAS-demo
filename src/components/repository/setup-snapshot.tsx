@@ -1,4 +1,5 @@
-import { Stack, TextField, Grid, Alert } from '@mui/material';
+import { Stack, TextField, Grid, Alert, Collapse } from '@mui/material';
+import { useState } from 'react';
 import { SNAPSHOT_LIMITS } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
@@ -43,6 +44,8 @@ export function SetupSnapshot({
   handleSetupSnapshot,
   handleResetSnapshotForm,
 }: SetupSnapshotProps) {
+  const [areFiltersExpanded, setAreFiltersExpanded] = useState(false);
+
   return (
     <SectionCard
       title="setupSnapshot()"
@@ -50,7 +53,11 @@ export function SetupSnapshot({
       category="Snapshot"
     >
       <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid size={{ xs: 6, sm: 3 }}>
+        <Grid
+          size={{
+            xs: 6,
+          }}
+        >
           <TextField
             label="Limit"
             type="number"
@@ -74,7 +81,12 @@ export function SetupSnapshot({
             }}
           />
         </Grid>
-        <Grid size={{ xs: 6, sm: 3 }}>
+        <Grid
+          size={{
+            xs: 6,
+            // sm: 3
+          }}
+        >
           <TextField
             label="Offset"
             type="number"
@@ -86,56 +98,70 @@ export function SetupSnapshot({
           />
         </Grid>
       </Grid>
-      <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid size={{ xs: 12, sm: 3 }}>
-          <TextField
-            label="User Name"
-            type="text"
-            value={snapshotUserNm}
-            onChange={(e) => setSnapshotUserNm(e.target.value)}
-            placeholder="Filter by user"
-            fullWidth
-            size="small"
-            slotProps={{ htmlInput: { maxLength: 20 } }}
-          />
+
+      <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 2 }}>
+        <ActionButton
+          onClick={() => setAreFiltersExpanded((prev) => !prev)}
+          variant="secondary"
+          disabled={snapshotLoading}
+        >
+          {areFiltersExpanded ? 'フィルタを隠す' : 'フィルタを表示'}
+        </ActionButton>
+      </Stack>
+
+      <Collapse in={areFiltersExpanded}>
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <TextField
+              label="User Name"
+              type="text"
+              value={snapshotUserNm}
+              onChange={(e) => setSnapshotUserNm(e.target.value)}
+              placeholder="Filter by user"
+              fullWidth
+              size="small"
+              slotProps={{ htmlInput: { maxLength: 20 } }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <TextField
+              label="Tag Name"
+              type="text"
+              value={snapshotTagNm}
+              onChange={(e) => setSnapshotTagNm(e.target.value)}
+              placeholder="Filter by tag"
+              fullWidth
+              size="small"
+              slotProps={{ htmlInput: { maxLength: 20 } }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <TextField
+              label="Event Name"
+              type="text"
+              value={snapshotEventNm}
+              onChange={(e) => setSnapshotEventNm(e.target.value)}
+              placeholder="Filter by event"
+              fullWidth
+              size="small"
+              slotProps={{ htmlInput: { maxLength: 20 } }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <TextField
+              label="Material Name"
+              type="text"
+              value={snapshotMaterialNm}
+              onChange={(e) => setSnapshotMaterialNm(e.target.value)}
+              placeholder="Filter by material"
+              fullWidth
+              size="small"
+              slotProps={{ htmlInput: { maxLength: 20 } }}
+            />
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
-          <TextField
-            label="Tag Name"
-            type="text"
-            value={snapshotTagNm}
-            onChange={(e) => setSnapshotTagNm(e.target.value)}
-            placeholder="Filter by tag"
-            fullWidth
-            size="small"
-            slotProps={{ htmlInput: { maxLength: 20 } }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
-          <TextField
-            label="Event Name"
-            type="text"
-            value={snapshotEventNm}
-            onChange={(e) => setSnapshotEventNm(e.target.value)}
-            placeholder="Filter by event"
-            fullWidth
-            size="small"
-            slotProps={{ htmlInput: { maxLength: 20 } }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
-          <TextField
-            label="Material Name"
-            type="text"
-            value={snapshotMaterialNm}
-            onChange={(e) => setSnapshotMaterialNm(e.target.value)}
-            placeholder="Filter by material"
-            fullWidth
-            size="small"
-            slotProps={{ htmlInput: { maxLength: 20 } }}
-          />
-        </Grid>
-      </Grid>
+      </Collapse>
+
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <ActionButton
           onClick={handleSetupSnapshot}

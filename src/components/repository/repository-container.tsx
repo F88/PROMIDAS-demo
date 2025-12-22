@@ -1,4 +1,4 @@
-import { Typography, Stack, Grid } from '@mui/material';
+import { Typography, Grid } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { SetupSnapshot } from './setup-snapshot';
 import { RefreshSnapshot } from './refresh-snapshot';
@@ -117,7 +117,48 @@ export function RepositoryContainer({
 
   return (
     <ContainerWrapper type="repository" label="Repository" isActive={isActive}>
-      {/* Management Operations */}
+      {/* Store management */}
+      <Typography
+        variant="h6"
+        sx={{
+          mt: 3,
+          mb: 1,
+          fontSize: '1.1rem',
+          fontWeight: 600,
+        }}
+      >
+        Store management{' '}
+        <Typography
+          component="span"
+          sx={{ fontSize: '0.85rem', fontWeight: 400, opacity: 0.7 }}
+        >
+          (returns data even if TTL expired)
+        </Typography>
+      </Typography>
+
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+          }}
+        >
+          <GetConfig
+            configLoading={configLoading}
+            fetchConfig={wrappedFetchConfig}
+          />
+        </Grid>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+          }}
+        >
+          <GetStats fetchStats={wrappedUpdateStats} />
+        </Grid>
+      </Grid>
+
+      {/* Snapshot Management */}
       <Typography
         variant="h6"
         sx={{
@@ -130,47 +171,48 @@ export function RepositoryContainer({
         Snapshot Management
       </Typography>
 
-      <Stack spacing={2}>
-        {/* Setup Snapshot */}
-        <SetupSnapshot
-          snapshotLimit={snapshotLimit}
-          setSnapshotLimit={setSnapshotLimit}
-          snapshotOffset={snapshotOffset}
-          setSnapshotOffset={setSnapshotOffset}
-          snapshotUserNm={snapshotUserNm}
-          setSnapshotUserNm={setSnapshotUserNm}
-          snapshotTagNm={snapshotTagNm}
-          setSnapshotTagNm={setSnapshotTagNm}
-          snapshotEventNm={snapshotEventNm}
-          setSnapshotEventNm={setSnapshotEventNm}
-          snapshotMaterialNm={snapshotMaterialNm}
-          setSnapshotMaterialNm={setSnapshotMaterialNm}
-          snapshotLoading={setupLoading}
-          snapshotSuccess={setupSuccess}
-          snapshotError={setupError}
-          handleSetupSnapshot={handleSetupSnapshot}
-          handleResetSnapshotForm={handleResetSnapshotForm}
-        />
-
-        {/* Refresh Snapshot */}
-        <RefreshSnapshot
-          snapshotLoading={refreshLoading}
-          snapshotSuccess={refreshSuccess}
-          snapshotError={refreshError}
-          stats={stats}
-          handleRefreshSnapshot={handleRefreshSnapshot}
-        />
-      </Stack>
-
       <Grid container spacing={3} sx={{ mt: 1 }}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <GetConfig
-            configLoading={configLoading}
-            fetchConfig={wrappedFetchConfig}
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            // md: 6,
+          }}
+        >
+          <SetupSnapshot
+            snapshotLimit={snapshotLimit}
+            setSnapshotLimit={setSnapshotLimit}
+            snapshotOffset={snapshotOffset}
+            setSnapshotOffset={setSnapshotOffset}
+            snapshotUserNm={snapshotUserNm}
+            setSnapshotUserNm={setSnapshotUserNm}
+            snapshotTagNm={snapshotTagNm}
+            setSnapshotTagNm={setSnapshotTagNm}
+            snapshotEventNm={snapshotEventNm}
+            setSnapshotEventNm={setSnapshotEventNm}
+            snapshotMaterialNm={snapshotMaterialNm}
+            setSnapshotMaterialNm={setSnapshotMaterialNm}
+            snapshotLoading={setupLoading}
+            snapshotSuccess={setupSuccess}
+            snapshotError={setupError}
+            handleSetupSnapshot={handleSetupSnapshot}
+            handleResetSnapshotForm={handleResetSnapshotForm}
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <GetStats fetchStats={wrappedUpdateStats} />
+
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+          }}
+        >
+          <RefreshSnapshot
+            snapshotLoading={refreshLoading}
+            snapshotSuccess={refreshSuccess}
+            snapshotError={refreshError}
+            stats={stats}
+            handleRefreshSnapshot={handleRefreshSnapshot}
+          />
         </Grid>
       </Grid>
 
@@ -193,7 +235,16 @@ export function RepositoryContainer({
         </Typography>
       </Typography>
 
-      <Analysis stats={stats} visualizeFlow={visualizeFlow} />
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid
+          size={{
+            // xs: 12
+            xs: 6,
+          }}
+        >
+          <Analysis stats={stats} visualizeFlow={visualizeFlow} />
+        </Grid>
+      </Grid>
 
       {/* Query Operations */}
       <Typography
@@ -215,23 +266,23 @@ export function RepositoryContainer({
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
           <PrototypeIds stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
           <AllPrototypes stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
           <SearchById stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
           <SingleRandom stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, xl: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
           <RandomPrototype stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>
       </Grid>
