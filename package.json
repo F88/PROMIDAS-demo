@@ -1,8 +1,11 @@
 {
   "name": "promidas-demo",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.13.0",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "homepage": "https://f88.github.io/PROMIDAS-demo",
   "scripts": {
     "dev": "vite",
@@ -23,9 +26,10 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@f88/promidas": "github:f88/promidas#9e263398585ac4dbb5c09621cf50ebb9761fa38a",
+    "@f88/promidas": "github:f88/promidas#v0.13.0",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
+    "protopedia-api-v2-client": "^3.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
@@ -54,7 +58,6 @@
     "jsdom": "^27.3.0",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
-    "protopedia-api-v2-client": "^3.0.0",
     "storybook": "^10.1.10",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.50.0",

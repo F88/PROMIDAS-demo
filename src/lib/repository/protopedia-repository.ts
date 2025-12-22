@@ -1,3 +1,10 @@
+/**
+ * @file Singleton repository accessors for the demo app.
+ *
+ * The demo holds an in-memory PROMIDAS repository instance for reuse across
+ * components. `resetRepository` exists mainly for tests and manual resets.
+ */
+
 import { PromidasRepositoryBuilder } from '@f88/promidas';
 import type { ProtopediaInMemoryRepository } from '@f88/promidas';
 import { getApiToken } from '../token/token-storage';
@@ -9,6 +16,11 @@ export { REPOSITORY_MAX_DATA_SIZE, REPOSITORY_TTL_MS } from './constants';
 
 let repository: ProtopediaInMemoryRepository | null = null;
 
+/**
+ * Returns a singleton `ProtopediaInMemoryRepository` instance.
+ *
+ * Throws if the API token is not configured.
+ */
 export function getProtopediaRepository(): ProtopediaInMemoryRepository {
   if (!repository) {
     const token = getApiToken();
@@ -43,6 +55,9 @@ export function getProtopediaRepository(): ProtopediaInMemoryRepository {
   return repository;
 }
 
+/**
+ * Disposes and clears the cached repository instance.
+ */
 export function resetRepository(): void {
   if (repository) {
     // Cleanup event listeners if repository has dispose method

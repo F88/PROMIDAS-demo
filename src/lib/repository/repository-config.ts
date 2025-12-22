@@ -1,12 +1,20 @@
+/**
+ * @file Repository/store/API client configuration builders.
+ *
+ * This module centralizes the demo app's configuration for PROMIDAS so the UI
+ * can remain focused on interactions and presentation.
+ */
+
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
 } from '@f88/promidas';
-import type { LogLevel } from '@f88/promidas/logger';
 import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
+import type { LogLevel } from '@f88/promidas/logger';
 import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 import { emitDownloadProgress } from '../../hooks/use-download-progress';
 import { REPOSITORY_TTL_MS } from './constants';
+import { createFetch } from './create-fetch';
 
 type CreateRepositoryConfigResult = {
   storeConfig: PrototypeInMemoryStoreConfig;
@@ -14,6 +22,9 @@ type CreateRepositoryConfigResult = {
   apiClientConfig: ProtopediaApiCustomClientConfig;
 };
 
+/**
+ * Creates PROMIDAS configuration objects used to build the repository.
+ */
 export function createRepositoryConfigs(
   token: string,
   logLevel: LogLevel,
@@ -35,21 +46,7 @@ export function createRepositoryConfigs(
     protoPediaApiClientOptions: {
       logLevel,
       token,
-      fetch: async (url, init) => {
-        // Workaround for CORS issue with x-client-user-agent header
-        //
-        // see https://github.com/F88/promidas/issues/55
-        //
-        // Remove x-client-user-agent header for browser CORS compatibility
-        // ProtoPedia API does not allow this custom header in browser requests
-        //
-        // NOTE: X-ProtoPedia-API-Client also fails CORS (tested 2025-12-17)
-        // Custom headers require server-side CORS configuration
-        const headers = new Headers(init?.headers);
-        headers.delete('x-client-user-agent');
-        // Keep all other headers including Authorization
-        return globalThis.fetch(url, { ...init, headers });
-      },
+      fetch: createFetch(),
     },
     progressLog: true,
     progressCallback: {

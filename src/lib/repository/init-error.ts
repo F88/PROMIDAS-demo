@@ -1,3 +1,11 @@
+/**
+ * @file Repository initialization error diagnostics.
+ *
+ * PROMIDAS repository creation can fail for configuration, storage, or network
+ * reasons. This module normalizes errors into a consistent diagnostic shape and
+ * throws a typed error to aid debugging in the demo.
+ */
+
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
@@ -175,6 +183,11 @@ export class RepositoryConfigurationError extends Error {
   }
 }
 
+/**
+ * Converts an unknown repository initialization failure into a typed error.
+ *
+ * This function never returns and always throws `RepositoryConfigurationError`.
+ */
 export function resolveRepositoryInitFailure(
   input: RepositoryInitErrorResolverInput,
 ): never {
@@ -252,7 +265,7 @@ export function resolveRepositoryInitFailure(
 
   if (category === 'CORS_ERROR') {
     hints.push(
-      'Browser CORS may block custom headers. This demo deletes x-client-user-agent to avoid preflight failures.',
+      'Browser CORS may block custom headers. PROMIDAS v0.13.0 removes x-client-user-agent in browser runtimes to avoid preflight failures.',
     );
   }
 

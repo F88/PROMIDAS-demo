@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for the singleton repository accessor.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 type Repo = { dispose?: () => void };
@@ -79,43 +83,47 @@ describe('protopedia-repository', () => {
     mocks.build.mockReset();
   });
 
-  it('throws when token is missing', () => {
-    mocks.getApiToken.mockReturnValue(null);
+  describe('token handling', () => {
+    it('throws when token is missing', () => {
+      mocks.getApiToken.mockReturnValue(null);
 
-    expect(() => getProtopediaRepository()).toThrow(
-      'API token is not set. Please configure it in Settings.',
-    );
+      expect(() => getProtopediaRepository()).toThrow(
+        'API token is not set. Please configure it in Settings.',
+      );
 
-    expect(mocks.build).not.toHaveBeenCalled();
+      expect(mocks.build).not.toHaveBeenCalled();
+    });
   });
 
-  it('returns a singleton instance until reset', () => {
-    mocks.getApiToken.mockReturnValue('token');
+  describe('singleton lifecycle', () => {
+    it('returns a singleton instance until reset', () => {
+      mocks.getApiToken.mockReturnValue('token');
 
-    const repo1: Repo = { dispose: vi.fn() };
-    const repo2: Repo = { dispose: vi.fn() };
+      const repo1: Repo = { dispose: vi.fn() };
+      const repo2: Repo = { dispose: vi.fn() };
 
-    mocks.build.mockReturnValueOnce(repo1).mockReturnValueOnce(repo2);
+      mocks.build.mockReturnValueOnce(repo1).mockReturnValueOnce(repo2);
 
-    mocks.createRepositoryConfigs.mockReturnValue({
-      storeConfig: { ttlMs: 1 },
-      repositoryConfig: { enableEvents: true },
-      apiClientConfig: { progressLog: true },
+      mocks.createRepositoryConfigs.mockReturnValue({
+        storeConfig: { ttlMs: 1 },
+        repositoryConfig: { enableEvents: true },
+        apiClientConfig: { progressLog: true },
+      });
+
+      const a = getProtopediaRepository();
+      const b = getProtopediaRepository();
+
+      expect(a).toBe(repo1);
+      expect(b).toBe(repo1);
+      expect(mocks.build).toHaveBeenCalledTimes(1);
+
+      resetRepository();
+
+      expect(repo1.dispose).toHaveBeenCalledTimes(1);
+
+      const c = getProtopediaRepository();
+      expect(c).toBe(repo2);
+      expect(mocks.build).toHaveBeenCalledTimes(2);
     });
-
-    const a = getProtopediaRepository();
-    const b = getProtopediaRepository();
-
-    expect(a).toBe(repo1);
-    expect(b).toBe(repo1);
-    expect(mocks.build).toHaveBeenCalledTimes(1);
-
-    resetRepository();
-
-    expect(repo1.dispose).toHaveBeenCalledTimes(1);
-
-    const c = getProtopediaRepository();
-    expect(c).toBe(repo2);
-    expect(mocks.build).toHaveBeenCalledTimes(2);
   });
 });

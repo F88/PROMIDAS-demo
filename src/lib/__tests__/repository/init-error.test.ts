@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for repository initialization diagnostics.
+ */
+
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 import {
@@ -53,64 +57,68 @@ describe('init-error', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it('categorizes missing token errors via message', () => {
-    const input = createMinimalInput({
-      error: new Error(
-        'API token is not set. Please configure it in Settings.',
-      ),
-      token: '',
+  describe('categorization', () => {
+    it('categorizes missing token errors via message', () => {
+      const input = createMinimalInput({
+        error: new Error(
+          'API token is not set. Please configure it in Settings.',
+        ),
+        token: '',
+      });
+
+      try {
+        resolveRepositoryInitFailure(input as never);
+        throw new Error('Expected resolveRepositoryInitFailure to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(RepositoryConfigurationError);
+        const repoError = error as RepositoryConfigurationError;
+        expect(repoError.diagnostics.category).toBe('MISSING_TOKEN');
+        expect(repoError.diagnostics.hints.length).toBeGreaterThan(0);
+      }
     });
 
-    try {
-      resolveRepositoryInitFailure(input as never);
-      throw new Error('Expected resolveRepositoryInitFailure to throw');
-    } catch (error) {
-      expect(error).toBeInstanceOf(RepositoryConfigurationError);
-      const repoError = error as RepositoryConfigurationError;
-      expect(repoError.diagnostics.category).toBe('MISSING_TOKEN');
-      expect(repoError.diagnostics.hints.length).toBeGreaterThan(0);
-    }
+    it('categorizes store max size errors via message and includes hint', () => {
+      const input = createMinimalInput({
+        error: new Error('maxDataSizeBytes must be <= 1234'),
+      });
+
+      try {
+        resolveRepositoryInitFailure(input as never);
+        throw new Error('Expected resolveRepositoryInitFailure to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(RepositoryConfigurationError);
+        const repoError = error as RepositoryConfigurationError;
+        expect(repoError.diagnostics.category).toBe(
+          'STORE_MAX_DATA_SIZE_EXCEEDED',
+        );
+        expect(repoError.diagnostics.hints.join('\n')).toContain(
+          'Reduce storeConfig.maxDataSizeBytes',
+        );
+      }
+    });
   });
 
-  it('categorizes store max size errors via message and includes hint', () => {
-    const input = createMinimalInput({
-      error: new Error('maxDataSizeBytes must be <= 1234'),
+  describe('diagnostics serialization', () => {
+    it('safeStringify handles circular references in configs', () => {
+      const storeConfig: Record<string, unknown> = {
+        ttlMs: 1,
+        maxDataSizeBytes: LIMIT_DATA_SIZE_BYTES,
+        logLevel: 'debug',
+      };
+      storeConfig.self = storeConfig;
+
+      const input = createMinimalInput({
+        error: new Error('maxDataSizeBytes must be <= 1234'),
+        storeConfig,
+      });
+
+      try {
+        resolveRepositoryInitFailure(input as never);
+        throw new Error('Expected resolveRepositoryInitFailure to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(RepositoryConfigurationError);
+        expect((error as Error).message).toContain('[Circular]');
+      }
     });
-
-    try {
-      resolveRepositoryInitFailure(input as never);
-      throw new Error('Expected resolveRepositoryInitFailure to throw');
-    } catch (error) {
-      expect(error).toBeInstanceOf(RepositoryConfigurationError);
-      const repoError = error as RepositoryConfigurationError;
-      expect(repoError.diagnostics.category).toBe(
-        'STORE_MAX_DATA_SIZE_EXCEEDED',
-      );
-      expect(repoError.diagnostics.hints.join('\n')).toContain(
-        'Reduce storeConfig.maxDataSizeBytes',
-      );
-    }
-  });
-
-  it('safeStringify handles circular references in configs', () => {
-    const storeConfig: Record<string, unknown> = {
-      ttlMs: 1,
-      maxDataSizeBytes: LIMIT_DATA_SIZE_BYTES,
-      logLevel: 'debug',
-    };
-    storeConfig.self = storeConfig;
-
-    const input = createMinimalInput({
-      error: new Error('maxDataSizeBytes must be <= 1234'),
-      storeConfig,
-    });
-
-    try {
-      resolveRepositoryInitFailure(input as never);
-      throw new Error('Expected resolveRepositoryInitFailure to throw');
-    } catch (error) {
-      expect(error).toBeInstanceOf(RepositoryConfigurationError);
-      expect((error as Error).message).toContain('[Circular]');
-    }
   });
 });

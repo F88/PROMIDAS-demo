@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for sessionStorage-based token helpers.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getApiToken,
@@ -88,36 +92,42 @@ describe('token-storage', () => {
   });
 
   describe('edge cases', () => {
-    it('handles storage quota exceeded gracefully', () => {
-      // Mock setItem to throw quota exceeded error
-      const originalSetItem = sessionStorage.setItem;
-      sessionStorage.setItem = vi.fn(() => {
-        throw new DOMException('QuotaExceededError');
+    describe('storage failures', () => {
+      it('handles storage quota exceeded gracefully', () => {
+        // Mock setItem to throw quota exceeded error
+        const originalSetItem = sessionStorage.setItem;
+        sessionStorage.setItem = vi.fn(() => {
+          throw new DOMException('QuotaExceededError');
+        });
+
+        // Should not throw, error is caught and logged
+        expect(() => setApiToken('token')).not.toThrow();
+
+        sessionStorage.setItem = originalSetItem;
+      });
+    });
+
+    describe('token content', () => {
+      it('handles special characters in tokens', () => {
+        const specialToken = 'token-with-!@#$%^&*()_+={}[]|\\:";<>?,./';
+        setApiToken(specialToken);
+        expect(getApiToken()).toBe(specialToken);
       });
 
-      // Should not throw, error is caught and logged
-      expect(() => setApiToken('token')).not.toThrow();
-
-      sessionStorage.setItem = originalSetItem;
+      it('handles very long tokens', () => {
+        const longToken = 'a'.repeat(10000);
+        setApiToken(longToken);
+        expect(getApiToken()).toBe(longToken);
+      });
     });
 
-    it('handles special characters in tokens', () => {
-      const specialToken = 'token-with-!@#$%^&*()_+={}[]|\\:";<>?,./';
-      setApiToken(specialToken);
-      expect(getApiToken()).toBe(specialToken);
-    });
-
-    it('handles very long tokens', () => {
-      const longToken = 'a'.repeat(10000);
-      setApiToken(longToken);
-      expect(getApiToken()).toBe(longToken);
-    });
-
-    it('maintains independence from other sessionStorage keys', () => {
-      sessionStorage.setItem('other-key', 'other-value');
-      setApiToken('api-token');
-      expect(sessionStorage.getItem('other-key')).toBe('other-value');
-      expect(getApiToken()).toBe('api-token');
+    describe('other keys', () => {
+      it('maintains independence from other sessionStorage keys', () => {
+        sessionStorage.setItem('other-key', 'other-value');
+        setApiToken('api-token');
+        expect(sessionStorage.getItem('other-key')).toBe('other-value');
+        expect(getApiToken()).toBe('api-token');
+      });
     });
   });
 });

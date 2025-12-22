@@ -1,9 +1,15 @@
-// API token is stored in sessionStorage.
-// The token persists during the browser session (until tab is closed).
-// This provides a balance between security and usability.
+/**
+ * @file Session-scoped storage helpers for the ProtoPedia API token.
+ *
+ * The demo stores the token in `sessionStorage` so it lasts for the current tab
+ * session only.
+ */
 
 const STORAGE_KEY = 'protopedia_api_token';
 
+/**
+ * Gets the currently stored API token.
+ */
 export function getApiToken(): string | null {
   try {
     return sessionStorage.getItem(STORAGE_KEY);
@@ -14,6 +20,9 @@ export function getApiToken(): string | null {
   }
 }
 
+/**
+ * Stores the API token for the current browser session.
+ */
 export function setApiToken(token: string): void {
   try {
     sessionStorage.setItem(STORAGE_KEY, token);
@@ -22,6 +31,9 @@ export function setApiToken(token: string): void {
   }
 }
 
+/**
+ * Removes the stored API token.
+ */
 export function removeApiToken(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -30,6 +42,9 @@ export function removeApiToken(): void {
   }
 }
 
+/**
+ * Returns whether a token value exists in storage.
+ */
 export function hasApiToken(): boolean {
   return getApiToken() !== null;
 }
