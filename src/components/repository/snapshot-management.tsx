@@ -142,7 +142,13 @@ export function SnapshotManagement({
           />
         </Grid>
       </Grid>
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          mb: 2,
+        }}
+      >
         <ActionButton
           onClick={handleSetupSnapshot}
           disabled={snapshotLoading}

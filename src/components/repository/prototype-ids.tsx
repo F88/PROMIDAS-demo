@@ -44,7 +44,15 @@ export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
       description="全てのIDを取得"
       category="Query"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={wrappedFetchIds}
           disabled={disabled}

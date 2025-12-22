@@ -53,7 +53,13 @@ export function RandomPrototype({
       description="無作為に抽出"
       category="Query"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          mb: 2,
+        }}
+      >
         <TextField
           disabled={disabled}
           label="件数"
@@ -68,7 +74,15 @@ export function RandomPrototype({
           sx={{ maxWidth: 200 }}
         />
       </Stack>
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={handleFetchRandom}
           disabled={disabled}

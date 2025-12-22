@@ -27,7 +27,15 @@ export function RefreshSnapshot({
       description="Snapshotを更新"
       category="Snapshot"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={handleRefreshSnapshot}
           disabled={snapshotLoading || !stats || stats.size === 0}

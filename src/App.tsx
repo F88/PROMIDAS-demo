@@ -20,12 +20,12 @@ import {
   useConfig,
   useRepositoryEvents,
   useDownloadProgress,
+  type RepositoryStats,
 } from './hooks';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
 
 function isCacheAliveForTtlPolling(
-  stats: PrototypeInMemoryStats | null,
-): stats is PrototypeInMemoryStats {
+  stats: RepositoryStats | null,
+): stats is RepositoryStats {
   return (
     stats !== null &&
     stats.cachedAt !== null &&
@@ -313,8 +313,15 @@ function App() {
 
       <PromidasInfoSection />
 
-      <Container component="main" maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
-        <Grid container spacing={3}>
+      <Container
+        component="main"
+        maxWidth="xl"
+        sx={{
+          mt: 6,
+          mb: 6,
+        }}
+      >
+        <Grid container spacing={2}>
           <Grid
             size={{
               xs: 12,
@@ -359,7 +366,13 @@ function App() {
               lg: 6,
             }}
           >
-            <FetcherContainer />
+            <Grid
+              size={{
+                xs: 12,
+              }}
+            >
+              <FetcherContainer />
+            </Grid>
           </Grid>
 
           <Grid size={{ xs: 12 }}>

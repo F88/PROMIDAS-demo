@@ -1,4 +1,11 @@
-import { Typography, Stack, Alert } from '@mui/material';
+import {
+  Typography,
+  Alert,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@mui/material';
 import { SectionCard } from '../common/section-card';
 import type { StoreConfig } from '../../hooks/use-config';
 import { formatTime } from '../../utils/time-utils';
@@ -40,49 +47,46 @@ export function ConfigDisplay({
         </Typography>
       )}
       {repoConfig && !configLoading && (
-        <Stack spacing={0}>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              TTL (Time To Live):
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {(repoConfig.ttlMs / 1000).toFixed(0)} seconds (
-              {(repoConfig.ttlMs / 1000 / 60).toFixed(1)} minutes)
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Max Data Size:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {(repoConfig.maxDataSizeBytes / 1024 / 1024).toFixed(2)} MB (
-              {repoConfig.maxDataSizeBytes.toLocaleString()} bytes)
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Log Level:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {repoConfig.logLevel || 'info'}
-            </Typography>
-          </Stack>
-        </Stack>
+        <Table size="small">
+          <TableBody>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                TTL (Time To Live)
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {(repoConfig.ttlMs / 1000).toFixed(0)} seconds
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Max Data Size
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {(repoConfig.maxDataSizeBytes / 1024 / 1024).toFixed(2)} MB
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Log Level
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {repoConfig.logLevel || 'info'}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       )}
     </SectionCard>
   );

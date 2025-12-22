@@ -1,4 +1,10 @@
-import { Typography, Stack } from '@mui/material';
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@mui/material';
 import { SectionCard } from '../common/section-card';
 import type { RepositoryStats } from '../../hooks/use-repository-stats';
 import { formatTime } from '../../utils/time-utils';
@@ -25,90 +31,86 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
         </Typography>
       )}
       {stats && (
-        <Stack spacing={0}>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Snapshot Size:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {stats.size} prototypes
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Cached At:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {stats.cachedAt
-                ? new Date(stats.cachedAt).toLocaleString()
-                : 'Not cached'}
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="center"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Expired:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {stats.isExpired ? 'True' : 'False'}
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Remaining TTL:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {stats.remainingTtlMs > 0
-                ? `${(stats.remainingTtlMs / 1000).toFixed(1)} seconds`
-                : 'Expired'}
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="baseline"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Data Size:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {(stats.dataSizeBytes / 1024).toFixed(2)} KB
-            </Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            alignItems="center"
-          >
-            <Typography variant="caption" color="text.secondary">
-              Refresh In Flight:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {stats.refreshInFlight ? 'True' : 'False'}
-            </Typography>
-          </Stack>
-        </Stack>
+        <Table size="small">
+          <TableBody>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Snapshot Size
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {stats.size.toLocaleString()} prototypes
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Cached At
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {stats.cachedAt
+                  ? new Date(stats.cachedAt).toLocaleString()
+                  : 'Not cached'}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Expired
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {stats.isExpired ? 'True' : 'False'}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Remaining TTL
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {stats.remainingTtlMs > 0
+                  ? `${(stats.remainingTtlMs / 1000).toFixed(1)} seconds`
+                  : 'Expired'}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Data Size
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {(stats.dataSizeBytes / 1024 / 1024).toFixed(2)} MB
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Refresh In Flight
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {stats.refreshInFlight ? 'True' : 'False'}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       )}
     </SectionCard>
   );

@@ -1,4 +1,11 @@
-import { Stack, Alert, Typography, Box } from '@mui/material';
+import {
+  Stack,
+  Alert,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
@@ -43,7 +50,13 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
       description="Snapshotを分析"
       category="Analysis"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          mb: 2,
+        }}
+      >
         <ActionButton
           onClick={wrappedAnalyze}
           disabled={disabled}
@@ -65,24 +78,34 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
         </Alert>
       )}
       {analysis && !analysisLoading && (
-        <Stack spacing={1.5}>
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              Minimum ID:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {analysis.min !== null ? analysis.min : 'N/A'}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              Maximum ID:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {analysis.max !== null ? analysis.max : 'N/A'}
-            </Typography>
-          </Box>
-        </Stack>
+        <Table size="small">
+          <TableBody>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Minimum ID
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {analysis.min !== null ? analysis.min : 'N/A'}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: 'text.secondary', fontWeight: 400 }}
+              >
+                Maximum ID
+              </TableCell>
+              <TableCell sx={{ fontWeight: 500 }}>
+                {analysis.max !== null ? analysis.max : 'N/A'}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       )}
     </SectionCard>
   );

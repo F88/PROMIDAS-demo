@@ -69,7 +69,7 @@ export function RepositoryContainer({
     setupSnapshot,
     refreshSnapshot,
     clearSetupState,
-    clearRefreshState,
+    // clearRefreshState,
   } = useSnapshotManagement();
 
   // Event Handlers
@@ -124,8 +124,9 @@ export function RepositoryContainer({
       <Typography
         variant="h6"
         sx={{
-          mt: 3,
-          mb: 1,
+          // mt: 3,
+          // mb: 1,
+          my: 2,
           fontSize: '1.1rem',
           fontWeight: 600,
         }}
@@ -139,7 +140,7 @@ export function RepositoryContainer({
         </Typography> */}
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={2}>
         <Grid
           size={{
             xs: 12,
@@ -165,8 +166,9 @@ export function RepositoryContainer({
       <Typography
         variant="h6"
         sx={{
-          mt: 2,
-          mb: 1,
+          // mt: 2,
+          // mb: 1,
+          my: 2,
           fontSize: '1.1rem',
           fontWeight: 600,
         }}
@@ -174,7 +176,7 @@ export function RepositoryContainer({
         Snapshot Management
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={2}>
         <Grid
           size={{
             xs: 12,
@@ -223,8 +225,9 @@ export function RepositoryContainer({
       <Typography
         variant="h6"
         sx={{
-          mt: 3,
-          mb: 1,
+          // mt: 3,
+          // mb: 1,
+          my: 2,
           fontSize: '1.1rem',
           fontWeight: 600,
         }}
@@ -238,7 +241,7 @@ export function RepositoryContainer({
         </Typography>
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={2}>
         <Grid
           size={{
             xs: 12,
@@ -253,8 +256,9 @@ export function RepositoryContainer({
       <Typography
         variant="h6"
         sx={{
-          mt: 3,
-          mb: 1,
+          // mt: 3,
+          // mb: 1,
+          my: 2,
           fontSize: '1.1rem',
           fontWeight: 600,
         }}
@@ -268,7 +272,7 @@ export function RepositoryContainer({
         </Typography>
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
           <PrototypeIds stats={stats} visualizeFlow={visualizeFlow} />
         </Grid>

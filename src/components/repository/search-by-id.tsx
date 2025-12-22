@@ -54,7 +54,13 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
       description="IDを指定して取得"
       category="Query"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          mb: 2,
+        }}
+      >
         <TextField
           disabled={disabled}
           label="ID"
@@ -69,7 +75,15 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
           sx={{ maxWidth: 200 }}
         />
       </Stack>
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={handleSearch}
           disabled={disabled}

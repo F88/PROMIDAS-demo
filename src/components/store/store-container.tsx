@@ -1,14 +1,14 @@
 import { Grid } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { ConfigDisplay } from './config-display';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { RepositoryStats } from '../../hooks/use-repository-stats';
 // import { GetStats } from './get-stats';
 // import { GetConfig } from './get-config';
 import { StatsDisplay } from './stats-display';
 import type { StoreConfig } from '../../hooks/use-config';
 
 interface StoreContainerProps {
-  stats: PrototypeInMemoryStats | null;
+  stats: RepositoryStats | null;
   fetchStats: () => void;
   config: StoreConfig | null;
   configLoading: boolean;
@@ -28,7 +28,7 @@ export function StoreContainer({
 }: StoreContainerProps) {
   return (
     <ContainerWrapper type="store" label="Store" isActive={isActive}>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
           <ConfigDisplay
             repoConfig={config}

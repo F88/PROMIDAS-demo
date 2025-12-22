@@ -62,8 +62,6 @@ export function RepositorySettings({
     }
   };
 
-  const defaults = getDefaultStoreSettings();
-
   const ttlOptions = [
     { value: 10 * 1000, label: '10 秒' },
     { value: 30 * 1000, label: '30 秒' },
@@ -84,7 +82,14 @@ export function RepositorySettings({
       description="Store の設定"
       category="Configuration"
     >
-      <Stack spacing={2} sx={{ mb: 2 }}>
+      <Stack
+        spacing={2}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <Box>
           <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
             TTL (キャッシュ有効期限)
@@ -92,7 +97,7 @@ export function RepositorySettings({
           <ToggleButtonGroup
             value={settings.ttlMs}
             exclusive
-            onChange={(e, value) => value && handleTtlChange(value.toString())}
+            onChange={(_e, value) => value && handleTtlChange(value.toString())}
             size="small"
             fullWidth
           >
@@ -111,7 +116,7 @@ export function RepositorySettings({
           <ToggleButtonGroup
             value={settings.maxDataSizeBytes}
             exclusive
-            onChange={(e, value) =>
+            onChange={(_e, value) =>
               value && handleMaxDataSizeChange(value.toString())
             }
             size="small"

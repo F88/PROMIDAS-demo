@@ -45,7 +45,7 @@ export function useRepositoryStats() {
       const fetchedAt = Date.now();
 
       console.debug('[useRepositoryStats] Fetched repository stats', {
-        count: result.count,
+        size: result.size,
         cachedAt: result.cachedAt,
         isExpired: result.isExpired,
         remainingTtlMs: result.remainingTtlMs,

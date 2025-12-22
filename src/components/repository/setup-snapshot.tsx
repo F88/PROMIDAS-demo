@@ -54,7 +54,13 @@ export function SetupSnapshot({
       description="Snapshotを初期化"
       category="Snapshot"
     >
-      <Grid container spacing={2} sx={{ mb: 2 }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          mb: 2,
+        }}
+      >
         <Grid
           size={{
             xs: 6,
@@ -127,7 +133,13 @@ export function SetupSnapshot({
       </Stack>
 
       <Collapse in={areFiltersExpanded}>
-        <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            mb: 2,
+          }}
+        >
           <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
               label="User Name"
@@ -179,7 +191,15 @@ export function SetupSnapshot({
         </Grid>
       </Collapse>
 
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={handleSetupSnapshot}
           disabled={snapshotLoading}

@@ -45,7 +45,15 @@ export function SingleRandom({ stats, visualizeFlow }: SingleRandomProps) {
       description="ランダムに1件を取得"
       category="Query"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={wrappedFetchSingleRandom}
           disabled={disabled}

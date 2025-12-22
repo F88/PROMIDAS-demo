@@ -5,6 +5,7 @@ import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { getStoreState } from '../../utils/store-state-utils';
 import { useAllPrototypes } from '../../hooks';
+import { background } from 'storybook/theming';
 
 type FlowPattern =
   | 'get-store-info'
@@ -44,7 +45,15 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
       description="全てのPrototypeを取得"
       category="Query"
     >
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={
+          {
+            // mb: 2,
+          }
+        }
+      >
         <ActionButton
           onClick={wrappedFetchAll}
           disabled={disabled}
