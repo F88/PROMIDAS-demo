@@ -19,68 +19,137 @@ describe('createFetch', () => {
     globalThis.fetch = originalFetch;
   });
 
-  it('forwards RequestInit.headers object without changes', async () => {
-    const wrappedFetch = createFetch();
+  describe('argument forwarding', () => {
+    it('forwards a URL input', async () => {
+      const wrappedFetch = createFetch();
 
-    const headersObject = {
-      'x-client-user-agent': 'promidas-demo',
-      authorization: 'Bearer test',
-    };
+      const url = new URL('https://example.com/path');
+      await wrappedFetch(url);
 
-    await wrappedFetch('https://example.com', {
-      headers: headersObject,
+      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      expect(globalThis.fetch).toHaveBeenCalledWith(url, undefined);
     });
 
-    const fetchMock = globalThis.fetch as unknown as {
-      mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
-    };
+    it('forwards a Request input', async () => {
+      const wrappedFetch = createFetch();
 
-    const init = fetchMock.mock.calls[0]?.[1];
-    if (!init) {
-      throw new Error('Expected fetch to be called with init');
-    }
+      const request = new Request('https://example.com/request', {
+        method: 'POST',
+      });
+      await wrappedFetch(request);
 
-    expect(init.headers).toBe(headersObject);
-  });
-
-  it('forwards a Headers instance without mutation', async () => {
-    const wrappedFetch = createFetch();
-
-    const originalHeaders = new Headers({
-      'x-client-user-agent': 'promidas-demo',
-      authorization: 'Bearer test',
+      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      expect(globalThis.fetch).toHaveBeenCalledWith(request, undefined);
     });
 
-    await wrappedFetch('https://example.com', { headers: originalHeaders });
+    it('forwards undefined init', async () => {
+      const wrappedFetch = createFetch();
 
-    expect(originalHeaders.has('x-client-user-agent')).toBe(true);
-    expect(originalHeaders.get('authorization')).toBe('Bearer test');
+      await wrappedFetch('https://example.com');
 
-    const fetchMock = globalThis.fetch as unknown as {
-      mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
-    };
+      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
 
-    const init = fetchMock.mock.calls[0]?.[1];
-    if (!init) {
-      throw new Error('Expected fetch to be called with init');
-    }
+      const fetchMock = globalThis.fetch as unknown as {
+        mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
+      };
 
-    const passedHeaders = init.headers;
-    expect(passedHeaders).toBe(originalHeaders);
+      const init = fetchMock.mock.calls[0]?.[1];
+      expect(init).toBeUndefined();
+    });
+
+    it('forwards the init object without cloning', async () => {
+      const wrappedFetch = createFetch();
+
+      const init: RequestInit = {
+        method: 'GET',
+        headers: {
+          authorization: 'Bearer test',
+        },
+      };
+
+      await wrappedFetch('https://example.com', init);
+
+      const fetchMock = globalThis.fetch as unknown as {
+        mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
+      };
+
+      const passedInit = fetchMock.mock.calls[0]?.[1];
+      expect(passedInit).toBe(init);
+    });
   });
 
-  it('forwards undefined init', async () => {
-    const wrappedFetch = createFetch();
+  describe('header behavior', () => {
+    it('forwards RequestInit.headers object without changes', async () => {
+      const wrappedFetch = createFetch();
 
-    await wrappedFetch('https://example.com');
+      const headersObject = {
+        'x-client-user-agent': 'promidas-demo',
+        authorization: 'Bearer test',
+      };
 
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      await wrappedFetch('https://example.com', {
+        headers: headersObject,
+      });
 
-    const fetchMock = globalThis.fetch as unknown as {
-      mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
-    };
+      const fetchMock = globalThis.fetch as unknown as {
+        mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
+      };
 
-    const init = fetchMock.mock.calls[0]?.[1];
-    expect(init).toBeUndefined();
+      const init = fetchMock.mock.calls[0]?.[1];
+      if (!init) {
+        throw new Error('Expected fetch to be called with init');
+      }
+
+      expect(init.headers).toBe(headersObject);
+    });
+
+    it('forwards a Headers instance without mutation', async () => {
+      const wrappedFetch = createFetch();
+
+      const originalHeaders = new Headers({
+        'x-client-user-agent': 'promidas-demo',
+        authorization: 'Bearer test',
+      });
+
+      await wrappedFetch('https://example.com', { headers: originalHeaders });
+
+      expect(originalHeaders.has('x-client-user-agent')).toBe(true);
+      expect(originalHeaders.get('authorization')).toBe('Bearer test');
+
+      const fetchMock = globalThis.fetch as unknown as {
+        mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
+      };
+
+      const init = fetchMock.mock.calls[0]?.[1];
+      if (!init) {
+        throw new Error('Expected fetch to be called with init');
+      }
+
+      const passedHeaders = init.headers;
+      expect(passedHeaders).toBe(originalHeaders);
+    });
+  });
+
+  describe('return values and errors', () => {
+    it('returns the underlying fetch response', async () => {
+      const wrappedFetch = createFetch();
+
+      const response = { ok: true } as unknown as Response;
+      globalThis.fetch = vi.fn(async () => response) as unknown as typeof fetch;
+
+      const result = await wrappedFetch('https://example.com');
+      expect(result).toBe(response);
+    });
+
+    it('propagates errors from the underlying fetch', async () => {
+      const wrappedFetch = createFetch();
+
+      const error = new Error('fetch failed');
+      globalThis.fetch = vi.fn(async () => {
+        throw error;
+      }) as unknown as typeof fetch;
+
+      await expect(wrappedFetch('https://example.com')).rejects.toBe(error);
+    });
   });
 });

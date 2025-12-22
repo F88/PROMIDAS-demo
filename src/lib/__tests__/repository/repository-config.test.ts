@@ -34,81 +34,87 @@ describe('repository-config', () => {
     globalThis.fetch = originalFetch;
   });
 
-  it('creates configs with expected store defaults', () => {
-    const { storeConfig, repositoryConfig, apiClientConfig } =
-      createRepositoryConfigs('token', 'debug');
+  describe('store defaults', () => {
+    it('creates configs with expected store defaults', () => {
+      const { storeConfig, repositoryConfig, apiClientConfig } =
+        createRepositoryConfigs('token', 'debug');
 
-    expect(storeConfig.ttlMs).toBe(REPOSITORY_TTL_MS);
-    expect(storeConfig.maxDataSizeBytes).toBe(LIMIT_DATA_SIZE_BYTES);
-    expect(repositoryConfig.enableEvents).toBe(true);
+      expect(storeConfig.ttlMs).toBe(REPOSITORY_TTL_MS);
+      expect(storeConfig.maxDataSizeBytes).toBe(LIMIT_DATA_SIZE_BYTES);
+      expect(repositoryConfig.enableEvents).toBe(true);
 
-    expect(apiClientConfig.progressLog).toBe(true);
-    expect(typeof apiClientConfig.protoPediaApiClientOptions?.fetch).toBe(
-      'function',
-    );
+      expect(apiClientConfig.progressLog).toBe(true);
+      expect(typeof apiClientConfig.protoPediaApiClientOptions?.fetch).toBe(
+        'function',
+      );
+    });
   });
 
-  it('custom fetch forwards RequestInit.headers as-is', async () => {
-    const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
-    const customFetch = apiClientConfig.protoPediaApiClientOptions?.fetch;
+  describe('custom fetch', () => {
+    it('forwards RequestInit.headers as-is', async () => {
+      const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+      const customFetch = apiClientConfig.protoPediaApiClientOptions?.fetch;
 
-    expect(customFetch).toBeDefined();
+      expect(customFetch).toBeDefined();
 
-    const headersObject = {
-      'x-client-user-agent': 'promidas-demo',
-      authorization: 'Bearer test',
-    };
+      const headersObject = {
+        'x-client-user-agent': 'promidas-demo',
+        authorization: 'Bearer test',
+      };
 
-    await customFetch?.('https://example.com', {
-      headers: headersObject,
+      await customFetch?.('https://example.com', {
+        headers: headersObject,
+      });
+
+      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+
+      const fetchMock = globalThis.fetch as unknown as {
+        mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
+      };
+      const init = fetchMock.mock.calls[0]?.[1];
+
+      if (!init) {
+        throw new Error('Expected fetch to be called with init');
+      }
+
+      expect(init.headers).toBe(headersObject);
     });
-
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-
-    const fetchMock = globalThis.fetch as unknown as {
-      mock: { calls: Array<readonly [unknown, RequestInit | undefined]> };
-    };
-    const init = fetchMock.mock.calls[0]?.[1];
-
-    if (!init) {
-      throw new Error('Expected fetch to be called with init');
-    }
-
-    expect(init.headers).toBe(headersObject);
   });
 
-  it('progress callbacks emit download progress events', () => {
-    const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
-    const cb = apiClientConfig.progressCallback;
+  describe('download progress', () => {
+    it('progress callbacks emit download progress events', () => {
+      const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+      const cb = apiClientConfig.progressCallback;
 
-    if (!cb?.onStart || !cb.onProgress || !cb.onComplete) {
-      throw new Error('Expected progressCallback to be defined');
-    }
+      if (!cb?.onStart || !cb.onProgress || !cb.onComplete) {
+        throw new Error('Expected progressCallback to be defined');
+      }
 
-    cb.onStart(100, 200, 1.234);
-    cb.onProgress(10, 100, 10);
-    cb.onComplete(100, 100, 2.345, 3.456);
+      cb.onStart(100, 200, 1.234);
+      cb.onProgress(10, 100, 10);
+      cb.onComplete(100, 100, 2.345, 3.456);
 
-    expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
-      status: 'started',
-      estimatedBytes: 100,
-      limit: 200,
-      prepareTimeMs: 1234,
-    });
+      expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+        status: 'started',
+        estimatedBytes: 100,
+        limit: 200,
+        prepareTimeMs: 1234,
+      });
 
-    expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
-      status: 'in-progress',
-      receivedBytes: 10,
-      estimatedBytes: 100,
-      percentage: 10,
-    });
+      expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+        status: 'in-progress',
+        receivedBytes: 10,
+        estimatedBytes: 100,
+        percentage: 10,
+      });
 
-    expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
-      status: 'completed',
-      receivedBytes: 100,
-      estimatedBytes: 100,
-      downloadTimeMs: 2345,
-      totalTimeMs: 3456,
+      expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+        status: 'completed',
+        receivedBytes: 100,
+        estimatedBytes: 100,
+        downloadTimeMs: 2345,
+        totalTimeMs: 3456,
+      });
     });
   });
 });
