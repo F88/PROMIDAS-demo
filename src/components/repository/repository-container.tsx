@@ -238,8 +238,8 @@ export function RepositoryContainer({
       <Grid container spacing={3} sx={{ mt: 1 }}>
         <Grid
           size={{
-            // xs: 12
-            xs: 6,
+            xs: 12,
+            sm: 6,
           }}
         >
           <Analysis stats={stats} visualizeFlow={visualizeFlow} />
