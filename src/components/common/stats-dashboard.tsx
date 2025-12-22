@@ -31,16 +31,25 @@ function StyledChip({ label, color = 'default', fontWeight }: StyledChipProps) {
       label={label}
       color={color}
       size="small"
-      sx={{
+      sx={(theme) => ({
         fontWeight,
-        transition: 'all 0.3s ease-in-out',
+        transition: theme.transitions.create(
+          ['background-color', 'color', 'border-color'],
+          {
+            duration: theme.transitions.duration.shorter,
+            easing: theme.transitions.easing.easeInOut,
+          },
+        ),
         height: 24,
         fontSize: '0.75rem',
+        '@media (prefers-reduced-motion: reduce)': {
+          transition: 'none',
+        },
         '& .MuiChip-label': {
           px: 1,
           py: 0,
         },
-      }}
+      })}
     />
   );
 }
@@ -136,13 +145,19 @@ function StatItem({
       >
         {icon && (
           <Box
-            sx={{
+            sx={(theme) => ({
               mr: 0.5,
               display: 'flex',
               alignItems: 'center',
               color: iconColor || 'text.secondary',
-              transition: 'color 0.3s ease-in-out',
-            }}
+              transition: theme.transitions.create('color', {
+                duration: theme.transitions.duration.shorter,
+                easing: theme.transitions.easing.easeInOut,
+              }),
+              '@media (prefers-reduced-motion: reduce)': {
+                transition: 'none',
+              },
+            })}
           >
             {icon}
           </Box>
@@ -155,7 +170,15 @@ function StatItem({
           component="span"
           fontWeight={600}
           color="text.primary"
-          sx={{ transition: 'all 0.3s ease-in-out' }}
+          sx={(theme) => ({
+            transition: theme.transitions.create('color', {
+              duration: theme.transitions.duration.shorter,
+              easing: theme.transitions.easing.easeInOut,
+            }),
+            '@media (prefers-reduced-motion: reduce)': {
+              transition: 'none',
+            },
+          })}
         >
           {value}
         </Typography>
@@ -165,14 +188,21 @@ function StatItem({
           variant="determinate"
           value={progressPercent}
           color={progressColor}
-          sx={{
+          sx={(theme) => ({
             height: 4,
             borderRadius: 2,
-            transition: 'all 0.3s ease-in-out',
             '& .MuiLinearProgress-bar': {
-              transition: 'transform 0.5s ease-in-out',
+              transition: theme.transitions.create('transform', {
+                duration: theme.transitions.duration.standard,
+                easing: theme.transitions.easing.easeOut,
+              }),
             },
-          }}
+            '@media (prefers-reduced-motion: reduce)': {
+              '& .MuiLinearProgress-bar': {
+                transition: 'none',
+              },
+            },
+          })}
         />
       )}
     </Box>
@@ -245,17 +275,20 @@ function StoredStatsContent({
 
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
         width: '100%',
-        animation: 'fadeIn 0.3s ease-in-out',
+        animation: `fadeIn ${theme.transitions.duration.shorter}ms ${theme.transitions.easing.easeOut}`,
+        '@media (prefers-reduced-motion: reduce)': {
+          animation: 'none',
+        },
         '@keyframes fadeIn': {
           from: { opacity: 0, transform: 'translateY(-5px)' },
           to: { opacity: 1, transform: 'translateY(0)' },
         },
-      }}
+      })}
     >
       <Box
         sx={{
