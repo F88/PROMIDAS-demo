@@ -31,8 +31,7 @@ describe('localizeSnapshotOperationError', () => {
         '- APIトークンが未設定、または無効',
         '- ネットワークがオフライン',
         '- サーバが一時的に利用できない',
-        '(ProtoPedia API)',
-        '注: ProtoPedia APIがAccess-Control-Allow-Originを返さない場合、ブラウザ側で401を判定できず通信失敗として表示されます。',
+        '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
       ].join('\n'),
     );
   });
