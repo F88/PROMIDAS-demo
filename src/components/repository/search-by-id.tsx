@@ -6,6 +6,7 @@ import { ActionButton } from '../common/action-button';
 import { useState } from 'react';
 import { usePrototypeSearch } from '../../hooks';
 import { getStoreState } from '../../utils/store-state-utils';
+import { clampNumericInput } from '../../utils/number-utils';
 
 type FlowPattern =
   | 'get-store-info'
@@ -50,17 +51,17 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
   return (
     <SectionCard
       title="getPrototypeFromSnapshotByPrototypeId()"
-      description="Search for a specific prototype by ID"
+      description="IDを指定して取得"
       category="Query"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
           disabled={disabled}
-          label="Prototype ID"
+          label="ID"
           type="number"
           value={searchId}
           onChange={(e) => {
-            setSearchId(e.target.value);
+            setSearchId(clampNumericInput(e.target.value, 0, 99_999));
           }}
           placeholder="Enter Prototype ID"
           size="small"

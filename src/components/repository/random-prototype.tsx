@@ -4,6 +4,7 @@ import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { getStoreState } from '../../utils/store-state-utils';
+import { clampNumericInput } from '../../utils/number-utils';
 import { useState } from 'react';
 import { useRandomPrototype } from '../../hooks';
 
@@ -49,19 +50,19 @@ export function RandomPrototype({
   return (
     <SectionCard
       title="getRandomSampleFromSnapshot(size)"
-      description="Get random samples from snapshot without duplicates"
+      description="無作為に抽出"
       category="Query"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
           disabled={disabled}
-          label="Sample Size"
+          label="件数"
           type="number"
           value={randomSampleSize}
           onChange={(e) => {
-            setRandomSampleSize(e.target.value);
+            setRandomSampleSize(clampNumericInput(e.target.value, 0, 99_999));
           }}
-          fullWidth
+          // fullWidth
           size="small"
           slotProps={{ htmlInput: { min: 0, max: 99_999 } }}
           sx={{ maxWidth: 200 }}
@@ -106,14 +107,15 @@ export function RandomPrototype({
       {randomPrototypes.length > 0 && !randomLoading && (
         <Box>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Total Prototypes: <strong>{randomPrototypes.length}</strong>
+            Total Prototypes:{' '}
+            <strong>{randomPrototypes.length.toLocaleString()}</strong>
             {randomPrototypes.length > 20 && (
               <Typography
                 component="span"
                 variant="body2"
                 sx={{ color: 'text.secondary', ml: 1 }}
               >
-                (Showing first 20)
+                (最初の20件)
               </Typography>
             )}
           </Typography>
