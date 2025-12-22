@@ -19,6 +19,7 @@ const mockConfig: StoreConfig = {
   ttlMs: 30000,
   maxDataSizeBytes: 10485760, // 10 MB
   logLevel: 'info',
+  fetchedAt: Date.now(),
 };
 
 const createMockStats = (
