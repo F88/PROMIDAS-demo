@@ -1,6 +1,40 @@
 /* ========== Data Flow Visualization ========== */
 
-@keyframes containerGlow {
+@keyframes fetcherGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0);
+    border-color: #e5e7eb;
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(16, 185, 129, 0.6),
+      0 0 40px rgba(16, 185, 129, 0.4);
+    border-color: #10b981;
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0);
+    border-color: #e5e7eb;
+  }
+}
+
+@keyframes storeGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0);
+    border-color: #e5e7eb;
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(245, 158, 11, 0.6),
+      0 0 40px rgba(245, 158, 11, 0.4);
+    border-color: #f59e0b;
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0);
+    border-color: #e5e7eb;
+  }
+}
+
+@keyframes repositoryGlow {
   0% {
     box-shadow: 0 0 0 rgba(102, 126, 234, 0);
     border-color: #e5e7eb;
@@ -17,6 +51,23 @@
   }
 }
 
+@keyframes configGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
+    border-color: #e5e7eb;
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(139, 92, 246, 0.6),
+      0 0 40px rgba(139, 92, 246, 0.4);
+    border-color: #8b5cf6;
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
+    border-color: #e5e7eb;
+  }
+}
+
 .container-wrapper {
   position: relative;
   border: 2px solid #e5e7eb;
@@ -27,25 +78,25 @@
 }
 
 .container-wrapper.active {
-  animation: containerGlow 1s ease-in-out;
+  animation: repositoryGlow 1s ease-in-out;
 }
 
 .fetcher-container.active {
-  animation: containerGlow 1s ease-in-out;
+  animation: fetcherGlow 1s ease-in-out;
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
 }
 
 .store-container.active {
-  animation: containerGlow 1s ease-in-out;
+  animation: storeGlow 1s ease-in-out;
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
 }
 
 .repository-container.active {
-  animation: containerGlow 1s ease-in-out;
+  animation: repositoryGlow 1s ease-in-out;
   box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
 }
 
 .config-container.active {
-  animation: containerGlow 1s ease-in-out;
+  animation: configGlow 1s ease-in-out;
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
 }
