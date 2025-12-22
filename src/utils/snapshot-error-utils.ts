@@ -72,5 +72,6 @@ export function localizeSnapshotOperationError(
     return messagesForDisplay;
   }
 
+  // RepositoryConfigurationError throws user-friendly hints directly
   return normalizedSnapshotError;
 }

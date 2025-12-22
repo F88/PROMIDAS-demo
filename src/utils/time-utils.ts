@@ -1,0 +1,12 @@
+/**
+ * Format timestamp to HH:MM:SS format
+ * @param timestamp - Unix timestamp in milliseconds
+ * @returns Formatted time string (HH:MM:SS)
+ */
+export function formatTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
