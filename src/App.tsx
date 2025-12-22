@@ -91,13 +91,24 @@ function App() {
   const [isRepositoryActive, setIsRepositoryActive] = useState(false);
   const [isDisplayActive, setIsDisplayActive] = useState(false);
 
-  const { stats, updateStats } = useRepositoryStats();
+  const { stats, updateStats, clearStats } = useRepositoryStats();
   const {
     config: repoConfig,
     loading: configLoading,
     error: configError,
     fetchConfig,
+    clear: clearConfig,
   } = useConfig();
+
+  const showStoreInfo = () => {
+    fetchConfig();
+    updateStats();
+  };
+
+  const hideStoreInfo = () => {
+    clearConfig();
+    clearStats();
+  };
 
   // Listen to repository events for real-time fetch visualization
   useRepositoryEvents({
@@ -136,8 +147,12 @@ function App() {
 
   // Initialize config and stats on mount
   useEffect(() => {
-    fetchConfig();
-    updateStats();
+    if (hasApiToken()) {
+      showStoreInfo();
+      return;
+    }
+
+    hideStoreInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -262,16 +277,11 @@ function App() {
     }, 'get-store-info');
   };
 
-  const handleTokenChange = () => {
-    // Refresh stats after token change
-    updateStats();
-  };
-
   const handleSaveToken = () => {
     if (token.trim()) {
       setApiToken(token.trim());
       resetRepository();
-      handleTokenChange();
+      showStoreInfo();
     }
   };
 
@@ -280,7 +290,7 @@ function App() {
       removeApiToken();
       resetRepository();
       setTokenInput('');
-      handleTokenChange();
+      hideStoreInfo();
     }
   };
 
