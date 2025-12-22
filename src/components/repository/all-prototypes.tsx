@@ -5,7 +5,6 @@ import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { getStoreState } from '../../utils/store-state-utils';
 import { useAllPrototypes } from '../../hooks';
-import { background } from 'storybook/theming';
 
 type FlowPattern =
   | 'get-store-info'

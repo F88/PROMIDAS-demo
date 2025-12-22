@@ -21,7 +21,6 @@ import {
   REPOSITORY_TTL_MS,
   REPOSITORY_MAX_DATA_SIZE,
 } from '../../repository/constants';
-import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 
 describe('repository-config', () => {
   const originalFetch = globalThis.fetch;

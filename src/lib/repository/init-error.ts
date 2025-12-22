@@ -80,29 +80,6 @@ function normalizeErrorMessage(error: unknown): string {
   return `Unknown error: ${String(error)}`;
 }
 
-function _safeStringify(value: unknown): string {
-  const seen = new WeakSet<object>();
-
-  return JSON.stringify(
-    value,
-    (_key, currentValue) => {
-      if (typeof currentValue === 'bigint') {
-        return String(currentValue);
-      }
-
-      if (typeof currentValue === 'object' && currentValue !== null) {
-        if (seen.has(currentValue)) {
-          return '[Circular]';
-        }
-        seen.add(currentValue);
-      }
-
-      return currentValue;
-    },
-    2,
-  );
-}
-
 function categorizeRepositoryInitError(
   error: unknown,
   errorMessage: string,
