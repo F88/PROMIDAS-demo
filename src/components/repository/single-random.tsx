@@ -42,7 +42,7 @@ export function SingleRandom({ stats, visualizeFlow }: SingleRandomProps) {
   return (
     <SectionCard
       title="getRandomPrototypeFromSnapshot()"
-      description="Get a single random prototype (optimized method)"
+      description="ランダムに1件を取得"
       category="Query"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>

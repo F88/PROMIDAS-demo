@@ -24,7 +24,7 @@ export function RefreshSnapshot({
   return (
     <SectionCard
       title="refreshSnapshot()"
-      description="Update snapshot with latest data"
+      description="Snapshotを更新"
       category="Snapshot"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>

@@ -41,7 +41,7 @@ export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
   return (
     <SectionCard
       title="getPrototypeIdsFromSnapshot()"
-      description="Efficient ID-only retrieval"
+      description="全てのIDを取得"
       category="Query"
     >
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -68,7 +68,16 @@ export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
       {prototypeIds && !idsLoading && (
         <Box>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Total IDs: <strong>{prototypeIds.length}</strong>
+            Total IDs: <strong>{prototypeIds.length.toLocaleString()}</strong>
+            {prototypeIds.length > 20 && (
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: 'text.secondary', ml: 1 }}
+              >
+                (最初の20件)
+              </Typography>
+            )}
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {prototypeIds.slice(0, 50).map((id) => (
