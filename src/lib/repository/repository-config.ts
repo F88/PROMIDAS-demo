@@ -1,3 +1,10 @@
+/**
+ * @file Repository/store/API client configuration builders.
+ *
+ * This module centralizes the demo app's configuration for PROMIDAS so the UI
+ * can remain focused on interactions and presentation.
+ */
+
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
@@ -15,6 +22,9 @@ type CreateRepositoryConfigResult = {
   apiClientConfig: ProtopediaApiCustomClientConfig;
 };
 
+/**
+ * Creates PROMIDAS configuration objects used to build the repository.
+ */
 export function createRepositoryConfigs(
   token: string,
   logLevel: LogLevel,

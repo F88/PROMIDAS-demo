@@ -1,17 +1,27 @@
+/**
+ * @file Fetch wrapper factory used by the demo repository configuration.
+ *
+ * This module intentionally keeps the wrapper minimal: it forwards arguments to
+ * `globalThis.fetch` without modifying headers or request options.
+ */
+
+/**
+ * Type definition for a `fetch`-compatible function.
+ */
 export type FetchFunction = (
   input: RequestInfo | URL,
   init?: RequestInit,
 ) => Promise<Response>;
 
+/**
+ * Creates a `fetch` function wrapper.
+ *
+ * The returned function is a thin passthrough to `globalThis.fetch`. Keeping it
+ * as a factory makes it easy to extend (or inject a different fetch) in the
+ * future without changing call sites.
+ */
 export function createFetch(): FetchFunction {
   return async (input, init) => {
-    // Workaround for CORS issue with x-client-user-agent header.
-    //
-    // See: https://github.com/F88/promidas/issues/55
-    const headers = new Headers(init?.headers);
-    headers.delete('x-client-user-agent');
-    // headers.append('x-client-user-agent', 'hogex');
-
-    return globalThis.fetch(input, { ...init, headers });
+    return globalThis.fetch(input, init);
   };
 }

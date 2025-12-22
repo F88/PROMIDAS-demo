@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for sessionStorage-based token helpers.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getApiToken,

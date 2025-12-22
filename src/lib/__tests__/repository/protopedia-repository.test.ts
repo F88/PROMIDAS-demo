@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for the singleton repository accessor.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 type Repo = { dispose?: () => void };

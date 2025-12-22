@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for repository initialization diagnostics.
+ */
+
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 import {

@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for the `createFetch` wrapper factory.
+ */
+
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { createFetch } from '../../repository/create-fetch';
@@ -15,14 +19,16 @@ describe('createFetch', () => {
     globalThis.fetch = originalFetch;
   });
 
-  it('removes x-client-user-agent header', async () => {
+  it('forwards RequestInit.headers object without changes', async () => {
     const wrappedFetch = createFetch();
 
+    const headersObject = {
+      'x-client-user-agent': 'promidas-demo',
+      authorization: 'Bearer test',
+    };
+
     await wrappedFetch('https://example.com', {
-      headers: {
-        'x-client-user-agent': 'promidas-demo',
-        authorization: 'Bearer test',
-      },
+      headers: headersObject,
     });
 
     const fetchMock = globalThis.fetch as unknown as {
@@ -34,16 +40,10 @@ describe('createFetch', () => {
       throw new Error('Expected fetch to be called with init');
     }
 
-    const headers = init.headers;
-    if (!(headers instanceof Headers)) {
-      throw new Error('Expected fetch init.headers to be a Headers instance');
-    }
-
-    expect(headers.has('x-client-user-agent')).toBe(false);
-    expect(headers.get('authorization')).toBe('Bearer test');
+    expect(init.headers).toBe(headersObject);
   });
 
-  it('does not mutate the original Headers instance', async () => {
+  it('forwards a Headers instance without mutation', async () => {
     const wrappedFetch = createFetch();
 
     const originalHeaders = new Headers({
@@ -66,15 +66,10 @@ describe('createFetch', () => {
     }
 
     const passedHeaders = init.headers;
-    if (!(passedHeaders instanceof Headers)) {
-      throw new Error('Expected fetch init.headers to be a Headers instance');
-    }
-
-    expect(passedHeaders.has('x-client-user-agent')).toBe(false);
-    expect(passedHeaders.get('authorization')).toBe('Bearer test');
+    expect(passedHeaders).toBe(originalHeaders);
   });
 
-  it('works when init is undefined', async () => {
+  it('forwards undefined init', async () => {
     const wrappedFetch = createFetch();
 
     await wrappedFetch('https://example.com');
@@ -86,11 +81,6 @@ describe('createFetch', () => {
     };
 
     const init = fetchMock.mock.calls[0]?.[1];
-    if (!init) {
-      throw new Error('Expected fetch to be called with init');
-    }
-
-    const headers = init.headers;
-    expect(headers instanceof Headers).toBe(true);
+    expect(init).toBeUndefined();
   });
 });

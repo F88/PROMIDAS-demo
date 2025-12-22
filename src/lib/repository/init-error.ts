@@ -1,3 +1,11 @@
+/**
+ * @file Repository initialization error diagnostics.
+ *
+ * PROMIDAS repository creation can fail for configuration, storage, or network
+ * reasons. This module normalizes errors into a consistent diagnostic shape and
+ * throws a typed error to aid debugging in the demo.
+ */
+
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
@@ -175,6 +183,11 @@ export class RepositoryConfigurationError extends Error {
   }
 }
 
+/**
+ * Converts an unknown repository initialization failure into a typed error.
+ *
+ * This function never returns and always throws `RepositoryConfigurationError`.
+ */
 export function resolveRepositoryInitFailure(
   input: RepositoryInitErrorResolverInput,
 ): never {

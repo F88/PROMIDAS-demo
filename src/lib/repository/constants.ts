@@ -1,4 +1,15 @@
-// Repository configuration constants
-// export const REPOSITORY_TTL_MS = 1_000 * 30; // 30 seconds
-export const REPOSITORY_TTL_MS = 1_000 * 10; // 10 seconds
-export const REPOSITORY_MAX_DATA_SIZE = 10 * 1024 * 1024; // 10 MiB
+/**
+ * @file Repository-related configuration constants for the demo app.
+ */
+
+/**
+ * In-memory repository time-to-live in milliseconds.
+ */
+export const REPOSITORY_TTL_MS = 1_000 * 10;
+
+/**
+ * Maximum data size used by the demo for local sizing/diagnostics.
+ *
+ * Note: PROMIDAS also enforces its own internal `LIMIT_DATA_SIZE_BYTES`.
+ */
+export const REPOSITORY_MAX_DATA_SIZE = 10 * 1024 * 1024;

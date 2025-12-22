@@ -1,3 +1,7 @@
+/**
+ * @file Unit tests for repository configuration builder utilities.
+ */
+
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => {
@@ -44,17 +48,19 @@ describe('repository-config', () => {
     );
   });
 
-  it('custom fetch removes x-client-user-agent header', async () => {
+  it('custom fetch forwards RequestInit.headers as-is', async () => {
     const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
     const customFetch = apiClientConfig.protoPediaApiClientOptions?.fetch;
 
     expect(customFetch).toBeDefined();
 
+    const headersObject = {
+      'x-client-user-agent': 'promidas-demo',
+      authorization: 'Bearer test',
+    };
+
     await customFetch?.('https://example.com', {
-      headers: {
-        'x-client-user-agent': 'promidas-demo',
-        authorization: 'Bearer test',
-      },
+      headers: headersObject,
     });
 
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
@@ -68,14 +74,7 @@ describe('repository-config', () => {
       throw new Error('Expected fetch to be called with init');
     }
 
-    const headers = init.headers;
-
-    if (!(headers instanceof Headers)) {
-      throw new Error('Expected fetch init.headers to be a Headers instance');
-    }
-
-    expect(headers.has('x-client-user-agent')).toBe(false);
-    expect(headers.get('authorization')).toBe('Bearer test');
+    expect(init.headers).toBe(headersObject);
   });
 
   it('progress callbacks emit download progress events', () => {
