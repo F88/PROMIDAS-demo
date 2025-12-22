@@ -144,9 +144,17 @@ export function RepositorySettings({
         </Stack>
       </Stack>
       {saveSuccess && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {saveSuccess}
-        </Alert>
+        <Box
+          sx={
+            {
+              // mt: 2,
+            }
+          }
+        >
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {saveSuccess}
+          </Alert>
+        </Box>
       )}
     </SectionCard>
   );
