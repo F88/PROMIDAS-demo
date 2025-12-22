@@ -16,7 +16,7 @@ export function ConfigDisplay({
   return (
     <SectionCard
       title="Configuration"
-      description="Current store settings"
+      description="現在のStore設定"
       category="Store"
     >
       {configError && (
@@ -31,7 +31,7 @@ export function ConfigDisplay({
           align="center"
           sx={{ py: 2 }}
         >
-          No config available. Please execute getConfig() first.
+          <b>getConfig()</b> を実行してください
         </Typography>
       )}
       {repoConfig && !configLoading && (

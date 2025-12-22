@@ -10,7 +10,7 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
   return (
     <SectionCard
       title="Statistics"
-      description="Current snapshot statistics"
+      description="現在のSnapshot統計"
       category="Store"
     >
       {!stats && (
@@ -20,7 +20,7 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
           align="center"
           sx={{ py: 2 }}
         >
-          No stats available. Please setup a snapshot first.
+          <b>setupSnapshot()</b> を実行してください
         </Typography>
       )}
       {stats && (
