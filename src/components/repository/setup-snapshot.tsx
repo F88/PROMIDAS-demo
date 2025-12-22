@@ -73,7 +73,7 @@ export function SetupSnapshot({
                 ),
               );
             }}
-            fullWidth
+            // fullWidth
             size="small"
             slotProps={{
               htmlInput: {
@@ -81,6 +81,7 @@ export function SetupSnapshot({
                 max: SNAPSHOT_LIMITS.MAX_LIMIT,
               },
             }}
+            sx={{ maxWidth: 200 }}
           />
         </Grid>
         <Grid
@@ -93,10 +94,24 @@ export function SetupSnapshot({
             label="Offset"
             type="number"
             value={snapshotOffset}
-            onChange={(e) => setSnapshotOffset(e.target.value)}
-            fullWidth
+            onChange={(e) => {
+              setSnapshotOffset(
+                clampNumericInput(
+                  e.target.value,
+                  SNAPSHOT_LIMITS.MIN_LIMIT,
+                  SNAPSHOT_LIMITS.MAX_LIMIT,
+                ),
+              );
+            }}
+            // fullWidth
             size="small"
-            slotProps={{ htmlInput: { min: 0 } }}
+            slotProps={{
+              htmlInput: {
+                min: SNAPSHOT_LIMITS.MIN_LIMIT,
+                max: SNAPSHOT_LIMITS.MAX_LIMIT,
+              },
+            }}
+            sx={{ maxWidth: 200 }}
           />
         </Grid>
       </Grid>
