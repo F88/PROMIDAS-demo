@@ -104,7 +104,7 @@ describe('token-storage', () => {
         expect(() => setApiToken('token')).not.toThrow();
 
         sessionStorage.setItem = originalSetItem;
-      };);
+      });
     });
 
     describe('token content', () => {
