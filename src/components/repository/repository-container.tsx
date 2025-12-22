@@ -128,12 +128,12 @@ export function RepositoryContainer({
         }}
       >
         Store management{' '}
-        <Typography
+        {/* <Typography
           component="span"
           sx={{ fontSize: '0.85rem', fontWeight: 400, opacity: 0.7 }}
         >
           (returns data even if TTL expired)
-        </Typography>
+        </Typography> */}
       </Typography>
 
       <Grid container spacing={3} sx={{ mt: 1 }}>

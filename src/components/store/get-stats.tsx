@@ -12,7 +12,7 @@ export function GetStats({ fetchStats }: GetStatsProps) {
   return (
     <SectionCard
       title="getStats()"
-      description="キャッシュの状態を取得"
+      description="Storeの状態を取得"
       category="Store"
     >
       <ActionButton disabled={disabled} onClick={fetchStats} size="small">
