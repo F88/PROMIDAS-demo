@@ -15,14 +15,19 @@ import {
 } from '../lib/repository/protopedia-repository';
 import { hasApiToken } from '../lib/token/token-storage';
 
+export type RepositoryStats = PrototypeInMemoryStats & {
+  fetchedAt: number;
+};
+
 export function useRepositoryStats() {
-  const [stats, setStats] = useState<PrototypeInMemoryStats | null>(() => {
+  const [stats, setStats] = useState<RepositoryStats | null>(() => {
     if (!hasApiToken()) {
       return null;
     }
     try {
       const repo = getProtopediaRepository();
-      return repo.getStats();
+      const result = repo.getStats();
+      return { ...result, fetchedAt: Date.now() };
     } catch (err) {
       console.error('[PROMIDAS Demo] useRepositoryStats init failed:', err);
       return null;
@@ -36,7 +41,18 @@ export function useRepositoryStats() {
     }
     try {
       const repo = getProtopediaRepository();
-      setStats(repo.getStats());
+      const result = repo.getStats();
+      const fetchedAt = Date.now();
+
+      console.debug('[useRepositoryStats] Fetched repository stats', {
+        count: result.count,
+        cachedAt: result.cachedAt,
+        isExpired: result.isExpired,
+        remainingTtlMs: result.remainingTtlMs,
+        fetchedAt: new Date(fetchedAt).toISOString(),
+      });
+
+      setStats({ ...result, fetchedAt });
     } catch (err) {
       console.error('[PROMIDAS Demo] useRepositoryStats update failed:', err);
       // Token not set yet

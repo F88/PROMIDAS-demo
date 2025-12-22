@@ -105,6 +105,16 @@ export function useSnapshotManagement() {
     }
   };
 
+  const clearSetupState = () => {
+    setSetupError(null);
+    setSetupSuccess(null);
+  };
+
+  const clearRefreshState = () => {
+    setRefreshError(null);
+    setRefreshSuccess(null);
+  };
+
   return {
     setupLoading,
     refreshLoading,
@@ -115,5 +125,7 @@ export function useSnapshotManagement() {
     stats,
     setupSnapshot,
     refreshSnapshot,
+    clearSetupState,
+    clearRefreshState,
   };
 }

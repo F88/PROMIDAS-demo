@@ -65,7 +65,7 @@ export function TokenConfiguration({
           onClick={onSaveToken}
           disabled={!token.trim()}
         >
-          Save
+          一時的に保存
         </ActionButton>
         {hasToken && (
           <ActionButton
@@ -73,7 +73,7 @@ export function TokenConfiguration({
             startIcon={<Delete />}
             onClick={onDeleteToken}
           >
-            Delete
+            削除
           </ActionButton>
         )}
       </Stack>
@@ -84,9 +84,9 @@ export function TokenConfiguration({
           target="_blank"
           rel="noopener noreferrer"
         >
-          ProtoPedia Settings
+          ProtoPedia
         </Link>{' '}
-        で確認できます
+        で確認して下さい
       </Typography>
     </SectionCard>
   );

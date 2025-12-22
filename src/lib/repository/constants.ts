@@ -5,7 +5,8 @@
 /**
  * In-memory repository time-to-live in milliseconds.
  */
-export const REPOSITORY_TTL_MS = 1_000 * 10;
+// export const REPOSITORY_TTL_MS = 10 * 1_000;
+export const REPOSITORY_TTL_MS = 60 * 1_000;
 
 /**
  * Maximum data size used by the demo for local sizing/diagnostics.

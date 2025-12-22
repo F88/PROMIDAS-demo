@@ -11,10 +11,9 @@ import type {
 } from '@f88/promidas';
 import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
 import type { LogLevel } from '@f88/promidas/logger';
-import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 import { emitDownloadProgress } from '../../hooks/use-download-progress';
-import { REPOSITORY_TTL_MS } from './constants';
 import { createFetch } from './create-fetch';
+import { loadStoreSettings } from './repository-settings';
 
 type CreateRepositoryConfigResult = {
   storeConfig: PrototypeInMemoryStoreConfig;
@@ -29,23 +28,18 @@ export function createRepositoryConfigs(
   token: string | null,
   logLevel: LogLevel,
 ): CreateRepositoryConfigResult {
-  const storeConfig: PrototypeInMemoryStoreConfig = {
-    ttlMs: REPOSITORY_TTL_MS,
-    // maxDataSizeBytes: LIMIT_DATA_SIZE_BYTES /* imported from @f88/promidas/store */,
-    // maxDataSizeBytes: REPOSITORY_MAX_DATA_SIZE,
-    maxDataSizeBytes: LIMIT_DATA_SIZE_BYTES,
-    logLevel,
-  };
+  const settings = loadStoreSettings();
 
-  const repositoryConfig: ProtopediaInMemoryRepositoryConfig = {
+  const storeConfig: PrototypeInMemoryStoreConfig = {
+    ttlMs: settings.ttlMs,
+    maxDataSizeBytes: settings.maxDataSizeBytes,
     logLevel,
-    enableEvents: true,
   };
 
   const apiClientConfig: ProtopediaApiCustomClientConfig = {
     protoPediaApiClientOptions: {
       logLevel,
-      token,
+      token: token ?? undefined,
       fetch: createFetch(),
     },
     progressLog: true,
@@ -92,6 +86,11 @@ export function createRepositoryConfigs(
         });
       },
     },
+  };
+
+  const repositoryConfig: ProtopediaInMemoryRepositoryConfig = {
+    logLevel,
+    enableEvents: true,
   };
 
   return { storeConfig, repositoryConfig, apiClientConfig };

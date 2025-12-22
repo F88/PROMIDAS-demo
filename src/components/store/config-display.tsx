@@ -1,6 +1,7 @@
 import { Typography, Stack, Alert } from '@mui/material';
 import { SectionCard } from '../common/section-card';
 import type { StoreConfig } from '../../hooks/use-config';
+import { formatTime } from '../../utils/time-utils';
 
 interface ConfigDisplayProps {
   repoConfig: StoreConfig | null;
@@ -13,10 +14,14 @@ export function ConfigDisplay({
   configLoading,
   configError,
 }: ConfigDisplayProps) {
+  const description = repoConfig
+    ? `現在のStore設定 (${formatTime(repoConfig.fetchedAt)})`
+    : '現在のStore設定';
+
   return (
     <SectionCard
       title="Configuration"
-      description="現在のStore設定"
+      description={description}
       category="Store"
     >
       {configError && (

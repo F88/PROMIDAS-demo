@@ -99,7 +99,7 @@ describe('init-error', () => {
   });
 
   describe('diagnostics serialization', () => {
-    it('safeStringify handles circular references in configs', () => {
+    it('throws user-friendly hints instead of diagnostic JSON', () => {
       const storeConfig: Record<string, unknown> = {
         ttlMs: 1,
         maxDataSizeBytes: LIMIT_DATA_SIZE_BYTES,
@@ -117,7 +117,11 @@ describe('init-error', () => {
         throw new Error('Expected resolveRepositoryInitFailure to throw');
       } catch (error) {
         expect(error).toBeInstanceOf(RepositoryConfigurationError);
-        expect((error as Error).message).toContain('[Circular]');
+        // Error message should be user-friendly hints, not diagnostic JSON
+        expect((error as Error).message).toContain(
+          'Reduce storeConfig.maxDataSizeBytes',
+        );
+        expect((error as Error).message).not.toContain('Diagnostics:');
       }
     });
   });

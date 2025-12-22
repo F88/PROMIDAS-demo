@@ -1,6 +1,6 @@
 import { Stack, TextField, Grid, Alert } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { SNAPSHOT_LIMITS } from '../../App';
+import { SETUP_SNAPSHOT } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 
@@ -60,8 +60,8 @@ export function SnapshotManagement({
             onChange={(e) => {
               const value = parseInt(e.target.value) || 0;
               setSnapshotLimit(
-                value > SNAPSHOT_LIMITS.MAX_LIMIT
-                  ? SNAPSHOT_LIMITS.MAX_LIMIT.toString()
+                value > SETUP_SNAPSHOT.LIMIT.MAX
+                  ? SETUP_SNAPSHOT.LIMIT.MAX.toString()
                   : e.target.value,
               );
             }}
@@ -69,8 +69,8 @@ export function SnapshotManagement({
             size="small"
             slotProps={{
               htmlInput: {
-                min: SNAPSHOT_LIMITS.MIN_LIMIT,
-                max: SNAPSHOT_LIMITS.MAX_LIMIT,
+                min: SETUP_SNAPSHOT.LIMIT.MIN,
+                max: SETUP_SNAPSHOT.LIMIT.MAX,
               },
             }}
           />

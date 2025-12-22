@@ -1,6 +1,6 @@
 import { Stack, TextField, Grid, Alert, Collapse } from '@mui/material';
 import { useState } from 'react';
-import { SNAPSHOT_LIMITS } from '../../App';
+import { SETUP_SNAPSHOT } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { clampNumericInput } from '../../utils/number-utils';
@@ -68,8 +68,8 @@ export function SetupSnapshot({
               setSnapshotLimit(
                 clampNumericInput(
                   e.target.value,
-                  SNAPSHOT_LIMITS.MIN_LIMIT,
-                  SNAPSHOT_LIMITS.MAX_LIMIT,
+                  SETUP_SNAPSHOT.LIMIT.MIN,
+                  SETUP_SNAPSHOT.LIMIT.MAX,
                 ),
               );
             }}
@@ -77,8 +77,8 @@ export function SetupSnapshot({
             size="small"
             slotProps={{
               htmlInput: {
-                min: SNAPSHOT_LIMITS.MIN_LIMIT,
-                max: SNAPSHOT_LIMITS.MAX_LIMIT,
+                min: SETUP_SNAPSHOT.LIMIT.MIN,
+                max: SETUP_SNAPSHOT.LIMIT.MAX,
               },
             }}
             sx={{ maxWidth: 200 }}
@@ -98,8 +98,8 @@ export function SetupSnapshot({
               setSnapshotOffset(
                 clampNumericInput(
                   e.target.value,
-                  SNAPSHOT_LIMITS.MIN_LIMIT,
-                  SNAPSHOT_LIMITS.MAX_LIMIT,
+                  SETUP_SNAPSHOT.OFFSET.MIN,
+                  SETUP_SNAPSHOT.LIMIT.MAX,
                 ),
               );
             }}
@@ -107,8 +107,8 @@ export function SetupSnapshot({
             size="small"
             slotProps={{
               htmlInput: {
-                min: SNAPSHOT_LIMITS.MIN_LIMIT,
-                max: SNAPSHOT_LIMITS.MAX_LIMIT,
+                min: SETUP_SNAPSHOT.OFFSET.MIN,
+                max: SETUP_SNAPSHOT.LIMIT.MAX,
               },
             }}
             sx={{ maxWidth: 200 }}

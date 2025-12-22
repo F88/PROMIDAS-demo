@@ -17,7 +17,10 @@ vi.mock('../../../hooks/use-download-progress', () => {
 });
 
 import { createRepositoryConfigs } from '../../repository/repository-config';
-import { REPOSITORY_TTL_MS } from '../../repository/constants';
+import {
+  REPOSITORY_TTL_MS,
+  REPOSITORY_MAX_DATA_SIZE,
+} from '../../repository/constants';
 import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 
 describe('repository-config', () => {
@@ -40,7 +43,7 @@ describe('repository-config', () => {
         createRepositoryConfigs('token', 'debug');
 
       expect(storeConfig.ttlMs).toBe(REPOSITORY_TTL_MS);
-      expect(storeConfig.maxDataSizeBytes).toBe(LIMIT_DATA_SIZE_BYTES);
+      expect(storeConfig.maxDataSizeBytes).toBe(REPOSITORY_MAX_DATA_SIZE);
       expect(repositoryConfig.enableEvents).toBe(true);
 
       expect(apiClientConfig.progressLog).toBe(true);

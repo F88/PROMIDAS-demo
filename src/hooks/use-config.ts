@@ -3,7 +3,11 @@ import { getProtopediaRepository } from '../lib/repository/protopedia-repository
 import { hasApiToken } from '../lib/token/token-storage';
 import type { ProtopediaInMemoryRepository } from '@f88/promidas';
 
-export type StoreConfig = ReturnType<ProtopediaInMemoryRepository['getConfig']>;
+export type StoreConfig = ReturnType<
+  ProtopediaInMemoryRepository['getConfig']
+> & {
+  fetchedAt: number;
+};
 
 /**
  * Custom hook for retrieving repository configuration.
@@ -30,13 +34,15 @@ export function useConfig() {
     try {
       const repo = getProtopediaRepository();
       const result = repo.getConfig();
+      const fetchedAt = Date.now();
 
       console.debug('[useConfig] Fetched repository config', {
         ttlMs: result.ttlMs,
         maxDataSizeBytes: result.maxDataSizeBytes,
+        fetchedAt: new Date(fetchedAt).toISOString(),
       });
 
-      setConfig(result);
+      setConfig({ ...result, fetchedAt });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Unknown error occurred';

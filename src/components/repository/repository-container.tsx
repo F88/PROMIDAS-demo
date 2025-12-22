@@ -12,7 +12,7 @@ import { GetConfig } from '../store/get-config';
 import { GetStats } from '../store/get-stats';
 import { useState } from 'react';
 import { useSnapshotManagement } from '../../hooks';
-import { SNAPSHOT_LIMITS } from '../../App';
+import { SETUP_SNAPSHOT } from '../../App';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 import type { StoreConfig } from '../../hooks/use-config';
@@ -48,10 +48,10 @@ export function RepositoryContainer({
 }: RepositoryContainerProps) {
   // Snapshot Management State
   const [snapshotLimit, setSnapshotLimit] = useState(
-    SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString(),
+    SETUP_SNAPSHOT.LIMIT.DEFAULT.toString(),
   );
   const [snapshotOffset, setSnapshotOffset] = useState(
-    SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString(),
+    SETUP_SNAPSHOT.OFFSET.DEFAULT.toString(),
   );
   const [snapshotUserNm, setSnapshotUserNm] = useState('');
   const [snapshotTagNm, setSnapshotTagNm] = useState('');
@@ -68,16 +68,19 @@ export function RepositoryContainer({
     refreshSuccess,
     setupSnapshot,
     refreshSnapshot,
+    clearSetupState,
+    clearRefreshState,
   } = useSnapshotManagement();
 
   // Event Handlers
   const handleResetSnapshotForm = () => {
-    setSnapshotLimit(SNAPSHOT_LIMITS.DEFAULT_LIMIT.toString());
-    setSnapshotOffset(SNAPSHOT_LIMITS.DEFAULT_OFFSET.toString());
+    setSnapshotLimit(SETUP_SNAPSHOT.LIMIT.DEFAULT.toString());
+    setSnapshotOffset(SETUP_SNAPSHOT.OFFSET.DEFAULT.toString());
     setSnapshotUserNm('');
     setSnapshotTagNm('');
     setSnapshotEventNm('');
     setSnapshotMaterialNm('');
+    clearSetupState();
   };
 
   const handleSetupSnapshot = async () => {

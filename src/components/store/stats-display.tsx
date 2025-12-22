@@ -1,18 +1,19 @@
 import { Typography, Stack } from '@mui/material';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
+import type { RepositoryStats } from '../../hooks/use-repository-stats';
+import { formatTime } from '../../utils/time-utils';
 
 interface StatsDisplayProps {
-  stats: PrototypeInMemoryStats | null;
+  stats: RepositoryStats | null;
 }
 
 export function StatsDisplay({ stats }: StatsDisplayProps) {
+  const description = stats
+    ? `現在のSnapshot統計 (${formatTime(stats.fetchedAt)})`
+    : '現在のSnapshot統計';
+
   return (
-    <SectionCard
-      title="Statistics"
-      description="現在のSnapshot統計"
-      category="Store"
-    >
+    <SectionCard title="Statistics" description={description} category="Store">
       {!stats && (
         <Typography
           variant="body2"

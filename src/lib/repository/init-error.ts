@@ -80,7 +80,7 @@ function normalizeErrorMessage(error: unknown): string {
   return `Unknown error: ${String(error)}`;
 }
 
-function safeStringify(value: unknown): string {
+function _safeStringify(value: unknown): string {
   const seen = new WeakSet<object>();
 
   return JSON.stringify(
@@ -267,11 +267,9 @@ export function resolveRepositoryInitFailure(
   }
 
   if (category === 'MISSING_TOKEN') {
+    hints.push('APIトークンが未設定または空です');
     hints.push(
-      'APIトークンが未設定または空です。Settings画面でProtoPedia API v2のトークンを設定してください。',
-    );
-    hints.push(
-      'This is a demo site - you can explore the UI even without a token, but API operations will fail.',
+      'ここはPROMIDASのデモサイトなので、トークン無しの動作を確認出来ますが、実際のAPI操作は出来ません。',
     );
   }
 
@@ -319,20 +317,25 @@ export function resolveRepositoryInitFailure(
     hints,
   };
 
-  console.error('[PROMIDAS Demo] Repository initialization failed', {
-    diagnostics,
-    error,
-    stack: error instanceof Error ? error.stack : undefined,
+  // For expected errors like MISSING_TOKEN, use lighter logging
+  if (category === 'MISSING_TOKEN') {
+    console.warn('[PROMIDAS Demo] Repository initialization failed:', {
+      category,
+      message: errorMessage,
+      hints,
+    });
+  } else {
+    console.error('[PROMIDAS Demo] Repository initialization failed', {
+      diagnostics,
+      error,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+  }
+
+  // Throw user-friendly error message with hints only
+  const userMessage = hints.length > 0 ? hints.join('\n') : errorMessage;
+
+  throw new RepositoryConfigurationError(userMessage, diagnostics, {
+    cause: error,
   });
-
-  const detailsText = safeStringify(diagnostics);
-
-  throw new RepositoryConfigurationError(
-    `Failed to initialize PROMIDAS repository.\n` +
-      `Category: ${category}\n` +
-      `Message: ${errorMessage}\n` +
-      `Diagnostics: ${detailsText}`,
-    diagnostics,
-    { cause: error },
-  );
 }

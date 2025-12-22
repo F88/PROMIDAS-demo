@@ -4,6 +4,7 @@ import './App.css';
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
 import { TokenConfiguration } from './components/config/token-configuration';
+import { RepositorySettings } from './components/config/repository-settings';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
@@ -36,13 +37,16 @@ function isCacheAliveForTtlPolling(
 /**
  * Constants for snapshot configuration
  */
-export const SNAPSHOT_LIMITS = {
-  // MAX_LIMIT: 1_000,
-  MAX_LIMIT: 10_000,
-  MIN_LIMIT: 0,
-  DEFAULT_LIMIT: 10,
-  MIN_OFFSET: 0,
-  DEFAULT_OFFSET: 0,
+export const SETUP_SNAPSHOT = {
+  LIMIT: {
+    MAX: 10_000,
+    MIN: 0,
+    DEFAULT: 10,
+  },
+  OFFSET: {
+    MIN: 0,
+    DEFAULT: 0,
+  },
 } as const;
 
 /**
@@ -314,28 +318,45 @@ function App() {
           <Grid
             size={{
               xs: 12,
-              sm: 6,
-              md: 6,
-              lg: 4,
+              sm: 12,
+              md: 12,
+              lg: 6,
             }}
           >
             <ConfigContainer>
-              <TokenConfiguration
-                token={token}
-                setToken={setTokenInput}
-                hasToken={hasApiToken()}
-                onSaveToken={handleSaveToken}
-                onDeleteToken={handleDeleteToken}
-              />
+              <Grid container spacing={2}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
+                  <TokenConfiguration
+                    token={token}
+                    setToken={setTokenInput}
+                    hasToken={hasApiToken()}
+                    onSaveToken={handleSaveToken}
+                    onDeleteToken={handleDeleteToken}
+                  />
+                </Grid>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                  }}
+                >
+                  <RepositorySettings onSettingsSaved={showStoreInfo} />
+                </Grid>
+              </Grid>
             </ConfigContainer>
           </Grid>
 
           <Grid
             size={{
               xs: 12,
-              sm: 6,
-              md: 6,
-              lg: 8,
+              sm: 12,
+              md: 12,
+              lg: 6,
             }}
           >
             <FetcherContainer />
