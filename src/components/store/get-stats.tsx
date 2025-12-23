@@ -11,8 +11,8 @@ export function GetStats({ fetchStats }: GetStatsProps) {
 
   return (
     <SectionCard
-      title="getStats()"
-      description="Storeの状態を取得"
+      title="getStats"
+      description="Store状態を取得"
       category="Store"
     >
       <ActionButton disabled={disabled} onClick={fetchStats} size="small">

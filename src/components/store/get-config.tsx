@@ -12,8 +12,8 @@ export function GetConfig({ configLoading, fetchConfig }: GetConfigProps) {
 
   return (
     <SectionCard
-      title="getConfig()"
-      description="Storeの設定を取得"
+      title="getConfig"
+      description="Store設定を取得"
       category="Store"
     >
       <ActionButton
