@@ -23,7 +23,7 @@ export function RefreshSnapshot({
 
   return (
     <SectionCard
-      title="refreshSnapshot()"
+      title="refreshSnapshot"
       description="Snapshotを更新"
       category="Snapshot"
     >

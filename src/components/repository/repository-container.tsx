@@ -17,13 +17,6 @@ import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 import type { StoreConfig } from '../../hooks/use-config';
 
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
-
 interface RepositoryContainerProps {
   isActive?: boolean;
   stats: PrototypeInMemoryStats | null;
@@ -32,10 +25,7 @@ interface RepositoryContainerProps {
   configLoading: boolean;
   configError: string | null;
   fetchConfig: () => void;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onDisplayChange?: (isDisplaying: boolean) => void;
 }
 
 export function RepositoryContainer({
@@ -44,7 +34,7 @@ export function RepositoryContainer({
   fetchStats,
   configLoading,
   fetchConfig,
-  visualizeFlow,
+  onDisplayChange,
 }: RepositoryContainerProps) {
   // Snapshot Management State
   const [snapshotLimit, setSnapshotLimit] = useState(
@@ -93,29 +83,13 @@ export function RepositoryContainer({
     if (snapshotEventNm) params.eventNm = snapshotEventNm;
     if (snapshotMaterialNm) params.materialNm = snapshotMaterialNm;
 
-    await visualizeFlow(async () => {
-      await setupSnapshot(params);
-      fetchStats();
-    }, 'forced-fetch');
+    await setupSnapshot(params);
+    fetchStats();
   };
 
   const handleRefreshSnapshot = async () => {
-    await visualizeFlow(async () => {
-      await refreshSnapshot();
-      fetchStats();
-    }, 'forced-fetch');
-  };
-
-  const wrappedFetchConfig = () => {
-    visualizeFlow(() => {
-      fetchConfig();
-    }, 'get-store-info');
-  };
-
-  const wrappedUpdateStats = () => {
-    visualizeFlow(() => {
-      fetchStats();
-    }, 'get-store-info');
+    await refreshSnapshot();
+    fetchStats();
   };
 
   return (
@@ -143,22 +117,21 @@ export function RepositoryContainer({
       <Grid container spacing={2}>
         <Grid
           size={{
-            xs: 12,
+            // xs: 12,
+            xs: 6,
             sm: 6,
           }}
         >
-          <GetConfig
-            configLoading={configLoading}
-            fetchConfig={wrappedFetchConfig}
-          />
+          <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
         </Grid>
         <Grid
           size={{
-            xs: 12,
+            // xs: 12,
+            xs: 6,
             sm: 6,
           }}
         >
-          <GetStats fetchStats={wrappedUpdateStats} />
+          <GetStats fetchStats={fetchStats} />
         </Grid>
       </Grid>
 
@@ -248,7 +221,7 @@ export function RepositoryContainer({
             sm: 6,
           }}
         >
-          <Analysis stats={stats} visualizeFlow={visualizeFlow} />
+          <Analysis stats={stats} onDisplayChange={onDisplayChange} />
         </Grid>
       </Grid>
 
@@ -274,23 +247,23 @@ export function RepositoryContainer({
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <PrototypeIds stats={stats} visualizeFlow={visualizeFlow} />
+          <PrototypeIds stats={stats} onDisplayChange={onDisplayChange} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <AllPrototypes stats={stats} visualizeFlow={visualizeFlow} />
+          <AllPrototypes stats={stats} onDisplayChange={onDisplayChange} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <SearchById stats={stats} visualizeFlow={visualizeFlow} />
+          <SearchById stats={stats} onDisplayChange={onDisplayChange} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <SingleRandom stats={stats} visualizeFlow={visualizeFlow} />
+          <SingleRandom stats={stats} onDisplayChange={onDisplayChange} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <RandomPrototype stats={stats} visualizeFlow={visualizeFlow} />
+          <RandomPrototype stats={stats} onDisplayChange={onDisplayChange} />
         </Grid>
       </Grid>
     </ContainerWrapper>

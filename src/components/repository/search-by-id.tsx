@@ -1,29 +1,19 @@
 import { Stack, TextField, Alert, Box } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { PrototypeCard } from '../common/prototype-card';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
-import { useState } from 'react';
 import { usePrototypeSearch } from '../../hooks';
 import { getStoreState } from '../../utils/store-state-utils';
 import { clampNumericInput } from '../../utils/number-utils';
 
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
-
 interface SearchByIdProps {
   stats: PrototypeInMemoryStats | null;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onDisplayChange?: (isDisplaying: boolean) => void;
 }
 
-export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
+export function SearchById({ stats, onDisplayChange }: SearchByIdProps) {
   const [searchId, setSearchId] = useState<string>('1');
 
   const {
@@ -34,12 +24,25 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
     clear: clearSearch,
   } = usePrototypeSearch();
 
+  // Control display indicator based on data visibility
+  useEffect(() => {
+    if (searchPrototype && !searchLoading) {
+      onDisplayChange?.(true);
+      const timer = setTimeout(() => {
+        onDisplayChange?.(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+
+    if (searchError || !searchPrototype) {
+      onDisplayChange?.(false);
+    }
+  }, [searchPrototype, searchLoading, searchError, onDisplayChange]);
+
   const handleSearch = () => {
     const id = parseInt(searchId);
     if (!isNaN(id)) {
-      visualizeFlow(() => {
-        searchById(id);
-      }, 'get-from-snapshot');
+      searchById(id);
     }
   };
 
@@ -50,7 +53,7 @@ export function SearchById({ stats, visualizeFlow }: SearchByIdProps) {
 
   return (
     <SectionCard
-      title="getPrototypeFromSnapshotByPrototypeId()"
+      title="getPrototypeFromSnapshotByPrototypeId"
       description="IDを指定して取得"
       category="Query"
     >

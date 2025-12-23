@@ -50,7 +50,7 @@ export function SetupSnapshot({
 
   return (
     <SectionCard
-      title="setupSnapshot()"
+      title="setupSnapshot"
       description="Snapshotを初期化"
       category="Snapshot"
     >

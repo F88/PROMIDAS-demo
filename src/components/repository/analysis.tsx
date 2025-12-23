@@ -6,28 +6,19 @@ import {
   TableRow,
   TableCell,
 } from '@mui/material';
+import { useEffect } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { getStoreState } from '../../utils/store-state-utils';
 import { usePrototypeAnalysis } from '../../hooks';
 
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
-
 interface AnalysisProps {
   stats: PrototypeInMemoryStats | null;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onDisplayChange?: (isDisplaying: boolean) => void;
 }
 
-export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
+export function Analysis({ stats, onDisplayChange }: AnalysisProps) {
   const {
     analysis,
     loading: analysisLoading,
@@ -36,17 +27,26 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
     clear: clearAnalysis,
   } = usePrototypeAnalysis();
 
-  const wrappedAnalyze = () => {
-    visualizeFlow(() => {
-      analyze();
-    }, 'get-from-snapshot');
-  };
+  // Control display indicator based on data visibility
+  useEffect(() => {
+    if (analysis && !analysisLoading) {
+      onDisplayChange?.(true);
+      const timer = setTimeout(() => {
+        onDisplayChange?.(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+
+    if (analysisError || !analysis) {
+      onDisplayChange?.(false);
+    }
+  }, [analysis, analysisLoading, analysisError, onDisplayChange]);
 
   const disabled = analysisLoading || getStoreState(stats) === 'not-stored';
 
   return (
     <SectionCard
-      title="analyzePrototypes()"
+      title="analyzePrototypes"
       description="Snapshotを分析"
       category="Analysis"
     >
@@ -60,7 +60,7 @@ export function Analysis({ stats, visualizeFlow }: AnalysisProps) {
         }
       >
         <ActionButton
-          onClick={wrappedAnalyze}
+          onClick={analyze}
           disabled={disabled}
           loading={analysisLoading}
         >

@@ -1,4 +1,5 @@
 import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
+import { useEffect } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
@@ -6,22 +7,12 @@ import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { getStoreState } from '../../utils/store-state-utils';
 import { useAllPrototypes } from '../../hooks';
 
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
-
 interface AllPrototypesProps {
   stats: PrototypeInMemoryStats | null;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onDisplayChange?: (isDisplaying: boolean) => void;
 }
 
-export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
+export function AllPrototypes({ stats, onDisplayChange }: AllPrototypesProps) {
   const {
     prototypes: allPrototypes,
     loading: allLoading,
@@ -30,17 +21,26 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
     clear: clearAll,
   } = useAllPrototypes();
 
-  const wrappedFetchAll = () => {
-    visualizeFlow(() => {
-      fetchAll();
-    }, 'get-from-snapshot');
-  };
+  // Control display indicator based on data visibility
+  useEffect(() => {
+    if (allPrototypes && !allLoading) {
+      onDisplayChange?.(true);
+      const timer = setTimeout(() => {
+        onDisplayChange?.(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+
+    if (allError || !allPrototypes) {
+      onDisplayChange?.(false);
+    }
+  }, [allPrototypes, allLoading, allError, onDisplayChange]);
 
   const disabled = allLoading || getStoreState(stats) === 'not-stored';
 
   return (
     <SectionCard
-      title="getAllFromSnapshot()"
+      title="getAllFromSnapshot"
       description="全てのPrototypeを取得"
       category="Query"
     >
@@ -54,7 +54,7 @@ export function AllPrototypes({ stats, visualizeFlow }: AllPrototypesProps) {
         }
       >
         <ActionButton
-          onClick={wrappedFetchAll}
+          onClick={fetchAll}
           disabled={disabled}
           loading={allLoading}
         >

@@ -46,7 +46,7 @@ export function SnapshotManagement({
   handleRefreshSnapshot,
 }: SnapshotManagementProps) {
   return (
-    <SectionCard title="setupSnapshot() / refreshSnapshot()">
+    <SectionCard title="setupSnapshot / refreshSnapshot">
       <Grid
         container
         spacing={2}
