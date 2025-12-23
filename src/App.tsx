@@ -187,101 +187,6 @@ function App() {
     };
   }, [stats, updateStats]);
 
-  // Visualize data flow with flexible step control
-  type FlowStep = 'fetcher' | 'store' | 'repository' | 'display';
-
-  const visualizeDataFlow = async (
-    operation: () => Promise<void> | void,
-    sequence: FlowStep[],
-  ) => {
-    // Temporarily disabled - real-time events handle visualization now
-    await operation();
-    return;
-
-    const delays: Record<FlowStep, number> = {
-      fetcher: 300,
-      store: 600,
-      repository: 400,
-      display: 1000,
-    };
-
-    const setters: Record<FlowStep, (active: boolean) => void> = {
-      fetcher: setIsFetcherActive,
-      store: setIsStoreActive,
-      repository: setIsRepositoryActive,
-      display: setIsDisplayActive,
-    };
-
-    let operationExecuted = false;
-
-    for (const step of sequence) {
-      setters[step](true);
-
-      // Execute operation on the first step
-      if (!operationExecuted) {
-        await operation();
-        operationExecuted = true;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, delays[step]));
-      setters[step](false);
-    }
-  };
-
-  // Convenience wrapper for common flow patterns
-  type FlowPattern =
-    | 'get-store-info'
-    | 'get-from-snapshot'
-    | 'fetch-individual'
-    | 'forced-fetch'
-    | 'simple-display';
-
-  const visualizeFlow = async (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => {
-    const patterns: Record<FlowPattern, FlowStep[]> = {
-      // Repository gets Store info (config/stats) and returns to Display
-      'get-store-info': ['repository', 'store', 'repository', 'display'],
-      // Repository gets data from snapshot in Store, returns to Display
-      'get-from-snapshot': ['repository', 'store', 'repository', 'display'],
-      // Repository checks Store (miss), fetches individual via Fetcher, saves to Store, returns to Display
-      'fetch-individual': [
-        'repository',
-        'store',
-        'fetcher',
-        'repository',
-        'store',
-        'display',
-      ],
-      // Repository forces fetch via Fetcher, saves to Store (success/fail), returns to Display
-      'forced-fetch': [
-        'repository',
-        'fetcher',
-        'repository',
-        'store',
-        'repository',
-        'display',
-      ],
-      // Simple display without data flow (for UI-only operations)
-      'simple-display': ['display'],
-    };
-
-    return visualizeDataFlow(operation, patterns[pattern]);
-  };
-
-  const wrappedFetchConfig = () => {
-    visualizeFlow(() => {
-      fetchConfig();
-    }, 'get-store-info');
-  };
-
-  const wrappedUpdateStats = () => {
-    visualizeFlow(() => {
-      updateStats();
-    }, 'get-store-info');
-  };
-
   const handleSaveToken = () => {
     if (token.trim()) {
       setApiToken(token.trim());
@@ -380,11 +285,11 @@ function App() {
             <StoreContainer
               isActive={isStoreActive}
               stats={stats}
-              fetchStats={wrappedUpdateStats}
+              fetchStats={updateStats}
               config={repoConfig}
               configLoading={configLoading}
               configError={configError}
-              fetchConfig={wrappedFetchConfig}
+              fetchConfig={fetchConfig}
             />
           </Grid>
 
@@ -397,7 +302,7 @@ function App() {
               configLoading={configLoading}
               configError={configError}
               fetchConfig={fetchConfig}
-              visualizeFlow={visualizeFlow}
+              onDisplayChange={setIsDisplayActive}
             />
           </Grid>
         </Grid>
