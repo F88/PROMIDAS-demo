@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface DownloadProgress {
-  status: 'idle' | 'started' | 'in-progress' | 'completed';
+  status: 'idle' | 'request-start' | 'started' | 'in-progress' | 'completed';
   estimatedBytes?: number;
   receivedBytes?: number;
   percentage?: number;
@@ -27,9 +27,11 @@ export function emitDownloadProgress(
   };
 
   // Clear history when starting a new download
-  if (progress.status === 'started') {
+  if (progress.status === 'request-start') {
     progressHistory = [progressWithTimestamp];
     previousBytes = 0;
+  } else if (progress.status === 'started') {
+    progressHistory = [...progressHistory, progressWithTimestamp];
   } else {
     // Calculate increment for in-progress events
     if (

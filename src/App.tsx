@@ -144,6 +144,7 @@ function App() {
     }
 
     const isActive =
+      latestProgress.status === 'request-start' ||
       latestProgress.status === 'started' ||
       latestProgress.status === 'in-progress';
     setIsFetcherActive(isActive);
