@@ -59,11 +59,10 @@ function PromidasInfoSection() {
     <>
       <Box
         sx={{
-          py: 4,
+          py: 3,
           px: 2,
           textAlign: 'center',
-          backgroundColor: 'rgba(52, 131, 75, 0.7)',
-          backdropFilter: 'blur(10px)',
+          backgroundColor: '#34834B',
           borderBottom: '1px solid',
           borderColor: 'divider',
           color: 'white',
@@ -76,6 +75,7 @@ function PromidasInfoSection() {
           sx={{
             color: 'white',
             textAlign: 'center',
+            my: 3,
             fontSize: {
               xs: '1.5rem', // h5相当 (小画面)
               sm: '2rem', // h4相当 (中画面)
