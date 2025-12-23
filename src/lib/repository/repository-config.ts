@@ -9,7 +9,10 @@ import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
 } from '@f88/promidas';
-import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
+import type {
+  ProtopediaApiCustomClientConfig,
+  FetchProgressEvent,
+} from '@f88/promidas/fetcher';
 import type { LogLevel } from '@f88/promidas/logger';
 import { emitDownloadProgress } from '../../hooks/use-download-progress';
 import { createFetch } from './create-fetch';
@@ -43,7 +46,7 @@ export function createRepositoryConfigs(
       fetch: createFetch(),
     },
     progressLog: true,
-    progressCallback: (event) => {
+    progressCallback: (event: FetchProgressEvent) => {
       switch (event.type) {
         case 'request-start':
           console.info('[Download Progress] Request started');
@@ -86,6 +89,23 @@ export function createRepositoryConfigs(
           });
           emitDownloadProgress({
             status: 'completed',
+            receivedBytes: event.received,
+            estimatedBytes: event.estimatedTotal,
+            downloadTimeMs: event.downloadTimeMs,
+            totalTimeMs: event.totalTimeMs,
+          });
+          break;
+        case 'error':
+          console.error('[Download Progress] Error', {
+            error: event.error,
+            receivedBytes: event.received,
+            estimatedBytes: event.estimatedTotal,
+            downloadTimeMs: event.downloadTimeMs,
+            totalTimeMs: event.totalTimeMs,
+          });
+          emitDownloadProgress({
+            status: 'error',
+            errorMessage: event.error,
             receivedBytes: event.received,
             estimatedBytes: event.estimatedTotal,
             downloadTimeMs: event.downloadTimeMs,
