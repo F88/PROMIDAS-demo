@@ -3,11 +3,12 @@ import { getProtopediaRepository } from '../lib/repository/protopedia-repository
 import { hasApiToken } from '../lib/token/token-storage';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { SnapshotOperationFailure } from '@f88/promidas/repository';
 
 interface RepositoryEventHandlers {
   onSnapshotStarted?: (params?: ListPrototypesParams) => void;
   onSnapshotCompleted?: (stats: PrototypeInMemoryStats) => void;
-  onSnapshotFailed?: (error: Error) => void;
+  onSnapshotFailed?: (error: SnapshotOperationFailure) => void;
 }
 
 export function useRepositoryEvents({
@@ -46,8 +47,12 @@ export function useRepositoryEvents({
         onSnapshotCompleted?.(stats);
       };
 
-      const handleSnapshotFailed = (error: Error) => {
-        console.debug('[Repository Event] snapshotFailed', error.message);
+      const handleSnapshotFailed = (error: SnapshotOperationFailure) => {
+        console.debug('[Repository Event] snapshotFailed', {
+          error: error.error,
+          status: error.status,
+          code: error.code,
+        });
         onSnapshotFailed?.(error);
       };
 
