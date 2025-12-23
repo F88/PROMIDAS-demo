@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 
 interface DownloadProgress {
-  status: 'idle' | 'request-start' | 'started' | 'in-progress' | 'completed';
+  status:
+    | 'idle'
+    | 'request-start'
+    | 'started'
+    | 'in-progress'
+    | 'completed'
+    | 'error';
   estimatedBytes?: number;
   receivedBytes?: number;
   percentage?: number;
@@ -10,6 +16,7 @@ interface DownloadProgress {
   totalTimeMs?: number;
   limit?: number;
   increment?: number;
+  errorMessage?: string;
   timestamp: number;
 }
 

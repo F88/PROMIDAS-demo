@@ -9,10 +9,10 @@ import { useSingleRandom } from '../../hooks';
 
 interface SingleRandomProps {
   stats: PrototypeInMemoryStats | null;
-  onDisplayChange?: (isDisplaying: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function SingleRandom({ stats, onDisplayChange }: SingleRandomProps) {
+export function SingleRandom({ stats, onUseSnapshot }: SingleRandomProps) {
   const {
     prototype: singleRandomPrototype,
     loading: singleRandomLoading,
@@ -22,26 +22,13 @@ export function SingleRandom({ stats, onDisplayChange }: SingleRandomProps) {
     hasExecuted: singleRandomHasExecuted,
   } = useSingleRandom();
 
-  // Control display indicator based on data visibility
+  // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (singleRandomPrototype && !singleRandomLoading) {
-      onDisplayChange?.(true);
-      const timer = setTimeout(() => {
-        onDisplayChange?.(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      onUseSnapshot?.(true);
     }
-
-    // Hide indicator on error or when no data
-    if (singleRandomError || !singleRandomPrototype) {
-      onDisplayChange?.(false);
-    }
-  }, [
-    singleRandomPrototype,
-    singleRandomLoading,
-    singleRandomError,
-    onDisplayChange,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [singleRandomPrototype, singleRandomLoading]);
 
   const wrappedFetchSingleRandom = () => {
     fetchSingleRandom();

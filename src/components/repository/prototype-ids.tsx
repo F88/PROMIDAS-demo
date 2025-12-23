@@ -9,10 +9,10 @@ import { usePrototypeIds } from '../../hooks';
 
 interface PrototypeIdsProps {
   stats: PrototypeInMemoryStats | null;
-  onDisplayChange?: (isDisplaying: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function PrototypeIds({ stats, onDisplayChange }: PrototypeIdsProps) {
+export function PrototypeIds({ stats, onUseSnapshot }: PrototypeIdsProps) {
   const {
     ids: prototypeIds,
     loading: idsLoading,
@@ -21,20 +21,13 @@ export function PrototypeIds({ stats, onDisplayChange }: PrototypeIdsProps) {
     clear: clearIds,
   } = usePrototypeIds();
 
-  // Control display indicator based on data visibility
+  // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (prototypeIds && !idsLoading) {
-      onDisplayChange?.(true);
-      const timer = setTimeout(() => {
-        onDisplayChange?.(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      onUseSnapshot?.(true);
     }
-
-    if (idsError || !prototypeIds) {
-      onDisplayChange?.(false);
-    }
-  }, [prototypeIds, idsLoading, idsError, onDisplayChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prototypeIds, idsLoading]);
 
   const disabled = idsLoading || getStoreState(stats) === 'not-stored';
 

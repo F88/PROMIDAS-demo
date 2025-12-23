@@ -6,6 +6,7 @@ import {
   TableRow,
   TableCell,
 } from '@mui/material';
+import { useEffect } from 'react';
 import { SectionCard } from '../common/section-card';
 import type { StoreConfig } from '../../hooks/use-config';
 import { formatTime } from '../../utils/time-utils';
@@ -14,13 +15,25 @@ interface ConfigDisplayProps {
   repoConfig: StoreConfig | null;
   configLoading: boolean;
   configError: string | null;
+  onGetStoreInfo?: (isActive: boolean) => void;
 }
 
 export function ConfigDisplay({
   repoConfig,
   configLoading,
   configError,
+  onGetStoreInfo,
 }: ConfigDisplayProps) {
+  // Control store/repo indicator when data is displayed
+  useEffect(() => {
+    if (!repoConfig || configLoading || configError) {
+      return;
+    }
+
+    onGetStoreInfo?.(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [repoConfig?.fetchedAt, configLoading, configError]);
+
   const description = repoConfig
     ? `現在のStore設定 (${formatTime(repoConfig.fetchedAt)})`
     : '現在のStore設定';

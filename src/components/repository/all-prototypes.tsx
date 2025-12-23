@@ -9,10 +9,10 @@ import { useAllPrototypes } from '../../hooks';
 
 interface AllPrototypesProps {
   stats: PrototypeInMemoryStats | null;
-  onDisplayChange?: (isDisplaying: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function AllPrototypes({ stats, onDisplayChange }: AllPrototypesProps) {
+export function AllPrototypes({ stats, onUseSnapshot }: AllPrototypesProps) {
   const {
     prototypes: allPrototypes,
     loading: allLoading,
@@ -21,20 +21,13 @@ export function AllPrototypes({ stats, onDisplayChange }: AllPrototypesProps) {
     clear: clearAll,
   } = useAllPrototypes();
 
-  // Control display indicator based on data visibility
+  // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (allPrototypes && !allLoading) {
-      onDisplayChange?.(true);
-      const timer = setTimeout(() => {
-        onDisplayChange?.(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      onUseSnapshot?.(true);
     }
-
-    if (allError || !allPrototypes) {
-      onDisplayChange?.(false);
-    }
-  }, [allPrototypes, allLoading, allError, onDisplayChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allPrototypes, allLoading]);
 
   const disabled = allLoading || getStoreState(stats) === 'not-stored';
 

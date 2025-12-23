@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { StoreConfig } from '../../hooks/use-config';
 import { StatsDashboard } from './stats-dashboard';

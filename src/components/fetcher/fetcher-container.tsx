@@ -15,7 +15,8 @@ export function FetcherContainer() {
   const isActive =
     latestProgress &&
     latestProgress.status !== 'idle' &&
-    latestProgress.status !== 'completed';
+    latestProgress.status !== 'completed' &&
+    latestProgress.status !== 'error';
 
   // const formatBytes = (bytes?: number) => {
   //   if (bytes === undefined) return 'N/A';
@@ -68,6 +69,8 @@ export function FetcherContainer() {
             : 'N/A';
         return `[${time}] ✅ Download complete: ${progress.receivedBytes ?? 0} bytes received (estimated ${progress.estimatedBytes ?? 0} bytes) in ${downloadTimeS}s (total: ${totalTimeS}s)`;
       }
+      case 'error':
+        return `[${time}] ❌ Error: ${progress.errorMessage ?? 'Unknown error'}`;
       default:
         return `[${time}] Unknown status`;
     }
@@ -97,13 +100,15 @@ export function FetcherContainer() {
                 key={index}
                 variant="body2"
                 color={
-                  progress.status === 'completed'
-                    ? 'success.main'
-                    : progress.status === 'started'
-                      ? 'warning.main'
-                      : progress.status === 'in-progress'
-                        ? 'info.main'
-                        : 'text.secondary'
+                  progress.status === 'error'
+                    ? 'error'
+                    : progress.status === 'completed'
+                      ? 'success.main'
+                      : progress.status === 'started'
+                        ? 'warning.main'
+                        : progress.status === 'in-progress'
+                          ? 'info.main'
+                          : 'text.secondary'
                 }
                 sx={{
                   fontFamily: 'monospace',

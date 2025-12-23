@@ -26,6 +26,8 @@ interface RepositoryContainerProps {
   configError: string | null;
   fetchConfig: () => void;
   onDisplayChange?: (isDisplaying: boolean) => void;
+  onGetStoreInfo?: (isActive: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
 export function RepositoryContainer({
@@ -34,7 +36,8 @@ export function RepositoryContainer({
   fetchStats,
   configLoading,
   fetchConfig,
-  onDisplayChange,
+  onGetStoreInfo,
+  onUseSnapshot,
 }: RepositoryContainerProps) {
   // Snapshot Management State
   const [snapshotLimit, setSnapshotLimit] = useState(
@@ -92,6 +95,10 @@ export function RepositoryContainer({
     fetchStats();
   };
 
+  const handleUseSnapshot = (isActive: boolean) => {
+    onUseSnapshot?.(isActive);
+  };
+
   return (
     <ContainerWrapper type="repository" label="Repository" isActive={isActive}>
       {/* Store management */}
@@ -122,7 +129,11 @@ export function RepositoryContainer({
             sm: 6,
           }}
         >
-          <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
+          <GetConfig
+            configLoading={configLoading}
+            fetchConfig={fetchConfig}
+            onGetStoreInfo={onGetStoreInfo}
+          />
         </Grid>
         <Grid
           size={{
@@ -131,7 +142,7 @@ export function RepositoryContainer({
             sm: 6,
           }}
         >
-          <GetStats fetchStats={fetchStats} />
+          <GetStats fetchStats={fetchStats} onGetStoreInfo={onGetStoreInfo} />
         </Grid>
       </Grid>
 
@@ -221,7 +232,7 @@ export function RepositoryContainer({
             sm: 6,
           }}
         >
-          <Analysis stats={stats} onDisplayChange={onDisplayChange} />
+          <Analysis stats={stats} onUseSnapshot={handleUseSnapshot} />
         </Grid>
       </Grid>
 
@@ -247,23 +258,23 @@ export function RepositoryContainer({
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <PrototypeIds stats={stats} onDisplayChange={onDisplayChange} />
+          <PrototypeIds stats={stats} onUseSnapshot={handleUseSnapshot} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <AllPrototypes stats={stats} onDisplayChange={onDisplayChange} />
+          <AllPrototypes stats={stats} onUseSnapshot={handleUseSnapshot} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <SearchById stats={stats} onDisplayChange={onDisplayChange} />
+          <SearchById stats={stats} onUseSnapshot={handleUseSnapshot} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <SingleRandom stats={stats} onDisplayChange={onDisplayChange} />
+          <SingleRandom stats={stats} onUseSnapshot={handleUseSnapshot} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, xl: 4 }}>
-          <RandomPrototype stats={stats} onDisplayChange={onDisplayChange} />
+          <RandomPrototype stats={stats} onUseSnapshot={handleUseSnapshot} />
         </Grid>
       </Grid>
     </ContainerWrapper>

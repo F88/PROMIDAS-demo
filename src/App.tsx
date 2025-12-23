@@ -3,11 +3,20 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
-import { TokenConfiguration } from './components/config/token-configuration';
 import { RepositorySettings } from './components/config/repository-settings';
+import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
+import {
+  useConfig,
+  useDownloadProgress,
+  useHeaderStats,
+  useStoreStats,
+  type HeaderStats,
+} from './hooks';
+import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
+import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
 import { resetRepository } from './lib/repository/protopedia-repository';
 import {
   getApiToken,
@@ -15,17 +24,10 @@ import {
   removeApiToken,
   setApiToken,
 } from './lib/token/token-storage';
-import {
-  useRepositoryStats,
-  useConfig,
-  useRepositoryEvents,
-  useDownloadProgress,
-  type RepositoryStats,
-} from './hooks';
 
 function isCacheAliveForTtlPolling(
-  stats: RepositoryStats | null,
-): stats is RepositoryStats {
+  stats: HeaderStats | null,
+): stats is HeaderStats {
   return (
     stats !== null &&
     stats.cachedAt !== null &&
@@ -109,13 +111,33 @@ function PromidasInfoSection() {
 function App() {
   const [token, setTokenInput] = useState(getApiToken() || '');
 
-  // Data flow visualization states
-  const [isFetcherActive, setIsFetcherActive] = useState(false);
-  const [isStoreActive, setIsStoreActive] = useState(false);
-  const [isRepositoryActive, setIsRepositoryActive] = useState(false);
-  const [isDisplayActive, setIsDisplayActive] = useState(false);
+  // Data flow visualization
+  const {
+    isFetcherActive,
+    isStoreActive,
+    isRepositoryActive,
+    isDisplayActive,
+    setIsFetcherActive,
+    setIsStoreActive,
+    setIsRepositoryActive,
+    setIsDisplayActive,
+    handleGetStoreInfo,
+    handleUseSnapshot,
+  } = useDataFlowIndicators();
 
-  const { stats, updateStats, clearStats } = useRepositoryStats();
+  // Stats for header (updated every second for Remaining TTL)
+  const {
+    stats: headerStats,
+    updateStats: updateHeaderStats,
+    clearStats: clearHeaderStats,
+  } = useHeaderStats();
+  // Stats for store display (updated only when data actually changes)
+  const {
+    stats: storeStats,
+    updateStats: updateStoreStats,
+    clearStats: clearStoreStats,
+  } = useStoreStats();
+
   const {
     config: repoConfig,
     loading: configLoading,
@@ -126,32 +148,22 @@ function App() {
 
   const showStoreInfo = () => {
     fetchConfig();
-    updateStats();
+    updateHeaderStats();
+    updateStoreStats();
   };
 
   const hideStoreInfo = () => {
     clearConfig();
-    clearStats();
+    clearHeaderStats();
+    clearStoreStats();
   };
 
   // Listen to repository events for real-time fetch visualization
-  useRepositoryEvents({
-    onSnapshotStarted: () => {
-      console.debug('[Repository Event] Snapshot Started');
-      setIsRepositoryActive(true);
-      setIsStoreActive(true);
-    },
-    onSnapshotCompleted: (stats) => {
-      console.debug('[Repository Event] Snapshot Completed', stats);
-      setIsRepositoryActive(false);
-      setIsStoreActive(false);
-      updateStats();
-    },
-    onSnapshotFailed: () => {
-      console.debug('[Repository Event] Snapshot Failed');
-      setIsRepositoryActive(false);
-      setIsStoreActive(false);
-    },
+  useSnapshotEventHandlers({
+    setIsRepositoryActive,
+    setIsStoreActive,
+    updateHeaderStats,
+    updateStoreStats,
   });
 
   // Control Fetcher active state based on download progress
@@ -168,7 +180,7 @@ function App() {
       latestProgress.status === 'started' ||
       latestProgress.status === 'in-progress';
     setIsFetcherActive(isActive);
-  }, [downloadProgress]);
+  }, [downloadProgress, setIsFetcherActive]);
 
   // Initialize config and stats on mount
   useEffect(() => {
@@ -183,29 +195,29 @@ function App() {
 
   // Periodically update stats to show remaining TTL changes
   useEffect(() => {
-    if (!isCacheAliveForTtlPolling(stats)) {
+    if (!isCacheAliveForTtlPolling(headerStats)) {
       return;
     }
 
     const expiryBufferMs = 100;
 
     const expiryTimeoutId = window.setTimeout(() => {
-      updateStats();
-    }, stats.remainingTtlMs + expiryBufferMs);
+      updateHeaderStats();
+    }, headerStats.remainingTtlMs + expiryBufferMs);
 
-    if (stats.remainingTtlMs < 1_000) {
+    if (headerStats.remainingTtlMs < 1_000) {
       return () => window.clearTimeout(expiryTimeoutId);
     }
 
     const intervalId = window.setInterval(() => {
-      updateStats();
+      updateHeaderStats();
     }, 1_000); // Update every 1 second
 
     return () => {
       window.clearInterval(intervalId);
       window.clearTimeout(expiryTimeoutId);
     };
-  }, [stats, updateStats]);
+  }, [headerStats, updateHeaderStats]);
 
   const handleSaveToken = () => {
     if (token.trim()) {
@@ -227,7 +239,7 @@ function App() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppHeader
-        stats={stats}
+        stats={headerStats}
         config={repoConfig}
         dataFlowIndicator={{
           isFetcherActive,
@@ -304,25 +316,29 @@ function App() {
           <Grid size={{ xs: 12 }}>
             <StoreContainer
               isActive={isStoreActive}
-              stats={stats}
-              fetchStats={updateStats}
+              stats={storeStats}
+              fetchStats={updateStoreStats}
               config={repoConfig}
               configLoading={configLoading}
               configError={configError}
               fetchConfig={fetchConfig}
+              onGetStoreInfo={handleGetStoreInfo}
+              onDisplayChange={setIsDisplayActive}
             />
           </Grid>
 
           <Grid size={{ xs: 12 }}>
             <RepositoryContainer
               isActive={isRepositoryActive}
-              stats={stats}
-              fetchStats={updateStats}
+              stats={storeStats}
+              fetchStats={updateStoreStats}
               config={repoConfig}
               configLoading={configLoading}
               configError={configError}
               fetchConfig={fetchConfig}
               onDisplayChange={setIsDisplayActive}
+              onGetStoreInfo={handleGetStoreInfo}
+              onUseSnapshot={handleUseSnapshot}
             />
           </Grid>
         </Grid>

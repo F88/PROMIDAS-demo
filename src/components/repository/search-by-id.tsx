@@ -10,10 +10,10 @@ import { clampNumericInput } from '../../utils/number-utils';
 
 interface SearchByIdProps {
   stats: PrototypeInMemoryStats | null;
-  onDisplayChange?: (isDisplaying: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function SearchById({ stats, onDisplayChange }: SearchByIdProps) {
+export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
   const [searchId, setSearchId] = useState<string>('1');
 
   const {
@@ -24,20 +24,13 @@ export function SearchById({ stats, onDisplayChange }: SearchByIdProps) {
     clear: clearSearch,
   } = usePrototypeSearch();
 
-  // Control display indicator based on data visibility
+  // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (searchPrototype && !searchLoading) {
-      onDisplayChange?.(true);
-      const timer = setTimeout(() => {
-        onDisplayChange?.(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      onUseSnapshot?.(true);
     }
-
-    if (searchError || !searchPrototype) {
-      onDisplayChange?.(false);
-    }
-  }, [searchPrototype, searchLoading, searchError, onDisplayChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchPrototype, searchLoading]);
 
   const handleSearch = () => {
     const id = parseInt(searchId);

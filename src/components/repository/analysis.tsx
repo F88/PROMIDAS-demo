@@ -15,10 +15,10 @@ import { usePrototypeAnalysis } from '../../hooks';
 
 interface AnalysisProps {
   stats: PrototypeInMemoryStats | null;
-  onDisplayChange?: (isDisplaying: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function Analysis({ stats, onDisplayChange }: AnalysisProps) {
+export function Analysis({ stats, onUseSnapshot }: AnalysisProps) {
   const {
     analysis,
     loading: analysisLoading,
@@ -27,20 +27,13 @@ export function Analysis({ stats, onDisplayChange }: AnalysisProps) {
     clear: clearAnalysis,
   } = usePrototypeAnalysis();
 
-  // Control display indicator based on data visibility
+  // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (analysis && !analysisLoading) {
-      onDisplayChange?.(true);
-      const timer = setTimeout(() => {
-        onDisplayChange?.(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      onUseSnapshot?.(true);
     }
-
-    if (analysisError || !analysis) {
-      onDisplayChange?.(false);
-    }
-  }, [analysis, analysisLoading, analysisError, onDisplayChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [analysis, analysisLoading]);
 
   const disabled = analysisLoading || getStoreState(stats) === 'not-stored';
 

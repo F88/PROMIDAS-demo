@@ -45,12 +45,23 @@ export function RefreshSnapshot({
         </ActionButton>
       </Stack>
       {snapshotSuccess && (
-        <Alert severity="success" sx={{ mb: 2 }}>
+        <Alert
+          severity="success"
+          sx={{
+            mt: 2,
+          }}
+        >
           {snapshotSuccess}
         </Alert>
       )}
       {snapshotError && (
-        <Alert severity="error" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
+        <Alert
+          severity="error"
+          sx={{
+            mt: 2,
+            whiteSpace: 'pre-line',
+          }}
+        >
           {localizedSnapshotError}
         </Alert>
       )}

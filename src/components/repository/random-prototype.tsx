@@ -10,10 +10,13 @@ import { useRandomPrototype } from '../../hooks';
 
 interface RandomPrototypeProps {
   stats: PrototypeInMemoryStats | null;
-  onDisplayChange?: (isDisplaying: boolean) => void;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function RandomPrototype({ stats, onDisplayChange }: RandomPrototypeProps) {
+export function RandomPrototype({
+  stats,
+  onUseSnapshot,
+}: RandomPrototypeProps) {
   const [randomSampleSize, setRandomSampleSize] = useState('3');
 
   const {
@@ -25,20 +28,13 @@ export function RandomPrototype({ stats, onDisplayChange }: RandomPrototypeProps
     hasExecuted: randomHasExecuted,
   } = useRandomPrototype();
 
-  // Control display indicator based on data visibility
+  // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (randomPrototypes.length > 0 && !randomLoading) {
-      onDisplayChange?.(true);
-      const timer = setTimeout(() => {
-        onDisplayChange?.(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      onUseSnapshot?.(true);
     }
-
-    if (randomError || randomPrototypes.length === 0) {
-      onDisplayChange?.(false);
-    }
-  }, [randomPrototypes, randomLoading, randomError, onDisplayChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [randomPrototypes, randomLoading]);
 
   const handleFetchRandom = () => {
     const size = parseInt(randomSampleSize) || 0;

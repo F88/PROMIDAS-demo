@@ -5,10 +5,20 @@ import { hasApiToken } from '../../lib/token/token-storage';
 interface GetConfigProps {
   configLoading: boolean;
   fetchConfig: () => void;
+  onGetStoreInfo?: (isActive: boolean) => void;
 }
 
-export function GetConfig({ configLoading, fetchConfig }: GetConfigProps) {
+export function GetConfig({
+  configLoading,
+  fetchConfig,
+  onGetStoreInfo,
+}: GetConfigProps) {
   const disabled = hasApiToken() === false;
+
+  const handleFetchConfig = () => {
+    fetchConfig();
+    onGetStoreInfo?.(true);
+  };
 
   return (
     <SectionCard
@@ -18,7 +28,7 @@ export function GetConfig({ configLoading, fetchConfig }: GetConfigProps) {
     >
       <ActionButton
         disabled={disabled}
-        onClick={fetchConfig}
+        onClick={handleFetchConfig}
         loading={configLoading}
         size="small"
       >
