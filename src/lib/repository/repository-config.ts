@@ -43,48 +43,56 @@ export function createRepositoryConfigs(
       fetch: createFetch(),
     },
     progressLog: true,
-    progressCallback: {
-      onStart: (estimatedTotal, limit, prepareTime) => {
-        console.debug('[Download Progress] Started', {
-          estimatedBytes: estimatedTotal,
-          limit,
-          prepareTimeMs: Math.round(prepareTime * 1000),
-        });
-        emitDownloadProgress({
-          status: 'started',
-          estimatedBytes: estimatedTotal,
-          limit,
-          prepareTimeMs: Math.round(prepareTime * 1000),
-        });
-      },
-      onProgress: (received, total, percentage) => {
-        console.debug('[Download Progress] In progress', {
-          receivedBytes: received,
-          totalBytes: total,
-          percentage,
-        });
-        emitDownloadProgress({
-          status: 'in-progress',
-          receivedBytes: received,
-          estimatedBytes: total,
-          percentage,
-        });
-      },
-      onComplete: (received, estimatedTotal, downloadTime, totalTime) => {
-        console.debug('[Download Progress] Completed', {
-          receivedBytes: received,
-          estimatedBytes: estimatedTotal,
-          downloadTimeMs: Math.round(downloadTime * 1000),
-          totalTimeMs: Math.round(totalTime * 1000),
-        });
-        emitDownloadProgress({
-          status: 'completed',
-          receivedBytes: received,
-          estimatedBytes: estimatedTotal,
-          downloadTimeMs: Math.round(downloadTime * 1000),
-          totalTimeMs: Math.round(totalTime * 1000),
-        });
-      },
+    progressCallback: (event) => {
+      switch (event.type) {
+        case 'request-start':
+          console.info('[Download Progress] Request started');
+          emitDownloadProgress({
+            status: 'request-start',
+          });
+          break;
+        case 'response-received':
+          console.info('[Download Progress] Started', {
+            estimatedBytes: event.estimatedTotal,
+            limit: event.limit,
+            prepareTimeMs: event.prepareTimeMs,
+          });
+          emitDownloadProgress({
+            status: 'started',
+            estimatedBytes: event.estimatedTotal,
+            limit: event.limit,
+            prepareTimeMs: event.prepareTimeMs,
+          });
+          break;
+        case 'download-progress':
+          console.info('[Download Progress] In progress', {
+            receivedBytes: event.received,
+            totalBytes: event.total,
+            percentage: event.percentage,
+          });
+          emitDownloadProgress({
+            status: 'in-progress',
+            receivedBytes: event.received,
+            estimatedBytes: event.total,
+            percentage: event.percentage,
+          });
+          break;
+        case 'complete':
+          console.info('[Download Progress] Completed', {
+            receivedBytes: event.received,
+            estimatedBytes: event.estimatedTotal,
+            downloadTimeMs: event.downloadTimeMs,
+            totalTimeMs: event.totalTimeMs,
+          });
+          emitDownloadProgress({
+            status: 'completed',
+            receivedBytes: event.received,
+            estimatedBytes: event.estimatedTotal,
+            downloadTimeMs: event.downloadTimeMs,
+            totalTimeMs: event.totalTimeMs,
+          });
+          break;
+      }
     },
   };
 

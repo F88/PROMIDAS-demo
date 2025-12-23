@@ -88,13 +88,30 @@ describe('repository-config', () => {
       const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
       const cb = apiClientConfig.progressCallback;
 
-      if (!cb?.onStart || !cb.onProgress || !cb.onComplete) {
+      if (!cb) {
         throw new Error('Expected progressCallback to be defined');
       }
 
-      cb.onStart(100, 200, 1.234);
-      cb.onProgress(10, 100, 10);
-      cb.onComplete(100, 100, 2.345, 3.456);
+      cb({ type: 'request-start' });
+      cb({
+        type: 'response-received',
+        estimatedTotal: 100,
+        limit: 200,
+        prepareTimeMs: 1234,
+      });
+      cb({
+        type: 'download-progress',
+        received: 10,
+        total: 100,
+        percentage: 10,
+      });
+      cb({
+        type: 'complete',
+        received: 100,
+        estimatedTotal: 100,
+        downloadTimeMs: 2345,
+        totalTimeMs: 3456,
+      });
 
       expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
         status: 'started',

@@ -39,6 +39,8 @@ export function FetcherContainer() {
     switch (progress.status) {
       case 'idle':
         return `[${time}] Ready to fetch`;
+      case 'request-start':
+        return `[${time}] 🌐 Request initiated`;
       case 'started': {
         const prepareTimeS =
           progress.prepareTimeMs !== undefined
