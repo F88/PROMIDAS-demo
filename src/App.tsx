@@ -54,35 +54,55 @@ export const SETUP_SNAPSHOT = {
  */
 function PromidasInfoSection() {
   return (
-    <Box
-      sx={{
-        py: 4,
-        px: 2,
-        textAlign: 'center',
-        backgroundColor: 'rgba(52, 131, 75, 0.7)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        color: 'white',
-      }}
-    >
-      <Link
-        href="https://f88.github.io/promidas/"
-        target="_blank"
-        rel="noopener noreferrer"
-        underline="hover"
+    <>
+      <Box
         sx={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 0.5,
+          py: 4,
+          px: 2,
+          textAlign: 'center',
+          backgroundColor: 'rgba(52, 131, 75, 0.7)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
           color: 'white',
-          fontWeight: 500,
-          fontSize: '1.1rem',
         }}
       >
-        📚 PROMIDAS とは
-      </Link>
-    </Box>
+        <Typography
+          variant="h4"
+          component="h1"
+          fontWeight={600}
+          sx={{
+            color: 'white',
+            textAlign: 'center',
+            fontSize: {
+              xs: '1.5rem', // h5相当 (小画面)
+              sm: '2rem', // h4相当 (中画面)
+              md: '2.5rem', // h3相当 (大画面)
+              lg: '3rem', // h2相当 (特大画面)
+            },
+          }}
+        >
+          PROMIDAS Demo
+        </Typography>
+
+        <Link
+          href="https://f88.github.io/promidas/"
+          target="_blank"
+          rel="noopener noreferrer"
+          underline="hover"
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'white',
+            fontWeight: 500,
+            fontSize: '1.1rem',
+          }}
+        >
+          📚 PROMIDAS とは
+        </Link>
+      </Box>
+    </>
   );
 }
 
