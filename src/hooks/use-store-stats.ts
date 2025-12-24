@@ -33,7 +33,7 @@ export function useStoreStats() {
 
       setStats({ ...result, fetchedAt });
     } catch (err) {
-      console.error('[PROMIDAS Demo] useStoreStats update failed:', err);
+      console.error('[PROMIDAS Playground] useStoreStats update failed:', err);
       setStats(null);
     }
   }, []);

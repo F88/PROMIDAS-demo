@@ -29,7 +29,10 @@ export function useRepositoryStats() {
       const result = repo.getStats();
       return { ...result, fetchedAt: Date.now() };
     } catch (err) {
-      console.error('[PROMIDAS Demo] useRepositoryStats init failed:', err);
+      console.error(
+        '[PROMIDAS Playground] useRepositoryStats init failed:',
+        err,
+      );
       return null;
     }
   });
@@ -54,7 +57,10 @@ export function useRepositoryStats() {
 
       setStats({ ...result, fetchedAt });
     } catch (err) {
-      console.error('[PROMIDAS Demo] useRepositoryStats update failed:', err);
+      console.error(
+        '[PROMIDAS Playground] useRepositoryStats update failed:',
+        err,
+      );
       // Token not set yet
       setStats(null);
     }
@@ -86,7 +92,7 @@ export function useRepositoryStats() {
         }
       } catch (err) {
         console.error(
-          '[PROMIDAS Demo] scheduling next stats update failed:',
+          '[PROMIDAS Playground] scheduling next stats update failed:',
           err,
         );
       }

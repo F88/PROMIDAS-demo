@@ -296,13 +296,13 @@ export function resolveRepositoryInitFailure(
 
   // For expected errors like MISSING_TOKEN, use lighter logging
   if (category === 'MISSING_TOKEN') {
-    console.warn('[PROMIDAS Demo] Repository initialization failed:', {
+    console.warn('[PROMIDAS Playground] Repository initialization failed:', {
       category,
       message: errorMessage,
       hints,
     });
   } else {
-    console.error('[PROMIDAS Demo] Repository initialization failed', {
+    console.error('[PROMIDAS Playground] Repository initialization failed', {
       diagnostics,
       error,
       stack: error instanceof Error ? error.stack : undefined,

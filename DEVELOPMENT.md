@@ -1,6 +1,6 @@
 # Development Guide
 
-PROMIDAS Demoの開発者向けドキュメント
+PROMIDAS Playground の開発者向けドキュメント
 
 ## 技術スタック
 

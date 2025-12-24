@@ -29,14 +29,14 @@ export function useRandomPrototype() {
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log repository stats before fetching
-      console.debug('[PROMIDAS Demo] fetchRandom: Current stats', stats);
+      console.debug('[PROMIDAS Playground] fetchRandom: Current stats', stats);
 
       const randomPrototypes = await repo.getRandomSampleFromSnapshot(size);
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log fetched prototypes
       console.debug(
-        '[PROMIDAS Demo] fetchRandom: Fetched prototypes',
+        '[PROMIDAS Playground] fetchRandom: Fetched prototypes',
         randomPrototypes,
       );
 
@@ -44,7 +44,7 @@ export function useRandomPrototype() {
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
-      console.error('[PROMIDAS Demo] fetchRandom failed:', err);
+      console.error('[PROMIDAS Playground] fetchRandom failed:', err);
 
       if (err instanceof ValidationError) {
         const message = `Validation error${

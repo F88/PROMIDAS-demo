@@ -22,13 +22,16 @@ export function usePrototypeSearch() {
     setError(null);
 
     try {
-      console.debug(`[PROMIDAS Demo] searchById: Searching for ID ${id}`);
+      console.debug(`[PROMIDAS Playground] searchById: Searching for ID ${id}`);
 
       const repo = getProtopediaRepository();
       const result = await repo.getPrototypeFromSnapshotByPrototypeId(id);
 
       // Demo site: Log search result
-      console.debug(`[PROMIDAS Demo] searchById: Result for ID ${id}`, result);
+      console.debug(
+        `[PROMIDAS Playground] searchById: Result for ID ${id}`,
+        result,
+      );
 
       if (!result) {
         const message = `Prototype with ID ${id} not found in snapshot`;
@@ -40,7 +43,10 @@ export function usePrototypeSearch() {
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
-      console.error(`[PROMIDAS Demo] searchById failed for ID ${id}:`, err);
+      console.error(
+        `[PROMIDAS Playground] searchById failed for ID ${id}:`,
+        err,
+      );
 
       if (err instanceof ValidationError) {
         const message = `Validation error${

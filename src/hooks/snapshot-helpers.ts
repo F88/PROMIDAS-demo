@@ -1,5 +1,5 @@
 /**
- * @file Helper functions for snapshot operations in PROMIDAS demo site
+ * @file Helper functions for snapshot operations in PROMIDAS Playground
  *
  * **IMPORTANT - DO NOT REMOVE CONSOLE LOGS**:
  * All console.debug and console.error statements are intentional
@@ -28,12 +28,12 @@ export function logFetchResult(
 ): void {
   if (result.ok) {
     console.debug(
-      `[PROMIDAS Demo] ${operationName} succeeded`,
+      `[PROMIDAS Playground] ${operationName} succeeded`,
       result as SnapshotOperationSuccess,
     );
   } else {
     console.error(
-      `[PROMIDAS Demo] ${operationName} failed`,
+      `[PROMIDAS Playground] ${operationName} failed`,
       result as SnapshotOperationResult,
     );
   }

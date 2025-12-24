@@ -84,7 +84,7 @@ function PromidasInfoSection() {
             },
           }}
         >
-          PROMIDAS Demo
+          🛝 PROMIDAS Playground
         </Typography>
 
         <Link

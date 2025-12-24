@@ -24,7 +24,7 @@ export function useAllPrototypes() {
 
     try {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
-      console.debug('[PROMIDAS Demo] fetchAll: Fetching all prototypes');
+      console.debug('[PROMIDAS Playground] fetchAll: Fetching all prototypes');
 
       const repo = getProtopediaRepository();
       const all = await repo.getAllFromSnapshot();
@@ -32,7 +32,7 @@ export function useAllPrototypes() {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log fetched prototypes count
       console.debug(
-        `[PROMIDAS Demo] fetchAll: Fetched ${all.length} prototypes`,
+        `[PROMIDAS Playground] fetchAll: Fetched ${all.length} prototypes`,
         all,
       );
 
@@ -40,7 +40,7 @@ export function useAllPrototypes() {
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
-      console.error('[PROMIDAS Demo] fetchAll failed:', err);
+      console.error('[PROMIDAS Playground] fetchAll failed:', err);
 
       const message =
         err instanceof Error ? err.message : 'Failed to fetch all prototypes';

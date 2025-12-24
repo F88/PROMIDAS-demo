@@ -24,20 +24,20 @@ export function usePrototypeAnalysis() {
 
     try {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
-      console.debug('[PROMIDAS Demo] analyze: Starting analysis');
+      console.debug('[PROMIDAS Playground] analyze: Starting analysis');
 
       const repo = getProtopediaRepository();
       const result = await repo.analyzePrototypes();
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log analysis result
-      console.debug('[PROMIDAS Demo] analyze: Result', result);
+      console.debug('[PROMIDAS Playground] analyze: Result', result);
 
       setAnalysis(result);
     } catch (err) {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log error details
-      console.error('[PROMIDAS Demo] analyze failed:', err);
+      console.error('[PROMIDAS Playground] analyze failed:', err);
 
       const message =
         err instanceof Error ? err.message : 'Failed to analyze prototypes';

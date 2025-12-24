@@ -24,7 +24,7 @@ export function useHeaderStats() {
       const result = repo.getStats();
       return { ...result, fetchedAt: Date.now() };
     } catch (err) {
-      console.error('[PROMIDAS Demo] useHeaderStats init failed:', err);
+      console.error('[PROMIDAS Playground] useHeaderStats init failed:', err);
       return null;
     }
   });
@@ -47,7 +47,7 @@ export function useHeaderStats() {
 
       setStats({ ...result, fetchedAt });
     } catch (err) {
-      console.error('[PROMIDAS Demo] useHeaderStats update failed:', err);
+      console.error('[PROMIDAS Playground] useHeaderStats update failed:', err);
       setStats(null);
     }
   }, []);
