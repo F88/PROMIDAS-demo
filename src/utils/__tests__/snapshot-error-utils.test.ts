@@ -12,6 +12,13 @@ import {
 } from '../snapshot-error-utils';
 
 describe('parseFetcherSnapshotFailure', () => {
+  const buildExpectedFetcherMessage = (
+    localizedMessage: string,
+    referenceLines: string[],
+  ): string => {
+    return [localizedMessage, '', '[参考情報]', ...referenceLines].join('\n');
+  };
+
   describe('HTTP errors (kind === "http")', () => {
     it('localizes 400 Bad Request', () => {
       const failure: FetcherSnapshotFailure = {
@@ -28,7 +35,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエストが不正です。パラメータを確認してください。',
+        buildExpectedFetcherMessage(
+          'リクエストが不正です。パラメータを確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 400 Bad Request',
+            'エラーコード: CLIENT_BAD_REQUEST',
+            '詳細: Bad request',
+          ],
+        ),
       );
     });
 
@@ -47,7 +62,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'APIトークンが無効です。設定を確認してください。',
+        buildExpectedFetcherMessage(
+          'APIトークンが無効です。設定を確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 401 Unauthorized',
+            'エラーコード: CLIENT_UNAUTHORIZED',
+            '詳細: Unauthorized',
+          ],
+        ),
       );
     });
 
@@ -66,7 +89,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'アクセスが拒否されました。APIトークンの権限を確認してください。',
+        buildExpectedFetcherMessage(
+          'アクセスが拒否されました。APIトークンの権限を確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 403 Forbidden',
+            'エラーコード: CLIENT_FORBIDDEN',
+            '詳細: Forbidden',
+          ],
+        ),
       );
     });
 
@@ -85,7 +116,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエストしたリソースが見つかりませんでした。',
+        buildExpectedFetcherMessage(
+          'リクエストしたリソースが見つかりませんでした。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 404 Not Found',
+            'エラーコード: CLIENT_NOT_FOUND',
+            '詳細: Resource not found',
+          ],
+        ),
       );
     });
 
@@ -104,7 +143,12 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        '許可されていないHTTPメソッドです。',
+        buildExpectedFetcherMessage('許可されていないHTTPメソッドです。', [
+          'リクエスト: POST https://api.example.com',
+          'レスポンス: HTTP 405 Method Not Allowed',
+          'エラーコード: CLIENT_METHOD_NOT_ALLOWED',
+          '詳細: Method not allowed',
+        ]),
       );
     });
 
@@ -123,7 +167,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエストがタイムアウトしました。再試行してください。',
+        buildExpectedFetcherMessage(
+          'リクエストがタイムアウトしました。再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 408 Request Timeout',
+            'エラーコード: CLIENT_TIMEOUT',
+            '詳細: Request timeout',
+          ],
+        ),
       );
     });
 
@@ -142,7 +194,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエスト制限に達しました。しばらく待ってから再試行してください。',
+        buildExpectedFetcherMessage(
+          'リクエスト制限に達しました。しばらく待ってから再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 429 Too Many Requests',
+            'エラーコード: CLIENT_RATE_LIMITED',
+            '詳細: Too many requests',
+          ],
+        ),
       );
     });
 
@@ -161,7 +221,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'クライアントエラーが発生しました (HTTP 418)。リクエスト内容を確認してください。',
+        buildExpectedFetcherMessage(
+          'クライアントエラーが発生しました (HTTP 418)。リクエスト内容を確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            "レスポンス: HTTP 418 I'm a teapot",
+            'エラーコード: CLIENT_ERROR',
+            '詳細: Client error',
+          ],
+        ),
       );
     });
 
@@ -180,7 +248,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'サーバー内部エラーが発生しました。しばらく待ってから再試行してください。',
+        buildExpectedFetcherMessage(
+          'サーバー内部エラーが発生しました。しばらく待ってから再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 500 Internal Server Error',
+            'エラーコード: SERVER_INTERNAL_ERROR',
+            '詳細: Internal server error',
+          ],
+        ),
       );
     });
 
@@ -199,7 +275,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'ゲートウェイエラーが発生しました。しばらく待ってから再試行してください。',
+        buildExpectedFetcherMessage(
+          'ゲートウェイエラーが発生しました。しばらく待ってから再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 502 Bad Gateway',
+            'エラーコード: SERVER_BAD_GATEWAY',
+            '詳細: Bad gateway',
+          ],
+        ),
       );
     });
 
@@ -218,7 +302,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'サービスが一時的に利用できません。しばらく待ってから再試行してください。',
+        buildExpectedFetcherMessage(
+          'サービスが一時的に利用できません。しばらく待ってから再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 503 Service Unavailable',
+            'エラーコード: SERVER_SERVICE_UNAVAILABLE',
+            '詳細: Service unavailable',
+          ],
+        ),
       );
     });
 
@@ -237,7 +329,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'ゲートウェイタイムアウトが発生しました。しばらく待ってから再試行してください。',
+        buildExpectedFetcherMessage(
+          'ゲートウェイタイムアウトが発生しました。しばらく待ってから再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 504 Gateway Timeout',
+            'エラーコード: SERVER_GATEWAY_TIMEOUT',
+            '詳細: Gateway timeout',
+          ],
+        ),
       );
     });
 
@@ -256,7 +356,15 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'サーバーエラーが発生しました (HTTP 599)。しばらく待ってから再試行してください。',
+        buildExpectedFetcherMessage(
+          'サーバーエラーが発生しました (HTTP 599)。しばらく待ってから再試行してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'レスポンス: HTTP 599 Network connect timeout error',
+            'エラーコード: SERVER_ERROR',
+            '詳細: Server error',
+          ],
+        ),
       );
     });
 
@@ -275,7 +383,12 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'HTTPエラーが発生しました (HTTP 999)。',
+        buildExpectedFetcherMessage('HTTPエラーが発生しました (HTTP 999)。', [
+          'リクエスト: GET https://api.example.com',
+          'レスポンス: HTTP 999 Unknown',
+          'エラーコード: UNKNOWN',
+          '詳細: Unknown error',
+        ]),
       );
     });
   });
@@ -294,12 +407,19 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        [
-          'APIサーバーとの通信がCORSポリシーによりブロックされました。',
-          '最も可能性が高い原因:',
-          '- APIトークンが未設定、または無効',
-          '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
-        ].join('\n'),
+        buildExpectedFetcherMessage(
+          [
+            'APIサーバーとの通信がCORSポリシーによりブロックされました。',
+            '最も可能性が高い原因:',
+            '- APIトークンが未設定、または無効',
+            '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
+          ].join('\n'),
+          [
+            'リクエスト: GET https://api.example.com',
+            'エラーコード: CORS_BLOCKED',
+            '詳細: CORS blocked',
+          ],
+        ),
       );
     });
   });
@@ -318,7 +438,14 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'サーバーに接続できませんでした。サーバーが起動しているか確認してください。',
+        buildExpectedFetcherMessage(
+          'サーバーに接続できませんでした。サーバーが起動しているか確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'エラーコード: ECONNREFUSED',
+            '詳細: Connection refused',
+          ],
+        ),
       );
     });
 
@@ -335,7 +462,14 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'サーバーが見つかりませんでした。URLを確認してください。',
+        buildExpectedFetcherMessage(
+          'サーバーが見つかりませんでした。URLを確認してください。',
+          [
+            'リクエスト: GET https://invalid-domain.example',
+            'エラーコード: ENOTFOUND',
+            '詳細: Host not found',
+          ],
+        ),
       );
     });
 
@@ -352,7 +486,14 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエストがタイムアウトしました。ネットワーク接続を確認してください。',
+        buildExpectedFetcherMessage(
+          'リクエストがタイムアウトしました。ネットワーク接続を確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'エラーコード: ETIMEDOUT',
+            '詳細: Socket timeout',
+          ],
+        ),
       );
     });
 
@@ -369,13 +510,20 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        [
-          'ネットワークエラーが発生しました。',
-          '次のような原因が考えられます:',
-          '- ネットワークがオフライン',
-          '- サーバーが一時的に利用できない',
-          '- ファイアウォールやプロキシの設定',
-        ].join('\n'),
+        buildExpectedFetcherMessage(
+          [
+            'ネットワークエラーが発生しました。',
+            '次のような原因が考えられます:',
+            '- ネットワークがオフライン',
+            '- サーバーが一時的に利用できない',
+            '- ファイアウォールやプロキシの設定',
+          ].join('\n'),
+          [
+            'リクエスト: GET https://api.example.com',
+            'エラーコード: NETWORK_ERROR',
+            '詳細: Failed to fetch',
+          ],
+        ),
       );
     });
   });
@@ -394,7 +542,14 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエストがタイムアウトしました。ネットワーク接続を確認してください。',
+        buildExpectedFetcherMessage(
+          'リクエストがタイムアウトしました。ネットワーク接続を確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'エラーコード: TIMEOUT',
+            '詳細: Request timeout',
+          ],
+        ),
       );
     });
   });
@@ -413,7 +568,11 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'リクエストがキャンセルされました。',
+        buildExpectedFetcherMessage('リクエストがキャンセルされました。', [
+          'リクエスト: GET https://api.example.com',
+          'エラーコード: ABORTED',
+          '詳細: Request aborted',
+        ]),
       );
     });
   });
@@ -432,7 +591,14 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'APIトークンが無効です。設定を確認してください。',
+        buildExpectedFetcherMessage(
+          'APIトークンが無効です。設定を確認してください。',
+          [
+            'リクエスト: GET https://api.example.com',
+            'エラーコード: CLIENT_UNAUTHORIZED',
+            '詳細: Unauthorized',
+          ],
+        ),
       );
     });
 
@@ -449,7 +615,10 @@ describe('parseFetcherSnapshotFailure', () => {
       };
 
       expect(parseFetcherSnapshotFailure(failure)).toBe(
-        'Unknown fetcher error',
+        buildExpectedFetcherMessage('Unknown fetcher error', [
+          'リクエスト: GET https://api.example.com',
+          'エラーコード: UNKNOWN',
+        ]),
       );
     });
   });
@@ -466,16 +635,19 @@ describe('parseStoreSnapshotFailure', () => {
       dataState: 'UNCHANGED',
     };
 
-    expect(parseStoreSnapshotFailure(failure)).toBe(
-      [
-        'データサイズが制限を超えました。',
-        '既存のスナップショットは保持されます。',
-        '次を試してください:',
-        '- limitパラメータを減らす',
-        '- ストアのmaxDataSizeBytesを増やす(設定可能な場合)',
-        '詳細: Data size exceeded limit',
-      ].join('\n'),
+    const message = parseStoreSnapshotFailure(failure);
+    expect(message).toContain('データサイズが制限を超えました。');
+    expect(message).toContain('既存のスナップショットは保持されます。');
+    expect(message).toContain('次を試してください:');
+    expect(message).toContain('- limitパラメータを減らす');
+    expect(message).toContain(
+      '- ストアのmaxDataSizeBytesを増やす(設定可能な場合)',
     );
+    expect(message).toContain('[参考情報]');
+    expect(message).toContain('エラーコード: STORE_CAPACITY_EXCEEDED');
+    expect(message).toContain('分類: storage_limit');
+    expect(message).toContain('dataState: UNCHANGED');
+    expect(message).toContain('詳細: Data size exceeded limit');
   });
 
   it('handles STORE_SERIALIZATION_FAILED', () => {
@@ -488,14 +660,15 @@ describe('parseStoreSnapshotFailure', () => {
       dataState: 'UNCHANGED',
     };
 
-    expect(parseStoreSnapshotFailure(failure)).toBe(
-      [
-        'データのシリアライズに失敗しました。',
-        '既存のスナップショットは保持されます。',
-        'データ形式に問題がある可能性があります。',
-        '詳細: Serialization failed',
-      ].join('\n'),
-    );
+    const message = parseStoreSnapshotFailure(failure);
+    expect(message).toContain('データのシリアライズに失敗しました。');
+    expect(message).toContain('既存のスナップショットは保持されます。');
+    expect(message).toContain('データ形式に問題がある可能性があります。');
+    expect(message).toContain('[参考情報]');
+    expect(message).toContain('エラーコード: STORE_SERIALIZATION_FAILED');
+    expect(message).toContain('分類: serialization');
+    expect(message).toContain('dataState: UNCHANGED');
+    expect(message).toContain('詳細: Serialization failed');
   });
 
   it('handles STORE_UNKNOWN', () => {
@@ -508,13 +681,14 @@ describe('parseStoreSnapshotFailure', () => {
       dataState: 'UNCHANGED',
     };
 
-    expect(parseStoreSnapshotFailure(failure)).toBe(
-      [
-        'ストレージエラーが発生しました。',
-        '既存のスナップショットは保持されます。',
-        '詳細: Unexpected store error',
-      ].join('\n'),
-    );
+    const message = parseStoreSnapshotFailure(failure);
+    expect(message).toContain('ストレージエラーが発生しました。');
+    expect(message).toContain('既存のスナップショットは保持されます。');
+    expect(message).toContain('[参考情報]');
+    expect(message).toContain('エラーコード: STORE_UNKNOWN');
+    expect(message).toContain('分類: unknown');
+    expect(message).toContain('dataState: UNCHANGED');
+    expect(message).toContain('詳細: Unexpected store error');
   });
 });
 
