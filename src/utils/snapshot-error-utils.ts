@@ -51,46 +51,70 @@ export function parseFetcherSnapshotFailure(
     }
   }
 
-  // CORS errors (認証エラーがブロックされている可能性が高い)
-  if (failure.code === 'CORS_BLOCKED') {
-    return [
-      'APIサーバーとの通信がCORSポリシーによりブロックされました。',
-      '最も可能性が高い原因:',
-      '- APIトークンが未設定、または無効',
-      '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
-    ].join('\n');
-  }
+  // Exhaustive handling of fetcher error codes.
+  // If PROMIDAS adds a new FetcherErrorCode, this switch should fail to compile
+  // until we explicitly decide how to present it in the demo site.
+  switch (failure.code) {
+    // HTTP-derived codes (status may not be observable in some environments)
+    case 'CLIENT_UNAUTHORIZED':
+      return 'APIトークンが無効です。設定を確認してください。';
+    case 'CLIENT_FORBIDDEN':
+      return 'アクセスが拒否されました。APIトークンの権限を確認してください。';
+    case 'CLIENT_NOT_FOUND':
+      return 'リクエストしたリソースが見つかりませんでした。';
+    case 'CLIENT_RATE_LIMITED':
+      return 'リクエスト制限に達しました。しばらく待ってから再試行してください。';
+    case 'CLIENT_BAD_REQUEST':
+      return 'リクエストが不正です。パラメータを確認してください。';
+    case 'CLIENT_METHOD_NOT_ALLOWED':
+      return '許可されていないHTTPメソッドです。';
+    case 'CLIENT_TIMEOUT':
+      return 'リクエストがタイムアウトしました。再試行してください。';
+    case 'CLIENT_ERROR':
+      return 'クライアントエラーが発生しました。リクエスト内容を確認してください。';
+    case 'SERVER_INTERNAL_ERROR':
+    case 'SERVER_BAD_GATEWAY':
+    case 'SERVER_GATEWAY_TIMEOUT':
+    case 'SERVER_SERVICE_UNAVAILABLE':
+    case 'SERVER_ERROR':
+      return 'サーバーエラーが発生しました。しばらく待ってから再試行してください。';
 
-  // Specific network errors
-  if (failure.code === 'ECONNREFUSED') {
-    return 'サーバーに接続できませんでした。サーバーが起動しているか確認してください。';
-  }
+    // Network / control
+    case 'NETWORK_ERROR':
+      return [
+        'ネットワークエラーが発生しました。',
+        '次のような原因が考えられます:',
+        '- ネットワークがオフライン',
+        '- サーバーが一時的に利用できない',
+        '- ファイアウォールやプロキシの設定',
+      ].join('\n');
+    case 'ECONNREFUSED':
+      return 'サーバーに接続できませんでした。サーバーが起動しているか確認してください。';
+    case 'ENOTFOUND':
+      return 'サーバーが見つかりませんでした。URLを確認してください。';
+    case 'ETIMEDOUT':
+    case 'TIMEOUT':
+      return 'リクエストがタイムアウトしました。ネットワーク接続を確認してください。';
+    case 'ABORTED':
+      return 'リクエストがキャンセルされました。';
 
-  if (failure.code === 'ENOTFOUND') {
-    return 'サーバーが見つかりませんでした。URLを確認してください。';
-  }
+    // CORS
+    case 'CORS_BLOCKED':
+      return [
+        'APIサーバーとの通信がCORSポリシーによりブロックされました。',
+        '最も可能性が高い原因:',
+        '- APIトークンが未設定、または無効',
+        '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
+      ].join('\n');
 
-  if (failure.code === 'TIMEOUT' || failure.code === 'ETIMEDOUT') {
-    return 'リクエストがタイムアウトしました。ネットワーク接続を確認してください。';
+    // Fallback
+    case 'UNKNOWN':
+      return failure.message;
+    default: {
+      const _exhaustiveCheck: never = failure.code;
+      return _exhaustiveCheck;
+    }
   }
-
-  if (failure.code === 'ABORTED') {
-    return 'リクエストがキャンセルされました。';
-  }
-
-  // Generic network errors
-  if (failure.code === 'NETWORK_ERROR') {
-    return [
-      'ネットワークエラーが発生しました。',
-      '次のような原因が考えられます:',
-      '- ネットワークがオフライン',
-      '- サーバーが一時的に利用できない',
-      '- ファイアウォールやプロキシの設定',
-    ].join('\n');
-  }
-
-  // Fallback to message for other fetcher errors
-  return failure.message;
 }
 
 /**
@@ -102,20 +126,52 @@ export function parseFetcherSnapshotFailure(
 export function parseStoreSnapshotFailure(
   failure: StoreSnapshotFailure,
 ): string {
-  if (failure.code === 'STORE_CAPACITY_EXCEEDED') {
-    return 'データサイズが制限を超えました。limitパラメータを減らしてください。';
-  }
+  const localizeStoreDataState = (
+    dataState: StoreSnapshotFailure['dataState'],
+  ): string => {
+    switch (dataState) {
+      case 'UNCHANGED':
+        return '既存のスナップショットは保持されます。';
+      case 'UNKNOWN':
+        return '既存のスナップショットの状態は不明です。';
+      default: {
+        const _exhaustiveCheck: never = dataState;
+        return _exhaustiveCheck;
+      }
+    }
+  };
 
-  if (failure.code === 'STORE_SERIALIZATION_FAILED') {
-    return 'データのシリアライズに失敗しました。データ形式に問題がある可能性があります。';
+  // Exhaustive handling of store error codes.
+  // If PROMIDAS adds a new StoreErrorCode, this switch should fail to compile
+  // until we decide how to present it in the demo site.
+  switch (failure.code) {
+    case 'STORE_CAPACITY_EXCEEDED':
+      return [
+        'データサイズが制限を超えました。',
+        localizeStoreDataState(failure.dataState),
+        '次を試してください:',
+        '- limitパラメータを減らす',
+        '- ストアのmaxDataSizeBytesを増やす(設定可能な場合)',
+        `詳細: ${failure.message}`,
+      ].join('\n');
+    case 'STORE_SERIALIZATION_FAILED':
+      return [
+        'データのシリアライズに失敗しました。',
+        localizeStoreDataState(failure.dataState),
+        'データ形式に問題がある可能性があります。',
+        `詳細: ${failure.message}`,
+      ].join('\n');
+    case 'STORE_UNKNOWN':
+      return [
+        'ストレージエラーが発生しました。',
+        localizeStoreDataState(failure.dataState),
+        `詳細: ${failure.message}`,
+      ].join('\n');
+    default: {
+      const _exhaustiveCheck: never = failure.code;
+      return _exhaustiveCheck;
+    }
   }
-
-  if (failure.code === 'STORE_UNKNOWN') {
-    return `ストレージエラーが発生しました: ${failure.message}`;
-  }
-
-  // Fallback to message for other store errors
-  return failure.message;
 }
 
 /**
@@ -146,13 +202,19 @@ export function localizeSnapshotOperationError(
     return null;
   }
 
-  if (failure.origin === 'fetcher') {
-    return parseFetcherSnapshotFailure(failure);
-  }
+  const origin = failure.origin;
 
-  if (failure.origin === 'store') {
-    return parseStoreSnapshotFailure(failure);
+  switch (origin) {
+    case 'fetcher':
+      return parseFetcherSnapshotFailure(failure);
+    case 'store':
+      return parseStoreSnapshotFailure(failure);
+    case 'unknown':
+      return parseUnknownSnapshotFailure(failure);
+    default: {
+      const _exhaustiveCheck: never = origin;
+      void _exhaustiveCheck;
+      return null;
+    }
   }
-
-  return parseUnknownSnapshotFailure(failure);
 }

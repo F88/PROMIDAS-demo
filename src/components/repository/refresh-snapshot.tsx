@@ -1,5 +1,6 @@
 import { Stack, Alert } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { SnapshotOperationFailure } from '@f88/promidas/repository';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils';
@@ -7,7 +8,7 @@ import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils
 interface RefreshSnapshotProps {
   snapshotLoading: boolean;
   snapshotSuccess: string | null;
-  snapshotError: string | null;
+  snapshotError: SnapshotOperationFailure | null;
   stats: PrototypeInMemoryStats | null;
   handleRefreshSnapshot: () => void;
 }
