@@ -14,6 +14,11 @@
  *
  * Both sequences follow the data flow pattern:
  * Repository (0-300ms) → Store (100-200ms) → Display (300-400ms)
+ *
+ * Note: handleGetStoreInfo and handleUseSnapshot intentionally duplicate the
+ * same timing logic. This keeps each flow explicit/readable and allows future
+ * divergence without coupling unrelated behaviors. Please avoid extracting a
+ * shared helper unless both flows must change in lockstep.
  */
 
 import { useState } from 'react';
@@ -37,6 +42,9 @@ export function useDataFlowIndicators() {
    * Activates indicators for store info retrieval operations (getConfig/getStats)
    *
    * Timeline: Repository (0-300ms), Store (100-200ms), Display (300-400ms)
+   *
+   * Note: This intentionally duplicates handleUseSnapshot's timing sequence to
+   * keep the store-info flow explicit and independently editable.
    *
    * @param isActive - Whether to activate the indicator sequence
    */
@@ -79,6 +87,9 @@ export function useDataFlowIndicators() {
    * Activates indicators for snapshot usage operations (query/analysis)
    *
    * Timeline: Repository (0-300ms), Store (100-200ms), Display (300-400ms)
+   *
+   * Note: This intentionally duplicates handleGetStoreInfo's timing sequence to
+   * keep the snapshot-usage flow explicit and independently editable.
    *
    * @param isActive - Whether to activate the indicator sequence
    */
