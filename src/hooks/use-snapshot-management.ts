@@ -8,7 +8,10 @@
  */
 
 import { useState } from 'react';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type {
+  ProtopediaInMemoryRepository,
+  PrototypeInMemoryStats,
+} from '@f88/promidas';
 import {
   ValidationError,
   type SnapshotOperationResult,
@@ -19,6 +22,7 @@ import {
   logFetchResult,
   handleSnapshotOperationError,
 } from './snapshot-helpers';
+import { emitDownloadProgress } from './use-download-progress';
 
 export function useSnapshotManagement() {
   const [setupLoading, setSetupLoading] = useState(false);
@@ -35,8 +39,8 @@ export function useSnapshotManagement() {
     setSetupSuccess(null);
 
     try {
-      const repo = getProtopediaRepository();
-      const result = await repo.setupSnapshot(params);
+      const repo: ProtopediaInMemoryRepository = getProtopediaRepository();
+      const result: SnapshotOperationResult = await repo.setupSnapshot(params);
 
       // Demo site: Log full error information to console for debugging
       // DO NOT REMOVE: This helps users understand PROMIDAS error responses
@@ -45,6 +49,16 @@ export function useSnapshotManagement() {
       // Check if setup was successful
       if (!result.ok) {
         handleSnapshotOperationError(result, setSetupError);
+        // Only emit to Fetcher for network/fetch failures, not validation failures
+        if (
+          result.origin === 'fetcher' &&
+          (result.code === 'NETWORK_ERROR' || result.code === 'CORS_BLOCKED')
+        ) {
+          emitDownloadProgress({
+            status: 'error',
+            errorMessage: result.message || 'Setup snapshot failed',
+          });
+        }
       } else {
         const limit = params.limit || 100;
         setSetupSuccess(`Snapshot initialized with up to ${limit} prototypes`);
@@ -83,6 +97,16 @@ export function useSnapshotManagement() {
 
       if (!result.ok) {
         handleSnapshotOperationError(result, setRefreshError);
+        // Only emit to Fetcher for network/fetch failures, not validation failures
+        if (
+          result.origin === 'fetcher' &&
+          (result.code === 'NETWORK_ERROR' || result.code === 'CORS_BLOCKED')
+        ) {
+          emitDownloadProgress({
+            status: 'error',
+            errorMessage: result.message || 'Refresh snapshot failed',
+          });
+        }
       } else {
         setRefreshSuccess('Snapshot refreshed successfully');
         // Set stats from result
