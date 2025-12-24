@@ -26,13 +26,13 @@ export function ConfigDisplay({
 }: ConfigDisplayProps) {
   // Control store/repo indicator when data is displayed
   useEffect(() => {
-    if (!repoConfig || configLoading || configError) {
+    const fetchedAt = repoConfig?.fetchedAt;
+    if (fetchedAt == null || configLoading || configError) {
       return;
     }
 
     onGetStoreInfo?.(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repoConfig?.fetchedAt, configLoading, configError]);
+  }, [repoConfig?.fetchedAt, configLoading, configError, onGetStoreInfo]);
 
   const description = repoConfig
     ? `現在のStore設定 (${formatTime(repoConfig.fetchedAt)})`

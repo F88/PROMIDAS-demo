@@ -10,7 +10,7 @@ import { AllPrototypes } from './all-prototypes';
 import { Analysis } from './analysis';
 import { GetConfig } from '../store/get-config';
 import { GetStats } from '../store/get-stats';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSnapshotManagement } from '../../hooks';
 import { SETUP_SNAPSHOT } from '../../App';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
@@ -95,9 +95,12 @@ export function RepositoryContainer({
     fetchStats();
   };
 
-  const handleUseSnapshot = (isActive: boolean) => {
-    onUseSnapshot?.(isActive);
-  };
+  const handleUseSnapshot = useCallback(
+    (isActive: boolean) => {
+      onUseSnapshot?.(isActive);
+    },
+    [onUseSnapshot],
+  );
 
   return (
     <ContainerWrapper type="repository" label="Repository" isActive={isActive}>

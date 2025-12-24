@@ -33,8 +33,7 @@ export function RandomPrototype({
     if (randomPrototypes.length > 0 && !randomLoading) {
       onUseSnapshot?.(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [randomPrototypes, randomLoading]);
+  }, [randomPrototypes, randomLoading, onUseSnapshot]);
 
   const handleFetchRandom = () => {
     const size = parseInt(randomSampleSize) || 0;

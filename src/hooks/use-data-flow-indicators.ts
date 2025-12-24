@@ -21,7 +21,7 @@
  * shared helper unless both flows must change in lockstep.
  */
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Custom hook for managing data flow indicator states and controls
@@ -48,7 +48,7 @@ export function useDataFlowIndicators() {
    *
    * @param isActive - Whether to activate the indicator sequence
    */
-  const handleGetStoreInfo = (isActive: boolean) => {
+  const handleGetStoreInfo = useCallback((isActive: boolean) => {
     if (isActive) {
       console.info('[Repository Event] Store info retrieval started.');
 
@@ -81,7 +81,7 @@ export function useDataFlowIndicators() {
         setIsDisplayActive(false);
       }, 400);
     }
-  };
+  }, []);
 
   /**
    * Activates indicators for snapshot usage operations (query/analysis)
@@ -93,7 +93,7 @@ export function useDataFlowIndicators() {
    *
    * @param isActive - Whether to activate the indicator sequence
    */
-  const handleUseSnapshot = (isActive: boolean) => {
+  const handleUseSnapshot = useCallback((isActive: boolean) => {
     if (isActive) {
       console.info('[Repository Event] Snapshot usage started.');
 
@@ -126,7 +126,7 @@ export function useDataFlowIndicators() {
         setIsDisplayActive(false);
       }, 400);
     }
-  };
+  }, []);
 
   return {
     // States

@@ -29,8 +29,7 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
     if (searchPrototype && !searchLoading) {
       onUseSnapshot?.(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchPrototype, searchLoading]);
+  }, [searchPrototype, searchLoading, onUseSnapshot]);
 
   const handleSearch = () => {
     const id = parseInt(searchId);

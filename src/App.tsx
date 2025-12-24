@@ -1,5 +1,5 @@
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
@@ -146,17 +146,17 @@ function App() {
     clear: clearConfig,
   } = useConfig();
 
-  const showStoreInfo = () => {
+  const showStoreInfo = useCallback(() => {
     fetchConfig();
     updateHeaderStats();
     updateStoreStats();
-  };
+  }, [fetchConfig, updateHeaderStats, updateStoreStats]);
 
-  const hideStoreInfo = () => {
+  const hideStoreInfo = useCallback(() => {
     clearConfig();
     clearHeaderStats();
     clearStoreStats();
-  };
+  }, [clearConfig, clearHeaderStats, clearStoreStats]);
 
   // Listen to repository events for real-time fetch visualization
   useSnapshotEventHandlers({
@@ -190,8 +190,7 @@ function App() {
     }
 
     hideStoreInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showStoreInfo, hideStoreInfo]);
 
   // Periodically update stats to show remaining TTL changes
   useEffect(() => {

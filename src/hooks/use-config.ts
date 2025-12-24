@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
 import { hasApiToken } from '../lib/token/token-storage';
 import type { ProtopediaInMemoryRepository } from '@f88/promidas';
@@ -20,7 +20,7 @@ export function useConfig() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchConfig = () => {
+  const fetchConfig = useCallback(() => {
     if (!hasApiToken()) {
       // Don't set error for demo site UX - just do nothing
       setConfig(null);
@@ -52,12 +52,12 @@ export function useConfig() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setConfig(null);
     setError(null);
-  };
+  }, []);
 
   return { config, loading, error, fetchConfig, clear };
 }

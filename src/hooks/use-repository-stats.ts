@@ -71,13 +71,10 @@ export function useRepositoryStats() {
         const repo = getProtopediaRepository();
         const currentStats = repo.getStats();
 
-        if (
-          typeof currentStats.cachedAt === 'number' &&
-          !currentStats.isExpired
-        ) {
+        if (currentStats.cachedAt instanceof Date && !currentStats.isExpired) {
           // Calculate time until expiration
           const now = Date.now();
-          const expiresAt = currentStats.cachedAt + REPOSITORY_TTL_MS;
+          const expiresAt = currentStats.cachedAt.getTime() + REPOSITORY_TTL_MS;
           const timeUntilExpiry = expiresAt - now;
 
           if (timeUntilExpiry > 0) {

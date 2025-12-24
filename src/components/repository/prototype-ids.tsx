@@ -26,8 +26,7 @@ export function PrototypeIds({ stats, onUseSnapshot }: PrototypeIdsProps) {
     if (prototypeIds && !idsLoading) {
       onUseSnapshot?.(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prototypeIds, idsLoading]);
+  }, [prototypeIds, idsLoading, onUseSnapshot]);
 
   const disabled = idsLoading || getStoreState(stats) === 'not-stored';
 

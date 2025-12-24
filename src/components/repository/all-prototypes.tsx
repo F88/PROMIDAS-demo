@@ -26,8 +26,7 @@ export function AllPrototypes({ stats, onUseSnapshot }: AllPrototypesProps) {
     if (allPrototypes && !allLoading) {
       onUseSnapshot?.(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allPrototypes, allLoading]);
+  }, [allPrototypes, allLoading, onUseSnapshot]);
 
   const disabled = allLoading || getStoreState(stats) === 'not-stored';
 

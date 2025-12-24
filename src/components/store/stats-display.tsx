@@ -18,13 +18,13 @@ interface StatsDisplayProps {
 export function StatsDisplay({ stats, onGetStoreInfo }: StatsDisplayProps) {
   // Control store/repo indicator when data is displayed
   useEffect(() => {
-    if (!stats) {
+    const fetchedAt = stats?.fetchedAt;
+    if (fetchedAt == null) {
       return;
     }
 
     onGetStoreInfo?.(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stats?.fetchedAt]);
+  }, [stats?.fetchedAt, onGetStoreInfo]);
 
   const description = stats
     ? `現在のSnapshot統計 (${formatTime(stats.fetchedAt)})`

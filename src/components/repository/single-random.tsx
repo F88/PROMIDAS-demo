@@ -27,8 +27,7 @@ export function SingleRandom({ stats, onUseSnapshot }: SingleRandomProps) {
     if (singleRandomPrototype && !singleRandomLoading) {
       onUseSnapshot?.(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [singleRandomPrototype, singleRandomLoading]);
+  }, [singleRandomPrototype, singleRandomLoading, onUseSnapshot]);
 
   const wrappedFetchSingleRandom = () => {
     fetchSingleRandom();

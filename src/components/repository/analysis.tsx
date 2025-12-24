@@ -32,8 +32,7 @@ export function Analysis({ stats, onUseSnapshot }: AnalysisProps) {
     if (analysis && !analysisLoading) {
       onUseSnapshot?.(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analysis, analysisLoading]);
+  }, [analysis, analysisLoading, onUseSnapshot]);
 
   const disabled = analysisLoading || getStoreState(stats) === 'not-stored';
 
