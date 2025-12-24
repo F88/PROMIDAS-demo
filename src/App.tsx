@@ -62,7 +62,7 @@ function PromidasInfoSection() {
           py: 3,
           px: 2,
           textAlign: 'center',
-          backgroundColor: '#34834B',
+          backgroundColor: '#0288d1',
           borderBottom: '1px solid',
           borderColor: 'divider',
           color: 'white',
@@ -350,7 +350,7 @@ function App() {
           px: 2,
           mt: 'auto',
           textAlign: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          backgroundColor: '#0288d1',
           color: 'white',
         }}
       >

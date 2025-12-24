@@ -31,8 +31,7 @@ export function AppHeader({
       sx={{
         py: 2,
         px: 2,
-        backgroundColor: 'rgba(34, 87, 47, 0.7)',
-        backdropFilter: 'blur(10px)',
+        backgroundColor: '#263238',
         borderBottom: '1px solid',
         borderColor: 'divider',
         position: 'sticky',
