@@ -14,40 +14,116 @@ import type {
 export function parseFetcherSnapshotFailure(
   failure: FetcherSnapshotFailure,
 ): string {
+  const buildFetcherFailureContextLines = (
+    currentLocalizedMessage: string,
+  ): string[] => {
+    const lines: string[] = [];
+
+    const method = failure.details.req?.method;
+    const url = failure.details.req?.url;
+    if (method || url) {
+      lines.push(`リクエスト: ${[method, url].filter(Boolean).join(' ')}`);
+    }
+
+    const statusText = failure.details.res?.statusText;
+    const resCode = failure.details.res?.code;
+    if (failure.status || statusText) {
+      if (failure.status) {
+        lines.push(
+          `レスポンス: HTTP ${failure.status}${statusText ? ` ${statusText}` : ''}`,
+        );
+      } else if (statusText) {
+        lines.push(`レスポンス: ${statusText}`);
+      }
+    }
+    if (resCode) {
+      lines.push(`レスポンスコード: ${resCode}`);
+    }
+
+    lines.push(`エラーコード: ${failure.code}`);
+
+    // Keep raw message as-is for stability (no parsing).
+    // Avoid duplicating it when the localized message is already the raw message.
+    if (failure.message && currentLocalizedMessage !== failure.message) {
+      lines.push(`詳細: ${failure.message}`);
+    }
+
+    return lines;
+  };
+
+  const buildFetcherFailureReferenceBlock = (
+    currentLocalizedMessage: string,
+  ): string => {
+    const lines = buildFetcherFailureContextLines(currentLocalizedMessage);
+    if (lines.length === 0) {
+      return '';
+    }
+    return `\n\n[参考情報]\n${lines.join('\n')}`;
+  };
+
+  const withFetcherReferenceInfo = (localizedMessage: string): string => {
+    return `${localizedMessage}${buildFetcherFailureReferenceBlock(localizedMessage)}`;
+  };
+
   // HTTP errors with status code (most specific)
   if (failure.kind === 'http' && failure.status) {
     switch (failure.status) {
       case 400:
-        return 'リクエストが不正です。パラメータを確認してください。';
+        return withFetcherReferenceInfo(
+          'リクエストが不正です。パラメータを確認してください。',
+        );
       case 401:
-        return 'APIトークンが無効です。設定を確認してください。';
+        return withFetcherReferenceInfo(
+          'APIトークンが無効です。設定を確認してください。',
+        );
       case 403:
-        return 'アクセスが拒否されました。APIトークンの権限を確認してください。';
+        return withFetcherReferenceInfo(
+          'アクセスが拒否されました。APIトークンの権限を確認してください。',
+        );
       case 404:
-        return 'リクエストしたリソースが見つかりませんでした。';
+        return withFetcherReferenceInfo(
+          'リクエストしたリソースが見つかりませんでした。',
+        );
       case 405:
-        return '許可されていないHTTPメソッドです。';
+        return withFetcherReferenceInfo('許可されていないHTTPメソッドです。');
       case 408:
-        return 'リクエストがタイムアウトしました。再試行してください。';
+        return withFetcherReferenceInfo(
+          'リクエストがタイムアウトしました。再試行してください。',
+        );
       case 429:
-        return 'リクエスト制限に達しました。しばらく待ってから再試行してください。';
+        return withFetcherReferenceInfo(
+          'リクエスト制限に達しました。しばらく待ってから再試行してください。',
+        );
       case 500:
-        return 'サーバー内部エラーが発生しました。しばらく待ってから再試行してください。';
+        return withFetcherReferenceInfo(
+          'サーバー内部エラーが発生しました。しばらく待ってから再試行してください。',
+        );
       case 502:
-        return 'ゲートウェイエラーが発生しました。しばらく待ってから再試行してください。';
+        return withFetcherReferenceInfo(
+          'ゲートウェイエラーが発生しました。しばらく待ってから再試行してください。',
+        );
       case 503:
-        return 'サービスが一時的に利用できません。しばらく待ってから再試行してください。';
+        return withFetcherReferenceInfo(
+          'サービスが一時的に利用できません。しばらく待ってから再試行してください。',
+        );
       case 504:
-        return 'ゲートウェイタイムアウトが発生しました。しばらく待ってから再試行してください。';
+        return withFetcherReferenceInfo(
+          'ゲートウェイタイムアウトが発生しました。しばらく待ってから再試行してください。',
+        );
       default:
         // Handle other HTTP status codes by range
         if (failure.status >= 400 && failure.status < 500) {
-          return `クライアントエラーが発生しました (HTTP ${failure.status})。リクエスト内容を確認してください。`;
+          const message = `クライアントエラーが発生しました (HTTP ${failure.status})。リクエスト内容を確認してください。`;
+          return withFetcherReferenceInfo(message);
         }
         if (failure.status >= 500 && failure.status < 600) {
-          return `サーバーエラーが発生しました (HTTP ${failure.status})。しばらく待ってから再試行してください。`;
+          const message = `サーバーエラーが発生しました (HTTP ${failure.status})。しばらく待ってから再試行してください。`;
+          return withFetcherReferenceInfo(message);
         }
-        return `HTTPエラーが発生しました (HTTP ${failure.status})。`;
+        {
+          const message = `HTTPエラーが発生しました (HTTP ${failure.status})。`;
+          return withFetcherReferenceInfo(message);
+        }
     }
   }
 
@@ -57,59 +133,85 @@ export function parseFetcherSnapshotFailure(
   switch (failure.code) {
     // HTTP-derived codes (status may not be observable in some environments)
     case 'CLIENT_UNAUTHORIZED':
-      return 'APIトークンが無効です。設定を確認してください。';
+      return withFetcherReferenceInfo(
+        'APIトークンが無効です。設定を確認してください。',
+      );
     case 'CLIENT_FORBIDDEN':
-      return 'アクセスが拒否されました。APIトークンの権限を確認してください。';
+      return withFetcherReferenceInfo(
+        'アクセスが拒否されました。APIトークンの権限を確認してください。',
+      );
     case 'CLIENT_NOT_FOUND':
-      return 'リクエストしたリソースが見つかりませんでした。';
+      return withFetcherReferenceInfo(
+        'リクエストしたリソースが見つかりませんでした。',
+      );
     case 'CLIENT_RATE_LIMITED':
-      return 'リクエスト制限に達しました。しばらく待ってから再試行してください。';
+      return withFetcherReferenceInfo(
+        'リクエスト制限に達しました。しばらく待ってから再試行してください。',
+      );
     case 'CLIENT_BAD_REQUEST':
-      return 'リクエストが不正です。パラメータを確認してください。';
+      return withFetcherReferenceInfo(
+        'リクエストが不正です。パラメータを確認してください。',
+      );
     case 'CLIENT_METHOD_NOT_ALLOWED':
-      return '許可されていないHTTPメソッドです。';
+      return withFetcherReferenceInfo('許可されていないHTTPメソッドです。');
     case 'CLIENT_TIMEOUT':
-      return 'リクエストがタイムアウトしました。再試行してください。';
+      return withFetcherReferenceInfo(
+        'リクエストがタイムアウトしました。再試行してください。',
+      );
     case 'CLIENT_ERROR':
-      return 'クライアントエラーが発生しました。リクエスト内容を確認してください。';
+      return withFetcherReferenceInfo(
+        'クライアントエラーが発生しました。リクエスト内容を確認してください。',
+      );
     case 'SERVER_INTERNAL_ERROR':
     case 'SERVER_BAD_GATEWAY':
     case 'SERVER_GATEWAY_TIMEOUT':
     case 'SERVER_SERVICE_UNAVAILABLE':
     case 'SERVER_ERROR':
-      return 'サーバーエラーが発生しました。しばらく待ってから再試行してください。';
+      return withFetcherReferenceInfo(
+        'サーバーエラーが発生しました。しばらく待ってから再試行してください。',
+      );
 
     // Network / control
     case 'NETWORK_ERROR':
-      return [
-        'ネットワークエラーが発生しました。',
-        '次のような原因が考えられます:',
-        '- ネットワークがオフライン',
-        '- サーバーが一時的に利用できない',
-        '- ファイアウォールやプロキシの設定',
-      ].join('\n');
+      return withFetcherReferenceInfo(
+        [
+          'ネットワークエラーが発生しました。',
+          '次のような原因が考えられます:',
+          '- ネットワークがオフライン',
+          '- サーバーが一時的に利用できない',
+          '- ファイアウォールやプロキシの設定',
+        ].join('\n'),
+      );
     case 'ECONNREFUSED':
-      return 'サーバーに接続できませんでした。サーバーが起動しているか確認してください。';
+      return withFetcherReferenceInfo(
+        'サーバーに接続できませんでした。サーバーが起動しているか確認してください。',
+      );
     case 'ENOTFOUND':
-      return 'サーバーが見つかりませんでした。URLを確認してください。';
+      return withFetcherReferenceInfo(
+        'サーバーが見つかりませんでした。URLを確認してください。',
+      );
     case 'ETIMEDOUT':
     case 'TIMEOUT':
-      return 'リクエストがタイムアウトしました。ネットワーク接続を確認してください。';
+      return withFetcherReferenceInfo(
+        'リクエストがタイムアウトしました。ネットワーク接続を確認してください。',
+      );
     case 'ABORTED':
-      return 'リクエストがキャンセルされました。';
+      return withFetcherReferenceInfo('リクエストがキャンセルされました。');
 
     // CORS
     case 'CORS_BLOCKED':
-      return [
-        'APIサーバーとの通信がCORSポリシーによりブロックされました。',
-        '最も可能性が高い原因:',
-        '- APIトークンが未設定、または無効',
-        '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
-      ].join('\n');
+      return withFetcherReferenceInfo(
+        [
+          'APIサーバーとの通信がCORSポリシーによりブロックされました。',
+          '最も可能性が高い原因:',
+          '- APIトークンが未設定、または無効',
+          '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
+        ].join('\n'),
+      );
 
     // Fallback
     case 'UNKNOWN':
-      return failure.message;
+      return withFetcherReferenceInfo(failure.message);
     default: {
       const _exhaustiveCheck: never = failure.code;
       return _exhaustiveCheck;
@@ -141,32 +243,61 @@ export function parseStoreSnapshotFailure(
     }
   };
 
+  const buildStoreFailureReferenceBlock = (
+    currentLocalizedMessage: string,
+  ): string => {
+    const lines: string[] = [];
+
+    lines.push(`エラーコード: ${failure.code}`);
+    lines.push(`分類: ${failure.kind}`);
+    lines.push(`dataState: ${failure.dataState}`);
+
+    // Keep raw message as-is for stability (no parsing).
+    // Avoid duplicating it when the localized message is already the raw message.
+    if (failure.message && currentLocalizedMessage !== failure.message) {
+      lines.push(`詳細: ${failure.message}`);
+    }
+
+    if (lines.length === 0) {
+      return '';
+    }
+
+    return `\n\n[参考情報]\n${lines.join('\n')}`;
+  };
+
+  const withStoreReferenceInfo = (localizedMessage: string): string => {
+    return `${localizedMessage}${buildStoreFailureReferenceBlock(localizedMessage)}`;
+  };
+
   // Exhaustive handling of store error codes.
   // If PROMIDAS adds a new StoreErrorCode, this switch should fail to compile
   // until we decide how to present it in the demo site.
   switch (failure.code) {
     case 'STORE_CAPACITY_EXCEEDED':
-      return [
-        'データサイズが制限を超えました。',
-        localizeStoreDataState(failure.dataState),
-        '次を試してください:',
-        '- limitパラメータを減らす',
-        '- ストアのmaxDataSizeBytesを増やす(設定可能な場合)',
-        `詳細: ${failure.message}`,
-      ].join('\n');
+      return withStoreReferenceInfo(
+        [
+          'データサイズが制限を超えました。',
+          localizeStoreDataState(failure.dataState),
+          '次を試してください:',
+          '- limitパラメータを減らす',
+          '- ストアのmaxDataSizeBytesを増やす(設定可能な場合)',
+        ].join('\n'),
+      );
     case 'STORE_SERIALIZATION_FAILED':
-      return [
-        'データのシリアライズに失敗しました。',
-        localizeStoreDataState(failure.dataState),
-        'データ形式に問題がある可能性があります。',
-        `詳細: ${failure.message}`,
-      ].join('\n');
+      return withStoreReferenceInfo(
+        [
+          'データのシリアライズに失敗しました。',
+          localizeStoreDataState(failure.dataState),
+          'データ形式に問題がある可能性があります。',
+        ].join('\n'),
+      );
     case 'STORE_UNKNOWN':
-      return [
-        'ストレージエラーが発生しました。',
-        localizeStoreDataState(failure.dataState),
-        `詳細: ${failure.message}`,
-      ].join('\n');
+      return withStoreReferenceInfo(
+        [
+          'ストレージエラーが発生しました。',
+          localizeStoreDataState(failure.dataState),
+        ].join('\n'),
+      );
     default: {
       const _exhaustiveCheck: never = failure.code;
       return _exhaustiveCheck;
