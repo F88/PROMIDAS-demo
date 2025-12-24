@@ -8,6 +8,53 @@ React SPAデモサイト - PROMIDASを使用してProtoPediaデータを取得�
 
 PROMIDASの`createProtopediaInMemoryRepository`を利用して、ProtoPedia APIからプロトタイプデータを取得し、インメモリキャッシュで管理します。
 
+## デモサイトの特徴
+
+- **リアルタイムデータフロー可視化** - Fetcher、Store、Repository、Displayの4つのコンポーネント間のデータフローをアニメーションで表示
+- **インメモリキャッシュ管理** - TTL(Time To Live)による自動キャッシュ管理、残り時間をリアルタイム表示
+- **スナップショット機能** - プロトタイプデータのスナップショット作成・更新、任意の件数(limit/offset)でデータ取得可能
+- **多様な検索機能** - ランダム取得、ID検索、全件取得、分析機能など豊富な検索オプション
+- **統計情報ダッシュボード** - キャッシュステータス、メモリ使用量、保存件数をヘッダーに常時表示
+- **レスポンシブデザイン** - Material-UIを使用したモダンで使いやすいUI、モバイルにも対応
+
+## 主な機能
+
+### ヘッダー統計ダッシュボード
+
+- **キャッシュステータス**: Stored/Expired/Not Setupの3状態
+- **キャッシュ時刻**: データ取得時刻とTTL残り時間
+- **データサイズ**: 件数とメモリ使用量(KB/MB)
+- **データフローインジケーター**: 4つのコンポーネントの状態を可視化
+
+### データフロー可視化
+
+ヘッダー下部のインジケーターで、データの流れをリアルタイム表示:
+
+- **Fetcher** 🔧: API通信中に点灯
+- **Store** 💾: ストアへの書き込み中に点灯
+- **Repository** 📚: リポジトリアクセス中に点灯
+- **Display** 🖥️: データ表示中に点灯
+
+### Store機能
+
+- Get Config: リポジトリ設定情報の取得
+- Get Stats: キャッシュ統計情報の取得
+- 設定とステータスの詳細表示
+
+### Repository機能
+
+- **Random Prototype**: ランダムに1件取得
+- **Single Random**: 指定件数をランダム取得
+- **Search by ID**: プロトタイプIDで検索
+- **All Prototypes**: 全件取得(ページネーション対応)
+- **Analysis**: 統計分析とデータ概要
+- **Snapshot Management**: スナップショットの作成・更新
+
+### 設定機能
+
+- **Token Configuration**: APIトークンの登録・削除
+- **Repository Settings**: スナップショット設定(limit/offset、TTL、maxPayload)
+
 ## 技術スタック
 
 ### Core
@@ -56,86 +103,22 @@ npm run dev
 
 ### 3. APIトークンの設定
 
-初回起動時に設定画面が表示されます。
+アプリケーション起動後、以下の手順でAPIトークンを設定します:
 
 1. [ProtoPedia設定ページ](https://protopedia.net/settings/application)でAPIトークンを取得
-2. 設定画面の入力欄にトークンを貼り付け
-3. "Save"ボタンをクリック
+2. "Token Configuration"セクションの入力欄にトークンを入力
+3. "Save Token"ボタンをクリック
 
-トークンはブラウザのLocalStorageに保存されます。設定画面は右上の⚙️ボタンからいつでも開けます。
+トークンはブラウザのSessionStorageに保存されます(現在のタブセッション中のみ有効)。
 
-## 使い方
+### 4. リポジトリ設定
 
-1. "Show Random Prototype"ボタンをクリック
-2. ProtoPediaからランダムにプロトタイプを取得して表示
-3. プロトタイプの詳細情報(画像、タグ、チーム名など)を確認
-4. "View on ProtoPedia"リンクから元のページへアクセス可能
+"Repository Settings"セクションで以下を設定:
 
-## 主な機能
+- **Limit**: スナップショット取得件数(0-10,000、デフォルト: 10)
+- **Offset**: 取得開始位置(デフォルト: 0)
 
-### APIトークン管理
-
-- LocalStorageでトークンを安全に保存
-- 設定画面からトークンの登録・削除が可能
-- トークン未設定時は自動的に設定画面を表示
-
-### データ取得とキャッシング
-
-- `createProtopediaInMemoryRepository`によるインメモリストレージ
-- TTL: 30秒
-- 最大ペイロードサイズ: 30 MiB
-- 自動的なスナップショット管理
-
-### カスタムフック
-
-- `useRandomPrototype` - ランダムなプロトタイプ取得
-- `usePrototypeSearch` - IDによるプロトタイプ検索
-- `useRepositoryStats` - リポジトリ統計情報の取得
-- `useSnapshotManagement` - スナップショット管理(setup/refresh)
-
-## テスト
-
-```bash
-# テスト実行
-npm test
-
-# UIモードでテスト
-npm run test:ui
-
-# カバレッジ確認
-npm run test:coverage
-```
-
-## ビルド
-
-```bash
-npm run build
-```
-
-ビルドされたファイルは`dist/`ディレクトリに出力されます。
-
-## プロジェクト構成
-
-```text
-src/
-├── components/          # Reactコンポーネント
-│   ├── PrototypeCard.tsx
-│   ├── PrototypeCard.css
-│   ├── Settings.tsx
-│   └── Settings.css
-├── hooks/              # カスタムReact Hooks
-│   └── usePrototype.ts
-├── lib/                # ユーティリティ
-│   ├── protopedia-repository.ts
-│   └── token-storage.ts
-├── test/               # テストファイル
-│   ├── setup.ts
-│   └── PrototypeCard.test.tsx
-├── App.tsx             # メインアプリ
-├── App.css
-├── main.tsx            # エントリーポイント
-└── index.css
-```
+設定後、"Save Settings"をクリックすると自動的にストア情報が更新されます。
 
 ## ライセンス
 
