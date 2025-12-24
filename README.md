@@ -1,5 +1,8 @@
 # PROMIDAS Demo
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/F88/PROMIDAS-demo)
+[![View Code Wiki](https://www.gstatic.com/_/boq-sdlc-agents-ui/_/r/YUi5dj2UWvE.svg)](https://codewiki.google/github.com/f88/PROMIDAS-demo)
+
 React SPAデモサイト - PROMIDASを使用してProtoPediaデータを取得・表示します。
 
 ## 概要
