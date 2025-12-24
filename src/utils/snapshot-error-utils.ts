@@ -1,77 +1,158 @@
-export type ParsedSnapshotFailure = {
-  error: string | null;
-  code: string | null;
-  status: number | null;
-};
+import type {
+  SnapshotOperationFailure,
+  FetcherSnapshotFailure,
+  StoreSnapshotFailure,
+  UnknownSnapshotFailure,
+} from '@f88/promidas/repository/types';
 
-function parseSnapshotFailureJson(
-  rawError: string,
-): ParsedSnapshotFailure | null {
-  const normalized = rawError.trim();
-
-  if (normalized.startsWith('{') === false) {
-    return null;
-  }
-
-  try {
-    const value: unknown = JSON.parse(normalized);
-
-    if (value === null || typeof value !== 'object') {
-      return null;
+/**
+ * Localizes fetcher-originated snapshot operation failures to Japanese.
+ *
+ * @param failure - The fetcher snapshot failure to localize
+ * @returns Localized error message in Japanese
+ */
+export function parseFetcherSnapshotFailure(
+  failure: FetcherSnapshotFailure,
+): string {
+  // HTTP errors with status code (most specific)
+  if (failure.kind === 'http' && failure.status) {
+    switch (failure.status) {
+      case 400:
+        return 'リクエストが不正です。パラメータを確認してください。';
+      case 401:
+        return 'APIトークンが無効です。設定を確認してください。';
+      case 403:
+        return 'アクセスが拒否されました。APIトークンの権限を確認してください。';
+      case 404:
+        return 'リクエストしたリソースが見つかりませんでした。';
+      case 405:
+        return '許可されていないHTTPメソッドです。';
+      case 408:
+        return 'リクエストがタイムアウトしました。再試行してください。';
+      case 429:
+        return 'リクエスト制限に達しました。しばらく待ってから再試行してください。';
+      case 500:
+        return 'サーバー内部エラーが発生しました。しばらく待ってから再試行してください。';
+      case 502:
+        return 'ゲートウェイエラーが発生しました。しばらく待ってから再試行してください。';
+      case 503:
+        return 'サービスが一時的に利用できません。しばらく待ってから再試行してください。';
+      case 504:
+        return 'ゲートウェイタイムアウトが発生しました。しばらく待ってから再試行してください。';
+      default:
+        // Handle other HTTP status codes by range
+        if (failure.status >= 400 && failure.status < 500) {
+          return `クライアントエラーが発生しました (HTTP ${failure.status})。リクエスト内容を確認してください。`;
+        }
+        if (failure.status >= 500 && failure.status < 600) {
+          return `サーバーエラーが発生しました (HTTP ${failure.status})。しばらく待ってから再試行してください。`;
+        }
+        return `HTTPエラーが発生しました (HTTP ${failure.status})。`;
     }
-
-    const obj = value as Record<string, unknown>;
-
-    if (obj.ok !== false) {
-      return null;
-    }
-
-    return {
-      error: typeof obj.error === 'string' ? obj.error : null,
-      code: typeof obj.code === 'string' ? obj.code : null,
-      status: typeof obj.status === 'number' ? obj.status : null,
-    };
-  } catch {
-    return null;
-  }
-}
-
-export function localizeSnapshotOperationError(
-  snapshotError: string | null,
-): string | null {
-  if (!snapshotError) {
-    return null;
   }
 
-  const normalizedSnapshotError = snapshotError.trim();
-
-  if (normalizedSnapshotError === '') {
-    return null;
-  }
-
-  if (
-    normalizedSnapshotError ===
-    'API token is not set. Please configure it in Settings.'
-  ) {
-    return 'APIトークンが設定されていません';
-  }
-
-  const parsed = parseSnapshotFailureJson(normalizedSnapshotError);
-  const isFetchNetworkError =
-    parsed?.code === 'NETWORK_ERROR' &&
-    parsed.error?.toLowerCase().includes('failed to fetch');
-
-  if (isFetchNetworkError) {
-    const messagesForDisplay = [
-      '通信に失敗しました。次のような原因が考えられます。',
+  // CORS errors (認証エラーがブロックされている可能性が高い)
+  if (failure.code === 'CORS_BLOCKED') {
+    return [
+      'APIサーバーとの通信がCORSポリシーによりブロックされました。',
+      '最も可能性が高い原因:',
       '- APIトークンが未設定、または無効',
-      '- ネットワークがオフライン',
-      '- サーバが一時的に利用できない',
       '注: ProtoPedia API は Access-Control-Allow-Origin を付与しないため、PROMIDASでは401(認証エラー)を正しく判定出来ません。',
     ].join('\n');
-    return messagesForDisplay;
   }
 
-  // RepositoryConfigurationError throws user-friendly hints directly
-  return normalizedSnapshotError;
+  // Specific network errors
+  if (failure.code === 'ECONNREFUSED') {
+    return 'サーバーに接続できませんでした。サーバーが起動しているか確認してください。';
+  }
+
+  if (failure.code === 'ENOTFOUND') {
+    return 'サーバーが見つかりませんでした。URLを確認してください。';
+  }
+
+  if (failure.code === 'TIMEOUT' || failure.code === 'ETIMEDOUT') {
+    return 'リクエストがタイムアウトしました。ネットワーク接続を確認してください。';
+  }
+
+  if (failure.code === 'ABORTED') {
+    return 'リクエストがキャンセルされました。';
+  }
+
+  // Generic network errors
+  if (failure.code === 'NETWORK_ERROR') {
+    return [
+      'ネットワークエラーが発生しました。',
+      '次のような原因が考えられます:',
+      '- ネットワークがオフライン',
+      '- サーバーが一時的に利用できない',
+      '- ファイアウォールやプロキシの設定',
+    ].join('\n');
+  }
+
+  // Fallback to message for other fetcher errors
+  return failure.message;
+}
+
+/**
+ * Localizes store-originated snapshot operation failures to Japanese.
+ *
+ * @param failure - The store snapshot failure to localize
+ * @returns Localized error message in Japanese
+ */
+export function parseStoreSnapshotFailure(
+  failure: StoreSnapshotFailure,
+): string {
+  if (failure.code === 'STORE_CAPACITY_EXCEEDED') {
+    return 'データサイズが制限を超えました。limitパラメータを減らしてください。';
+  }
+
+  if (failure.code === 'STORE_SERIALIZATION_FAILED') {
+    return 'データのシリアライズに失敗しました。データ形式に問題がある可能性があります。';
+  }
+
+  if (failure.code === 'STORE_UNKNOWN') {
+    return `ストレージエラーが発生しました: ${failure.message}`;
+  }
+
+  // Fallback to message for other store errors
+  return failure.message;
+}
+
+/**
+ * Localizes unknown-origin snapshot operation failures.
+ *
+ * @param failure - The unknown snapshot failure to localize
+ * @returns The original error message
+ */
+export function parseUnknownSnapshotFailure(
+  failure: UnknownSnapshotFailure,
+): string {
+  return failure.message;
+}
+
+/**
+ * Localizes snapshot operation failures to user-friendly Japanese messages.
+ *
+ * Uses discriminated union types to provide specific, actionable error messages
+ * based on the error's origin (fetcher, store, or unknown).
+ *
+ * @param failure - The snapshot operation failure to localize, or null
+ * @returns Localized error message in Japanese, or null if input is null
+ */
+export function localizeSnapshotOperationError(
+  failure: SnapshotOperationFailure | null,
+): string | null {
+  if (!failure) {
+    return null;
+  }
+
+  if (failure.origin === 'fetcher') {
+    return parseFetcherSnapshotFailure(failure);
+  }
+
+  if (failure.origin === 'store') {
+    return parseStoreSnapshotFailure(failure);
+  }
+
+  return parseUnknownSnapshotFailure(failure);
 }
