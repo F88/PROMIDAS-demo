@@ -4,66 +4,33 @@ React SPAデモサイト - PROMIDASを使用してProtoPediaデータを取得�
 
 ## 概要
 
-このプロジェクトは、[PROMIDAS](https://github.com/F88/promidas) のデモサイトです。
+[PROMIDAS](https://github.com/F88/promidas) のデモサイトです。
 
 PROMIDASは、ProtoPedia API v2を利用したデータ取得とキャッシュ管理を簡素化するライブラリです。
 PROMIDASを使用することで、API通信、インメモリキャッシュ、リポジトリ管理、データ表示の各コンポーネント間のデータフローを効率的に実装できます。
 
 ## デモサイトの特徴
 
-- **リアルタイムデータフロー可視化** - Fetcher、Store、Repository、Displayの4つのコンポーネント間のデータフローをアニメーションで表示
-- **インメモリキャッシュ管理** - TTL(Time To Live)による自動キャッシュ管理、残り時間をリアルタイム表示
-- **スナップショット機能** - プロトタイプデータのスナップショット作成・更新、任意の件数(limit/offset)でデータ取得可能
-- **多様な検索機能** - ランダム取得、ID検索、全件取得、分析機能など豊富な検索オプション
-- **統計情報ダッシュボード** - キャッシュステータス、メモリ使用量、保存件数をヘッダーに常時表示
-- **レスポンシブデザイン** - Material-UIを使用したモダンで使いやすいUI、モバイルにも対応
+### 🚀 PROMIDAS 統合
 
-## 主な機能
+ProtoPedia API v2とPROMIDASライブラリを活用した効率的なデータ取得と管理
 
-### ヘッダー統計ダッシュボード
+### 🧰 PROMIDAS を活用した主な機能
 
-- **キャッシュステータス**: Stored/Expired/Not Setupの3状態
-- **キャッシュ時刻**: データ取得時刻とTTL残り時間
-- **データサイズ**: 件数とメモリ使用量(KB/MB)
-- **データフローインジケーター**: 4つのコンポーネントの状態を可視化
-
-### データフロー可視化
-
-ヘッダー下部のインジケーターで、データの流れをリアルタイム表示:
-
-- **Fetcher** 🔧: API通信中に点灯
-- **Store** 💾: ストアへの書き込み中に点灯
-- **Repository** 📚: リポジトリアクセス中に点灯
-- **Display** 🖥️: データ表示中に点灯
-
-### Store機能
-
-- Get Config: リポジトリ設定情報の取得
-- Get Stats: キャッシュ統計情報の取得
-- 設定とステータスの詳細表示
-
-### Repository機能
-
-- **Random Prototype**: ランダムに1件取得
-- **Single Random**: 指定件数をランダム取得
-- **Search by ID**: プロトタイプIDで検索
-- **All Prototypes**: 全件取得(ページネーション対応)
-- **Analysis**: 統計分析とデータ概要
-- **Snapshot Management**: スナップショットの作成・更新
-
-### 設定機能
-
-- **Token Configuration**: APIトークンの登録・削除
-- **Repository Settings**: スナップショット設定(limit/offset、TTL、maxPayload)
+- 📊 **統計情報ダッシュボード** - キャッシュステータス、メモリ使用量、保存件数をヘッダーに常時表示
+- 🔄 **リアルタイムデータフロー可視化** - Fetcher、Store、Repository、Displayの4つのコンポーネント間のデータフローをアニメーションで表示
+- 📱 **レスポンシブデザイン** - Material-UIを使用したモダンで使いやすいUI、モバイルにも対応
+- ⏱️ **インメモリキャッシュ管理** - TTL(Time To Live)による自動キャッシュ管理、残り時間をリアルタイム表示
+- 📸 **スナップショット機能** - プロトタイプデータのスナップショット作成・更新、任意の件数(limit/offset)でデータ取得可能
 
 ## 使い方
 
 1. Setup Snapshotでデータを取得
 2. Repositoryセクションで各種機能を試す:
-   - Random Prototype: ランダムに取得
-   - Search by ID: ID指定で検索
-   - All Prototypes: 全件取得
-   - Analysis: データ分析
+    - Random Prototype: ランダムに取得
+    - Search by ID: ID指定で検索
+    - All Prototypes: 全件取得
+    - Analysis: データ分析
 3. ヘッダーでキャッシュ状態とTTL残り時間を確認
 
 ### APIトークンの設定
