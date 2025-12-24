@@ -49,9 +49,16 @@ export function useRepositoryEvents({
 
       const handleSnapshotFailed = (error: SnapshotOperationFailure) => {
         console.debug('[Repository Event] snapshotFailed', {
-          error: error.error,
-          status: error.status,
-          code: error.code,
+          origin: error.origin,
+          message: error.message,
+          ...(error.origin === 'fetcher' && {
+            code: error.code,
+            status: error.status,
+          }),
+          ...(error.origin === 'store' && {
+            code: error.code,
+            dataState: error.dataState,
+          }),
         });
         onSnapshotFailed?.(error);
       };

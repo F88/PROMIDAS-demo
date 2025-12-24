@@ -1,4 +1,5 @@
 import { Stack, Alert, Typography, Box, Chip } from '@mui/material';
+import { useEffect } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
@@ -6,22 +7,12 @@ import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { getStoreState } from '../../utils/store-state-utils';
 import { usePrototypeIds } from '../../hooks';
 
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
-
 interface PrototypeIdsProps {
   stats: PrototypeInMemoryStats | null;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
+export function PrototypeIds({ stats, onUseSnapshot }: PrototypeIdsProps) {
   const {
     ids: prototypeIds,
     loading: idsLoading,
@@ -30,17 +21,18 @@ export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
     clear: clearIds,
   } = usePrototypeIds();
 
-  const wrappedFetchIds = () => {
-    visualizeFlow(() => {
-      fetchIds();
-    }, 'get-from-snapshot');
-  };
+  // Control store/repo indicator when data is retrieved
+  useEffect(() => {
+    if (prototypeIds && !idsLoading) {
+      onUseSnapshot?.(true);
+    }
+  }, [prototypeIds, idsLoading, onUseSnapshot]);
 
   const disabled = idsLoading || getStoreState(stats) === 'not-stored';
 
   return (
     <SectionCard
-      title="getPrototypeIdsFromSnapshot()"
+      title="getPrototypeIdsFromSnapshot"
       description="全てのIDを取得"
       category="Query"
     >
@@ -54,7 +46,7 @@ export function PrototypeIds({ stats, visualizeFlow }: PrototypeIdsProps) {
         }
       >
         <ActionButton
-          onClick={wrappedFetchIds}
+          onClick={fetchIds}
           disabled={disabled}
           loading={idsLoading}
         >

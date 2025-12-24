@@ -1,10 +1,5 @@
 /**
- * @file Hook for fetching repository stats
- *
- * **DEMO SITE FEATURE**: This hook includes detailed console logging for
- * demonstration and debugging purposes. Do not remove console.debug or
- * console.error statements - they are essential for showing PROMIDAS
- * behavior to demo site users.
+ * @file Hook for header stats with auto-refresh for TTL display
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -15,12 +10,12 @@ import {
 } from '../lib/repository/protopedia-repository';
 import { hasApiToken } from '../lib/token/token-storage';
 
-export type RepositoryStats = PrototypeInMemoryStats & {
+export type HeaderStats = PrototypeInMemoryStats & {
   fetchedAt: number;
 };
 
-export function useRepositoryStats() {
-  const [stats, setStats] = useState<RepositoryStats | null>(() => {
+export function useHeaderStats() {
+  const [stats, setStats] = useState<HeaderStats | null>(() => {
     if (!hasApiToken()) {
       return null;
     }
@@ -29,7 +24,7 @@ export function useRepositoryStats() {
       const result = repo.getStats();
       return { ...result, fetchedAt: Date.now() };
     } catch (err) {
-      console.error('[PROMIDAS Demo] useRepositoryStats init failed:', err);
+      console.error('[PROMIDAS Demo] useHeaderStats init failed:', err);
       return null;
     }
   });
@@ -44,18 +39,15 @@ export function useRepositoryStats() {
       const result = repo.getStats();
       const fetchedAt = Date.now();
 
-      console.debug('[useRepositoryStats] Fetched repository stats', {
+      console.debug('[useHeaderStats] Fetched header stats', {
         size: result.size,
-        cachedAt: result.cachedAt,
-        isExpired: result.isExpired,
         remainingTtlMs: result.remainingTtlMs,
         fetchedAt: new Date(fetchedAt).toISOString(),
       });
 
       setStats({ ...result, fetchedAt });
     } catch (err) {
-      console.error('[PROMIDAS Demo] useRepositoryStats update failed:', err);
-      // Token not set yet
+      console.error('[PROMIDAS Demo] useHeaderStats update failed:', err);
       setStats(null);
     }
   }, []);
@@ -78,30 +70,27 @@ export function useRepositoryStats() {
           const timeUntilExpiry = expiresAt - now;
 
           if (timeUntilExpiry > 0) {
-            return setTimeout(() => {
+            // Schedule update at expiration time
+            const timeoutId = window.setTimeout(() => {
               updateStats();
-              scheduleNextUpdate();
-            }, timeUntilExpiry + 100); // Add small buffer
+            }, timeUntilExpiry + 100); // 100ms buffer
+
+            return () => window.clearTimeout(timeoutId);
           }
         }
-      } catch (err) {
-        console.error(
-          '[PROMIDAS Demo] scheduling next stats update failed:',
-          err,
-        );
+      } catch {
+        // Token not set yet or other error
       }
       return undefined;
     };
 
-    const timeout = scheduleNextUpdate();
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [updateStats]);
+    const cleanup = scheduleNextUpdate();
+    return () => cleanup?.();
+  }, [stats, updateStats]);
 
-  const clearStats = () => {
+  const clearStats = useCallback(() => {
     setStats(null);
-  };
+  }, []);
 
   return { stats, updateStats, clearStats };
 }

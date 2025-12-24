@@ -1,31 +1,21 @@
 import { Stack, Alert, TextField, Box, Typography, Chip } from '@mui/material';
+import { useEffect, useState } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { getStoreState } from '../../utils/store-state-utils';
 import { clampNumericInput } from '../../utils/number-utils';
-import { useState } from 'react';
 import { useRandomPrototype } from '../../hooks';
-
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
 
 interface RandomPrototypeProps {
   stats: PrototypeInMemoryStats | null;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
 export function RandomPrototype({
   stats,
-  visualizeFlow,
+  onUseSnapshot,
 }: RandomPrototypeProps) {
   const [randomSampleSize, setRandomSampleSize] = useState('3');
 
@@ -38,11 +28,16 @@ export function RandomPrototype({
     hasExecuted: randomHasExecuted,
   } = useRandomPrototype();
 
+  // Control store/repo indicator when data is retrieved
+  useEffect(() => {
+    if (randomPrototypes.length > 0 && !randomLoading) {
+      onUseSnapshot?.(true);
+    }
+  }, [randomPrototypes, randomLoading, onUseSnapshot]);
+
   const handleFetchRandom = () => {
     const size = parseInt(randomSampleSize) || 0;
-    visualizeFlow(() => {
-      fetchRandom(size);
-    }, 'get-from-snapshot');
+    fetchRandom(size);
   };
 
   const disabled = randomLoading || getStoreState(stats) === 'not-stored';

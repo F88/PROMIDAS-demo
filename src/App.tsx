@@ -1,13 +1,22 @@
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
-import { TokenConfiguration } from './components/config/token-configuration';
 import { RepositorySettings } from './components/config/repository-settings';
+import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
+import {
+  useConfig,
+  useDownloadProgress,
+  useHeaderStats,
+  useStoreStats,
+  type HeaderStats,
+} from './hooks';
+import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
+import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
 import { resetRepository } from './lib/repository/protopedia-repository';
 import {
   getApiToken,
@@ -15,17 +24,10 @@ import {
   removeApiToken,
   setApiToken,
 } from './lib/token/token-storage';
-import {
-  useRepositoryStats,
-  useConfig,
-  useRepositoryEvents,
-  useDownloadProgress,
-  type RepositoryStats,
-} from './hooks';
 
 function isCacheAliveForTtlPolling(
-  stats: RepositoryStats | null,
-): stats is RepositoryStats {
+  stats: HeaderStats | null,
+): stats is HeaderStats {
   return (
     stats !== null &&
     stats.cachedAt !== null &&
@@ -54,48 +56,88 @@ export const SETUP_SNAPSHOT = {
  */
 function PromidasInfoSection() {
   return (
-    <Box
-      sx={{
-        py: 4,
-        px: 2,
-        textAlign: 'center',
-        backgroundColor: 'rgba(52, 131, 75, 0.7)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        color: 'white',
-      }}
-    >
-      <Link
-        href="https://f88.github.io/promidas/"
-        target="_blank"
-        rel="noopener noreferrer"
-        underline="hover"
+    <>
+      <Box
         sx={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 0.5,
+          py: 3,
+          px: 2,
+          textAlign: 'center',
+          backgroundColor: '#34834B',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
           color: 'white',
-          fontWeight: 500,
-          fontSize: '1.1rem',
         }}
       >
-        📚 PROMIDAS とは
-      </Link>
-    </Box>
+        <Typography
+          variant="h4"
+          component="h1"
+          fontWeight={600}
+          sx={{
+            color: 'white',
+            textAlign: 'center',
+            my: 3,
+            fontSize: {
+              xs: '1.5rem', // h5相当 (小画面)
+              sm: '2rem', // h4相当 (中画面)
+              md: '2.5rem', // h3相当 (大画面)
+              lg: '3rem', // h2相当 (特大画面)
+            },
+          }}
+        >
+          PROMIDAS Demo
+        </Typography>
+
+        <Link
+          href="https://f88.github.io/promidas/"
+          target="_blank"
+          rel="noopener noreferrer"
+          underline="hover"
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'white',
+            fontWeight: 500,
+            fontSize: '1.1rem',
+          }}
+        >
+          📚 PROMIDAS とは
+        </Link>
+      </Box>
+    </>
   );
 }
 
 function App() {
   const [token, setTokenInput] = useState(getApiToken() || '');
 
-  // Data flow visualization states
-  const [isFetcherActive, setIsFetcherActive] = useState(false);
-  const [isStoreActive, setIsStoreActive] = useState(false);
-  const [isRepositoryActive, setIsRepositoryActive] = useState(false);
-  const [isDisplayActive, setIsDisplayActive] = useState(false);
+  // Data flow visualization
+  const {
+    isFetcherActive,
+    isStoreActive,
+    isRepositoryActive,
+    isDisplayActive,
+    setIsFetcherActive,
+    setIsStoreActive,
+    setIsRepositoryActive,
+    setIsDisplayActive,
+    handleGetStoreInfo,
+    handleUseSnapshot,
+  } = useDataFlowIndicators();
 
-  const { stats, updateStats, clearStats } = useRepositoryStats();
+  // Stats for header (updated every second for Remaining TTL)
+  const {
+    stats: headerStats,
+    updateStats: updateHeaderStats,
+    clearStats: clearHeaderStats,
+  } = useHeaderStats();
+  // Stats for store display (updated only when data actually changes)
+  const {
+    stats: storeStats,
+    updateStats: updateStoreStats,
+    clearStats: clearStoreStats,
+  } = useStoreStats();
+
   const {
     config: repoConfig,
     loading: configLoading,
@@ -104,34 +146,24 @@ function App() {
     clear: clearConfig,
   } = useConfig();
 
-  const showStoreInfo = () => {
+  const showStoreInfo = useCallback(() => {
     fetchConfig();
-    updateStats();
-  };
+    updateHeaderStats();
+    updateStoreStats();
+  }, [fetchConfig, updateHeaderStats, updateStoreStats]);
 
-  const hideStoreInfo = () => {
+  const hideStoreInfo = useCallback(() => {
     clearConfig();
-    clearStats();
-  };
+    clearHeaderStats();
+    clearStoreStats();
+  }, [clearConfig, clearHeaderStats, clearStoreStats]);
 
   // Listen to repository events for real-time fetch visualization
-  useRepositoryEvents({
-    onSnapshotStarted: () => {
-      console.debug('[Repository Event] Snapshot Started');
-      setIsRepositoryActive(true);
-      setIsStoreActive(true);
-    },
-    onSnapshotCompleted: (stats) => {
-      console.debug('[Repository Event] Snapshot Completed', stats);
-      setIsRepositoryActive(false);
-      setIsStoreActive(false);
-      updateStats();
-    },
-    onSnapshotFailed: () => {
-      console.debug('[Repository Event] Snapshot Failed');
-      setIsRepositoryActive(false);
-      setIsStoreActive(false);
-    },
+  useSnapshotEventHandlers({
+    setIsRepositoryActive,
+    setIsStoreActive,
+    updateHeaderStats,
+    updateStoreStats,
   });
 
   // Control Fetcher active state based on download progress
@@ -148,7 +180,7 @@ function App() {
       latestProgress.status === 'started' ||
       latestProgress.status === 'in-progress';
     setIsFetcherActive(isActive);
-  }, [downloadProgress]);
+  }, [downloadProgress, setIsFetcherActive]);
 
   // Initialize config and stats on mount
   useEffect(() => {
@@ -158,129 +190,33 @@ function App() {
     }
 
     hideStoreInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showStoreInfo, hideStoreInfo]);
 
   // Periodically update stats to show remaining TTL changes
   useEffect(() => {
-    if (!isCacheAliveForTtlPolling(stats)) {
+    if (!isCacheAliveForTtlPolling(headerStats)) {
       return;
     }
 
     const expiryBufferMs = 100;
 
     const expiryTimeoutId = window.setTimeout(() => {
-      updateStats();
-    }, stats.remainingTtlMs + expiryBufferMs);
+      updateHeaderStats();
+    }, headerStats.remainingTtlMs + expiryBufferMs);
 
-    if (stats.remainingTtlMs < 1_000) {
+    if (headerStats.remainingTtlMs < 1_000) {
       return () => window.clearTimeout(expiryTimeoutId);
     }
 
     const intervalId = window.setInterval(() => {
-      updateStats();
+      updateHeaderStats();
     }, 1_000); // Update every 1 second
 
     return () => {
       window.clearInterval(intervalId);
       window.clearTimeout(expiryTimeoutId);
     };
-  }, [stats, updateStats]);
-
-  // Visualize data flow with flexible step control
-  type FlowStep = 'fetcher' | 'store' | 'repository' | 'display';
-
-  const visualizeDataFlow = async (
-    operation: () => Promise<void> | void,
-    sequence: FlowStep[],
-  ) => {
-    // Temporarily disabled - real-time events handle visualization now
-    await operation();
-    return;
-
-    const delays: Record<FlowStep, number> = {
-      fetcher: 300,
-      store: 600,
-      repository: 400,
-      display: 1000,
-    };
-
-    const setters: Record<FlowStep, (active: boolean) => void> = {
-      fetcher: setIsFetcherActive,
-      store: setIsStoreActive,
-      repository: setIsRepositoryActive,
-      display: setIsDisplayActive,
-    };
-
-    let operationExecuted = false;
-
-    for (const step of sequence) {
-      setters[step](true);
-
-      // Execute operation on the first step
-      if (!operationExecuted) {
-        await operation();
-        operationExecuted = true;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, delays[step]));
-      setters[step](false);
-    }
-  };
-
-  // Convenience wrapper for common flow patterns
-  type FlowPattern =
-    | 'get-store-info'
-    | 'get-from-snapshot'
-    | 'fetch-individual'
-    | 'forced-fetch'
-    | 'simple-display';
-
-  const visualizeFlow = async (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => {
-    const patterns: Record<FlowPattern, FlowStep[]> = {
-      // Repository gets Store info (config/stats) and returns to Display
-      'get-store-info': ['repository', 'store', 'repository', 'display'],
-      // Repository gets data from snapshot in Store, returns to Display
-      'get-from-snapshot': ['repository', 'store', 'repository', 'display'],
-      // Repository checks Store (miss), fetches individual via Fetcher, saves to Store, returns to Display
-      'fetch-individual': [
-        'repository',
-        'store',
-        'fetcher',
-        'repository',
-        'store',
-        'display',
-      ],
-      // Repository forces fetch via Fetcher, saves to Store (success/fail), returns to Display
-      'forced-fetch': [
-        'repository',
-        'fetcher',
-        'repository',
-        'store',
-        'repository',
-        'display',
-      ],
-      // Simple display without data flow (for UI-only operations)
-      'simple-display': ['display'],
-    };
-
-    return visualizeDataFlow(operation, patterns[pattern]);
-  };
-
-  const wrappedFetchConfig = () => {
-    visualizeFlow(() => {
-      fetchConfig();
-    }, 'get-store-info');
-  };
-
-  const wrappedUpdateStats = () => {
-    visualizeFlow(() => {
-      updateStats();
-    }, 'get-store-info');
-  };
+  }, [headerStats, updateHeaderStats]);
 
   const handleSaveToken = () => {
     if (token.trim()) {
@@ -302,7 +238,7 @@ function App() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppHeader
-        stats={stats}
+        stats={headerStats}
         config={repoConfig}
         dataFlowIndicator={{
           isFetcherActive,
@@ -379,25 +315,29 @@ function App() {
           <Grid size={{ xs: 12 }}>
             <StoreContainer
               isActive={isStoreActive}
-              stats={stats}
-              fetchStats={wrappedUpdateStats}
+              stats={storeStats}
+              fetchStats={updateStoreStats}
               config={repoConfig}
               configLoading={configLoading}
               configError={configError}
-              fetchConfig={wrappedFetchConfig}
+              fetchConfig={fetchConfig}
+              onGetStoreInfo={handleGetStoreInfo}
+              onDisplayChange={setIsDisplayActive}
             />
           </Grid>
 
           <Grid size={{ xs: 12 }}>
             <RepositoryContainer
               isActive={isRepositoryActive}
-              stats={stats}
-              fetchStats={updateStats}
+              stats={storeStats}
+              fetchStats={updateStoreStats}
               config={repoConfig}
               configLoading={configLoading}
               configError={configError}
               fetchConfig={fetchConfig}
-              visualizeFlow={visualizeFlow}
+              onDisplayChange={setIsDisplayActive}
+              onGetStoreInfo={handleGetStoreInfo}
+              onUseSnapshot={handleUseSnapshot}
             />
           </Grid>
         </Grid>

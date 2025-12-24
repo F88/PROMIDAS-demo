@@ -15,6 +15,8 @@ interface StoreContainerProps {
   configError: string | null;
   fetchConfig: () => void;
   isActive?: boolean;
+  onGetStoreInfo?: (isActive: boolean) => void;
+  onDisplayChange?: (isDisplaying: boolean) => void;
 }
 
 export function StoreContainer({
@@ -25,6 +27,7 @@ export function StoreContainer({
   configError,
   // fetchConfig,
   isActive = false,
+  onGetStoreInfo,
 }: StoreContainerProps) {
   return (
     <ContainerWrapper type="store" label="Store" isActive={isActive}>
@@ -34,13 +37,14 @@ export function StoreContainer({
             repoConfig={config}
             configLoading={configLoading}
             configError={configError}
+            onGetStoreInfo={onGetStoreInfo}
           />
         </Grid>
         {/* <Grid size={{ xs: 12, md: 6 }}>
           <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
         </Grid> */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <StatsDisplay stats={stats} />
+          <StatsDisplay stats={stats} onGetStoreInfo={onGetStoreInfo} />
         </Grid>
         {/* <Grid size={{ xs: 12, md: 6 }}>
           <GetStats fetchStats={fetchStats} />

@@ -1,7 +1,9 @@
 export * from './snapshot-helpers';
 export * from './use-all-prototypes';
 export * from './use-config';
+// export * from './use-data-flow-indicators';
 export * from './use-download-progress';
+export * from './use-header-stats';
 export * from './use-prototype-analysis';
 export * from './use-prototype-ids';
 export * from './use-prototype-search';
@@ -9,4 +11,6 @@ export * from './use-random-prototype';
 export * from './use-repository-events';
 export * from './use-repository-stats';
 export * from './use-single-random';
+// export * from './use-snapshot-event-handlers';
 export * from './use-snapshot-management';
+export * from './use-store-stats';

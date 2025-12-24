@@ -5,15 +5,27 @@ import {
   TableRow,
   TableCell,
 } from '@mui/material';
+import { useEffect } from 'react';
 import { SectionCard } from '../common/section-card';
 import type { RepositoryStats } from '../../hooks/use-repository-stats';
 import { formatTime } from '../../utils/time-utils';
 
 interface StatsDisplayProps {
   stats: RepositoryStats | null;
+  onGetStoreInfo?: (isActive: boolean) => void;
 }
 
-export function StatsDisplay({ stats }: StatsDisplayProps) {
+export function StatsDisplay({ stats, onGetStoreInfo }: StatsDisplayProps) {
+  // Control store/repo indicator when data is displayed
+  useEffect(() => {
+    const fetchedAt = stats?.fetchedAt;
+    if (fetchedAt == null) {
+      return;
+    }
+
+    onGetStoreInfo?.(true);
+  }, [stats?.fetchedAt, onGetStoreInfo]);
+
   const description = stats
     ? `現在のSnapshot統計 (${formatTime(stats.fetchedAt)})`
     : '現在のSnapshot統計';

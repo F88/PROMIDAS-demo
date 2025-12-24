@@ -1,5 +1,6 @@
 import { Stack, TextField, Grid, Alert, Collapse } from '@mui/material';
 import { useState } from 'react';
+import type { SnapshotOperationFailure } from '@f88/promidas/repository';
 import { SETUP_SNAPSHOT } from '../../App';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
@@ -21,7 +22,7 @@ interface SetupSnapshotProps {
   setSnapshotMaterialNm: (value: string) => void;
   snapshotLoading: boolean;
   snapshotSuccess: string | null;
-  snapshotError: string | null;
+  snapshotError: SnapshotOperationFailure | null;
   handleSetupSnapshot: () => void;
   handleResetSnapshotForm: () => void;
 }
@@ -50,7 +51,7 @@ export function SetupSnapshot({
 
   return (
     <SectionCard
-      title="setupSnapshot()"
+      title="setupSnapshot"
       description="Snapshotを初期化"
       category="Snapshot"
     >

@@ -84,55 +84,99 @@ describe('repository-config', () => {
   });
 
   describe('download progress', () => {
-    it('progress callbacks emit download progress events', () => {
-      const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
-      const cb = apiClientConfig.progressCallback;
+    describe('success flow', () => {
+      it('emits events for complete download lifecycle', () => {
+        const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+        const cb = apiClientConfig.progressCallback;
 
-      if (!cb) {
-        throw new Error('Expected progressCallback to be defined');
-      }
+        if (!cb) {
+          throw new Error('Expected progressCallback to be defined');
+        }
 
-      cb({ type: 'request-start' });
-      cb({
-        type: 'response-received',
-        estimatedTotal: 100,
-        limit: 200,
-        prepareTimeMs: 1234,
-      });
-      cb({
-        type: 'download-progress',
-        received: 10,
-        total: 100,
-        percentage: 10,
-      });
-      cb({
-        type: 'complete',
-        received: 100,
-        estimatedTotal: 100,
-        downloadTimeMs: 2345,
-        totalTimeMs: 3456,
-      });
+        cb({ type: 'request-start' });
+        cb({
+          type: 'response-received',
+          estimatedTotal: 100,
+          limit: 200,
+          prepareTimeMs: 1234,
+        });
+        cb({
+          type: 'download-progress',
+          received: 10,
+          total: 100,
+          percentage: 10,
+        });
+        cb({
+          type: 'complete',
+          received: 100,
+          estimatedTotal: 100,
+          downloadTimeMs: 2345,
+          totalTimeMs: 3456,
+        });
 
-      expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
-        status: 'started',
-        estimatedBytes: 100,
-        limit: 200,
-        prepareTimeMs: 1234,
-      });
+        expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+          status: 'started',
+          estimatedBytes: 100,
+          limit: 200,
+          prepareTimeMs: 1234,
+        });
 
-      expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
-        status: 'in-progress',
-        receivedBytes: 10,
-        estimatedBytes: 100,
-        percentage: 10,
-      });
+        expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+          status: 'in-progress',
+          receivedBytes: 10,
+          estimatedBytes: 100,
+          percentage: 10,
+        });
 
-      expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
-        status: 'completed',
-        receivedBytes: 100,
-        estimatedBytes: 100,
-        downloadTimeMs: 2345,
-        totalTimeMs: 3456,
+        expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+          status: 'completed',
+          receivedBytes: 100,
+          estimatedBytes: 100,
+          downloadTimeMs: 2345,
+          totalTimeMs: 3456,
+        });
+      });
+    });
+
+    describe('error handling', () => {
+      it('emits error event when stream reading fails (PROMIDAS v0.15.0)', () => {
+        const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+        const cb = apiClientConfig.progressCallback;
+
+        if (!cb) {
+          throw new Error('Expected progressCallback to be defined');
+        }
+
+        cb({ type: 'request-start' });
+        cb({
+          type: 'response-received',
+          estimatedTotal: 50000,
+          limit: 100,
+          prepareTimeMs: 500,
+        });
+        cb({
+          type: 'download-progress',
+          received: 12345,
+          total: 50000,
+          percentage: 24.69,
+        });
+        cb({
+          type: 'error',
+          error: 'Network error occurred',
+          received: 12345,
+          estimatedTotal: 50000,
+          downloadTimeMs: 1500,
+          totalTimeMs: 2000,
+        });
+
+        expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+          status: 'error',
+          errorMessage: 'Network error occurred',
+          receivedBytes: 12345,
+          estimatedBytes: 50000,
+          downloadTimeMs: 1500,
+          totalTimeMs: 2000,
+        });
       });
     });
   });

@@ -42,17 +42,17 @@ export function logFetchResult(
 /**
  * Handle snapshot operation error for demo site.
  *
- * **DO NOT REMOVE**: This is a demo site feature that converts
- * SnapshotOperationFailure to JSON string for detailed error display.
+ * **DO NOT REMOVE**: This is a demo site feature that stores
+ * SnapshotOperationFailure for detailed error display.
  *
  * @param result - The SnapshotOperationResult to check
- * @param setError - setState function to set error message
+ * @param setError - setState function to set error object
  */
 export function handleSnapshotOperationError(
   result: SnapshotOperationResult,
-  setError: (error: string) => void,
+  setError: (error: SnapshotOperationFailure | null) => void,
 ): void {
-  const error = result as SnapshotOperationFailure;
-  const message = JSON.stringify(error);
-  setError(message);
+  if (!result.ok) {
+    setError(result);
+  }
 }

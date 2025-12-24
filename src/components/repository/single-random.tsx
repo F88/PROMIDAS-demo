@@ -1,4 +1,5 @@
 import { Stack, Alert, Typography, Box } from '@mui/material';
+import { useEffect } from 'react';
 import { PrototypeCard } from '../common/prototype-card';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { SectionCard } from '../common/section-card';
@@ -6,22 +7,12 @@ import { ActionButton } from '../common/action-button';
 import { getStoreState } from '../../utils/store-state-utils';
 import { useSingleRandom } from '../../hooks';
 
-type FlowPattern =
-  | 'get-store-info'
-  | 'get-from-snapshot'
-  | 'fetch-individual'
-  | 'forced-fetch'
-  | 'simple-display';
-
 interface SingleRandomProps {
   stats: PrototypeInMemoryStats | null;
-  visualizeFlow: (
-    operation: () => Promise<void> | void,
-    pattern: FlowPattern,
-  ) => Promise<void>;
+  onUseSnapshot?: (isActive: boolean) => void;
 }
 
-export function SingleRandom({ stats, visualizeFlow }: SingleRandomProps) {
+export function SingleRandom({ stats, onUseSnapshot }: SingleRandomProps) {
   const {
     prototype: singleRandomPrototype,
     loading: singleRandomLoading,
@@ -31,17 +22,22 @@ export function SingleRandom({ stats, visualizeFlow }: SingleRandomProps) {
     hasExecuted: singleRandomHasExecuted,
   } = useSingleRandom();
 
+  // Control store/repo indicator when data is retrieved
+  useEffect(() => {
+    if (singleRandomPrototype && !singleRandomLoading) {
+      onUseSnapshot?.(true);
+    }
+  }, [singleRandomPrototype, singleRandomLoading, onUseSnapshot]);
+
   const wrappedFetchSingleRandom = () => {
-    visualizeFlow(() => {
-      fetchSingleRandom();
-    }, 'get-from-snapshot');
+    fetchSingleRandom();
   };
 
   const disabled = singleRandomLoading || getStoreState(stats) === 'not-stored';
 
   return (
     <SectionCard
-      title="getRandomPrototypeFromSnapshot()"
+      title="getRandomPrototypeFromSnapshot"
       description="ランダムに1件を取得"
       category="Query"
     >

@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { StoreConfig } from '../../hooks/use-config';
 import { StatsDashboard } from './stats-dashboard';
@@ -47,23 +47,6 @@ export function AppHeader({
         justifyContent="center"
         sx={{ maxWidth: 1400, margin: '0 auto', mb: 1 }}
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          fontWeight={600}
-          sx={{
-            color: 'white',
-            textAlign: 'center',
-            fontSize: {
-              xs: '1.5rem', // h5相当 (小画面)
-              sm: '2rem', // h4相当 (中画面)
-              md: '2.5rem', // h3相当 (大画面)
-              lg: '3rem', // h2相当 (特大画面)
-            },
-          }}
-        >
-          PROMIDAS Demo
-        </Typography>
         <StatsDashboard stats={stats} config={config} />
         <DataFlowIndicator
           isFetcherActive={isFetcherActive}
