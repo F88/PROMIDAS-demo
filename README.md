@@ -55,53 +55,17 @@ PROMIDASの`createProtopediaInMemoryRepository`を利用して、ProtoPedia API�
 - **Token Configuration**: APIトークンの登録・削除
 - **Repository Settings**: スナップショット設定(limit/offset、TTL、maxPayload)
 
-## 技術スタック
+## 使い方
 
-### Core
+1. Setup Snapshotでデータを取得
+2. Repositoryセクションで各種機能を試す:
+   - Random Prototype: ランダムに取得
+   - Search by ID: ID指定で検索
+   - All Prototypes: 全件取得
+   - Analysis: データ分析
+3. ヘッダーでキャッシュ状態とTTL残り時間を確認
 
-- **React 19** - UIライブラリ
-- **TypeScript 5.9** - 型安全な開発
-- **Vite 7** - 高速ビルドツール
-
-### UI Framework
-
-- **Material-UI (MUI) 7** - Reactコンポーネントライブラリ
-- **Emotion** - CSS-in-JS
-
-### Data Management
-
-- **PROMIDAS** - ProtoPediaデータ管理ライブラリ
-- **ProtoPedia API v2 Client** - APIクライアント
-
-### Testing & Documentation
-
-- **Vitest 4** - テストフレームワーク
-- **Testing Library** - Reactコンポーネントテスト
-- **Storybook 10** - UIコンポーネントドキュメント
-
-### Code Quality
-
-- **Prettier** - コードフォーマッター
-- **ESLint 9** - 静的解析
-- **TypeScript ESLint** - TypeScript用Lintルール
-
-## セットアップ
-
-### 1. 依存関係のインストール
-
-```bash
-npm install
-```
-
-### 2. 開発サーバーの起動
-
-```bash
-npm run dev
-```
-
-ブラウザで <http://localhost:5173/> を開きます。
-
-### 3. APIトークンの設定
+### APIトークンの設定
 
 アプリケーション起動後、以下の手順でAPIトークンを設定します:
 
@@ -111,7 +75,7 @@ npm run dev
 
 トークンはブラウザのSessionStorageに保存されます(現在のタブセッション中のみ有効)。
 
-### 4. リポジトリ設定
+### リポジトリ設定
 
 "Repository Settings"セクションで以下を設定:
 
@@ -119,6 +83,17 @@ npm run dev
 - **Offset**: 取得開始位置(デフォルト: 0)
 
 設定後、"Save Settings"をクリックすると自動的にストア情報が更新されます。
+
+## 開発
+
+開発者向けの情報は[DEVELOPMENT.md](DEVELOPMENT.md)を参照:
+
+- 詳細な技術スタック
+- プロジェクト構成
+- アーキテクチャ
+- 利用可能なスクリプト
+- テスト戦略
+- ビルドとデプロイ
 
 ## ライセンス
 
