@@ -4,9 +4,10 @@ React SPAデモサイト - PROMIDASを使用してProtoPediaデータを取得�
 
 ## 概要
 
-このプロジェクトは、[PROMIDAS](https://github.com/F88/promidas) (ProtoPedia Resource Organized Management In-memory Data Access Store)を使用したデモアプリケーションです。
+このプロジェクトは、[PROMIDAS](https://github.com/F88/promidas) のデモサイトです。
 
-PROMIDASの`createProtopediaInMemoryRepository`を利用して、ProtoPedia APIからプロトタイプデータを取得し、インメモリキャッシュで管理します。
+PROMIDASは、ProtoPedia API v2を利用したデータ取得とキャッシュ管理を簡素化するライブラリです。
+PROMIDASを使用することで、API通信、インメモリキャッシュ、リポジトリ管理、データ表示の各コンポーネント間のデータフローを効率的に実装できます。
 
 ## デモサイトの特徴
 
