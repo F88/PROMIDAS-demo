@@ -1,6 +1,9 @@
-import { Box, Container, Grid, Link, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import './App.css';
+
+import { Box, Container, Grid, Link, Typography } from '@mui/material';
+
+import { resetRepository } from './lib/repository/protopedia-repository';
+
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
 import { RepositorySettings } from './components/config/repository-settings';
@@ -8,22 +11,19 @@ import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
+
 import {
   useConfig,
   useDownloadProgress,
   useHeaderStats,
   useStoreStats,
+  useToken,
   type HeaderStats,
 } from './hooks';
 import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
 import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
-import { resetRepository } from './lib/repository/protopedia-repository';
-import {
-  getApiToken,
-  hasApiToken,
-  removeApiToken,
-  setApiToken,
-} from './lib/token/token-storage';
+
+import './App.css';
 
 function isCacheAliveForTtlPolling(
   stats: HeaderStats | null,
@@ -109,7 +109,14 @@ function PromidasInfoSection() {
 }
 
 function App() {
-  const [token, setTokenInput] = useState(getApiToken() || '');
+  const { token, hasToken, saveToken, removeToken } = useToken();
+  const [tokenInput, setTokenInput] = useState('');
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      setTokenInput(token ?? '');
+    });
+  }, [token]);
 
   // Data flow visualization
   const {
@@ -184,13 +191,12 @@ function App() {
 
   // Initialize config and stats on mount
   useEffect(() => {
-    if (hasApiToken()) {
+    if (hasToken) {
       showStoreInfo();
-      return;
+    } else {
+      hideStoreInfo();
     }
-
-    hideStoreInfo();
-  }, [showStoreInfo, hideStoreInfo]);
+  }, [hasToken, showStoreInfo, hideStoreInfo]);
 
   // Periodically update stats to show remaining TTL changes
   useEffect(() => {
@@ -218,17 +224,17 @@ function App() {
     };
   }, [headerStats, updateHeaderStats]);
 
-  const handleSaveToken = () => {
-    if (token.trim()) {
-      setApiToken(token.trim());
+  const handleSaveToken = async () => {
+    if (tokenInput.trim()) {
+      await saveToken(tokenInput.trim());
       resetRepository();
       showStoreInfo();
     }
   };
 
-  const handleDeleteToken = () => {
+  const handleDeleteToken = async () => {
     if (confirm('トークンを削除してよろしいですか？')) {
-      removeApiToken();
+      await removeToken();
       resetRepository();
       setTokenInput('');
       hideStoreInfo();
@@ -276,9 +282,9 @@ function App() {
                   }}
                 >
                   <TokenConfiguration
-                    token={token}
+                    token={tokenInput}
                     setToken={setTokenInput}
-                    hasToken={hasApiToken()}
+                    hasToken={hasToken}
                     onSaveToken={handleSaveToken}
                     onDeleteToken={handleDeleteToken}
                   />

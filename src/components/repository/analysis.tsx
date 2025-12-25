@@ -1,17 +1,20 @@
+import { useEffect } from 'react';
+
+import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { getStoreState } from '@f88/promidas-utils/store';
+
 import {
-  Stack,
   Alert,
+  Stack,
   Table,
   TableBody,
-  TableRow,
   TableCell,
+  TableRow,
 } from '@mui/material';
-import { useEffect } from 'react';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { SectionCard } from '../common/section-card';
-import { ActionButton } from '../common/action-button';
-import { getStoreState } from '../../utils/store-state-utils';
+
 import { usePrototypeAnalysis } from '../../hooks';
+import { ActionButton } from '../common/action-button';
+import { SectionCard } from '../common/section-card';
 
 interface AnalysisProps {
   stats: PrototypeInMemoryStats | null;

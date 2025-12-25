@@ -10,21 +10,24 @@
 import { useState } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { ValidationError } from '@f88/promidas/repository';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 
 export function useRandomPrototype() {
+  const repository = useProtopediaRepository();
   const [prototypes, setPrototypes] = useState<NormalizedPrototype[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const fetchRandom = async (size: number = 1) => {
+    if (!repository) return;
+
     setLoading(true);
     setError(null);
     setHasExecuted(true);
 
     try {
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const stats = repo.getStats();
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***

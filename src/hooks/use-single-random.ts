@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 
 /**
@@ -9,18 +9,21 @@ import type { NormalizedPrototype } from '@f88/promidas/types';
  * Console logs are intentionally included for demo site debugging.
  */
 export function useSingleRandom() {
+  const repository = useProtopediaRepository();
   const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const fetchSingleRandom = async () => {
+    if (!repository) return;
+
     setLoading(true);
     setError(null);
     setHasExecuted(true);
 
     try {
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const result = await repo.getRandomPrototypeFromSnapshot();
 
       console.debug('[useSingleRandom] Fetched single random prototype', {

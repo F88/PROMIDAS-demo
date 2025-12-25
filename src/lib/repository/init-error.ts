@@ -83,6 +83,7 @@ function normalizeErrorMessage(error: unknown): string {
 function categorizeRepositoryInitError(
   error: unknown,
   errorMessage: string,
+  token: string | null,
 ): RepositoryInitErrorCategory {
   if (error instanceof DataSizeExceededError) {
     return 'STORE_MAX_DATA_SIZE_EXCEEDED';
@@ -111,18 +112,20 @@ function categorizeRepositoryInitError(
 
   const messageLower = errorMessage.toLowerCase();
 
+  const tokenMissingByValue = token == null || token.length === 0;
+  const tokenMissingByMessage =
+    messageLower.includes('missing protopedia_api_v2_token') ||
+    messageLower.includes('api token is not set');
+
+  if (tokenMissingByValue || tokenMissingByMessage) {
+    return 'MISSING_TOKEN';
+  }
+
   if (
     messageLower.includes('maxdatasizebytes') &&
     messageLower.includes('must be <=')
   ) {
     return 'STORE_MAX_DATA_SIZE_EXCEEDED';
-  }
-
-  if (
-    messageLower.includes('api token is not set') ||
-    messageLower.includes('missing protopedia_api_v2_token')
-  ) {
-    return 'MISSING_TOKEN';
   }
 
   if (
@@ -175,7 +178,7 @@ export function resolveRepositoryInitFailure(
     input;
 
   const errorMessage = normalizeErrorMessage(error);
-  const category = categorizeRepositoryInitError(error, errorMessage);
+  const category = categorizeRepositoryInitError(error, errorMessage, token);
 
   const isBrowser =
     typeof window !== 'undefined' && typeof window.document !== 'undefined';

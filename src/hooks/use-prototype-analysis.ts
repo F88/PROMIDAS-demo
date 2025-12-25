@@ -8,9 +8,10 @@
  */
 
 import { useState } from 'react';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 
 export function usePrototypeAnalysis() {
+  const repository = useProtopediaRepository();
   const [analysis, setAnalysis] = useState<{
     min: number | null;
     max: number | null;
@@ -19,6 +20,8 @@ export function usePrototypeAnalysis() {
   const [error, setError] = useState<string | null>(null);
 
   const analyze = async () => {
+    if (!repository) return;
+
     setLoading(true);
     setError(null);
 
@@ -26,7 +29,7 @@ export function usePrototypeAnalysis() {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       console.debug('[PROMIDAS Playground] analyze: Starting analysis');
 
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const result = await repo.analyzePrototypes();
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
