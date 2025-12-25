@@ -16,10 +16,15 @@ export function useToken() {
   // Initialize token from storage
   useEffect(() => {
     const init = async () => {
-      const storedToken = await tokenStorage.get();
-      setTokenValue(storedToken);
-      setHasToken(await tokenStorage.has());
-      setIsLoading(false);
+      try {
+        const storedToken = await tokenStorage.get();
+        setTokenValue(storedToken);
+        setHasToken(await tokenStorage.has());
+      } catch (err) {
+        console.error('[useToken] Failed to load token from storage', err);
+      } finally {
+        setIsLoading(false);
+      }
     };
     void init();
   }, []);
