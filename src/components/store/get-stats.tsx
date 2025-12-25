@@ -1,6 +1,6 @@
-import { SectionCard } from '../common/section-card';
+import { useToken } from '../../hooks';
 import { ActionButton } from '../common/action-button';
-import { hasApiToken } from '../../lib/token/token-storage';
+import { SectionCard } from '../common/section-card';
 
 interface GetStatsProps {
   fetchStats: () => void;
@@ -8,7 +8,8 @@ interface GetStatsProps {
 }
 
 export function GetStats({ fetchStats, onGetStoreInfo }: GetStatsProps) {
-  const disabled = hasApiToken() === false;
+  const { hasToken } = useToken();
+  const disabled = hasToken === false;
 
   const handleFetchStats = () => {
     fetchStats();

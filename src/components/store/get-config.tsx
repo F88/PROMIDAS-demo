@@ -1,6 +1,6 @@
-import { SectionCard } from '../common/section-card';
+import { useToken } from '../../hooks';
 import { ActionButton } from '../common/action-button';
-import { hasApiToken } from '../../lib/token/token-storage';
+import { SectionCard } from '../common/section-card';
 
 interface GetConfigProps {
   configLoading: boolean;
@@ -13,7 +13,8 @@ export function GetConfig({
   fetchConfig,
   onGetStoreInfo,
 }: GetConfigProps) {
-  const disabled = hasApiToken() === false;
+  const { hasToken } = useToken();
+  const disabled = hasToken === false;
 
   const handleFetchConfig = () => {
     fetchConfig();

@@ -13,15 +13,16 @@ import {
   getProtopediaRepository,
   REPOSITORY_TTL_MS,
 } from '../lib/repository/protopedia-repository';
-import { hasApiToken } from '../lib/token/token-storage';
+import { useToken } from './use-token';
 
 export type RepositoryStats = PrototypeInMemoryStats & {
   fetchedAt: number;
 };
 
 export function useRepositoryStats() {
+  const { hasToken } = useToken();
   const [stats, setStats] = useState<RepositoryStats | null>(() => {
-    if (!hasApiToken()) {
+    if (!hasToken) {
       return null;
     }
     try {
@@ -38,7 +39,7 @@ export function useRepositoryStats() {
   });
 
   const updateStats = useCallback(() => {
-    if (!hasApiToken()) {
+    if (!hasToken) {
       setStats(null);
       return;
     }
@@ -64,12 +65,12 @@ export function useRepositoryStats() {
       // Token not set yet
       setStats(null);
     }
-  }, []);
+  }, [hasToken]);
 
   useEffect(() => {
     // Schedule next update when TTL expires instead of polling
     const scheduleNextUpdate = () => {
-      if (!hasApiToken()) {
+      if (!hasToken) {
         return undefined;
       }
 

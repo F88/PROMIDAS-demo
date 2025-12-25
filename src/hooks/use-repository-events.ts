@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
-import { hasApiToken } from '../lib/token/token-storage';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { SnapshotOperationFailure } from '@f88/promidas/repository';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useToken } from './use-token';
 
 interface RepositoryEventHandlers {
   onSnapshotStarted?: (params?: ListPrototypesParams) => void;
@@ -16,9 +16,11 @@ export function useRepositoryEvents({
   onSnapshotCompleted,
   onSnapshotFailed,
 }: RepositoryEventHandlers = {}) {
+  const { hasToken } = useToken();
+
   useEffect(() => {
     // Skip if no token is configured
-    if (!hasApiToken()) {
+    if (!hasToken) {
       return;
     }
 

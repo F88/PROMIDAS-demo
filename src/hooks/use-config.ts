@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
-import { hasApiToken } from '../lib/token/token-storage';
 import type { ProtopediaInMemoryRepository } from '@f88/promidas';
+import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useToken } from './use-token';
 
 export type StoreConfig = ReturnType<
   ProtopediaInMemoryRepository['getConfig']
@@ -16,12 +16,13 @@ export type StoreConfig = ReturnType<
  * Console logs are intentionally included for demo site debugging.
  */
 export function useConfig() {
+  const { hasToken } = useToken();
   const [config, setConfig] = useState<StoreConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchConfig = useCallback(() => {
-    if (!hasApiToken()) {
+    if (!hasToken) {
       // Don't set error for demo site UX - just do nothing
       setConfig(null);
       setLoading(false);
@@ -52,7 +53,7 @@ export function useConfig() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [hasToken]);
 
   const clear = useCallback(() => {
     setConfig(null);

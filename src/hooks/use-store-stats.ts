@@ -5,17 +5,18 @@
 import { useState, useCallback } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
-import { hasApiToken } from '../lib/token/token-storage';
+import { useToken } from './use-token';
 
 export type StoreStats = PrototypeInMemoryStats & {
   fetchedAt: number;
 };
 
 export function useStoreStats() {
+  const { hasToken } = useToken();
   const [stats, setStats] = useState<StoreStats | null>(null);
 
   const updateStats = useCallback(() => {
-    if (!hasApiToken()) {
+    if (!hasToken) {
       setStats(null);
       return;
     }
@@ -36,7 +37,7 @@ export function useStoreStats() {
       console.error('[PROMIDAS Playground] useStoreStats update failed:', err);
       setStats(null);
     }
-  }, []);
+  }, [hasToken]);
 
   const clearStats = useCallback(() => {
     setStats(null);
