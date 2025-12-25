@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 
 /**
  * Custom hook for retrieving all prototype IDs from the current snapshot.
@@ -8,16 +8,19 @@ import { getProtopediaRepository } from '../lib/repository/protopedia-repository
  * Console logs are intentionally included for demo site debugging.
  */
 export function usePrototypeIds() {
+  const repository = useProtopediaRepository();
   const [ids, setIds] = useState<readonly number[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchIds = async () => {
+    if (!repository) return;
+
     setLoading(true);
     setError(null);
 
     try {
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const result = await repo.getPrototypeIdsFromSnapshot();
 
       console.debug('[usePrototypeIds] Fetched prototype IDs', {

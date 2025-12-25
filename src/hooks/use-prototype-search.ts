@@ -10,21 +10,24 @@
 import { useState } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { ValidationError } from '@f88/promidas/repository';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 
 export function usePrototypeSearch() {
+  const repository = useProtopediaRepository();
   const [prototype, setPrototype] = useState<NormalizedPrototype | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const searchById = async (id: number) => {
+    if (!repository) return;
+
     setLoading(true);
     setError(null);
 
     try {
       console.debug(`[PROMIDAS Playground] searchById: Searching for ID ${id}`);
 
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const result = await repo.getPrototypeFromSnapshotByPrototypeId(id);
 
       // Demo site: Log search result

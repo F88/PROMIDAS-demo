@@ -29,3 +29,5 @@ tools/prompts/*
 
 # Temporary ignore files
 # src/utils/__tests__/snapshot-error-utils.test.ts
+src/hooks/use-repository.ts
+

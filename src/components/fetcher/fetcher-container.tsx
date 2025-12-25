@@ -1,7 +1,7 @@
 import { Typography, Box } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { useDownloadProgress } from '../../hooks/use-download-progress';
-import { getApiToken } from '../../lib/token/token-storage';
+import { useToken } from '../../hooks/use-token';
 
 /**
  * Fetcher Container
@@ -10,6 +10,7 @@ import { getApiToken } from '../../lib/token/token-storage';
  * This container highlights when data is being fetched from the ProtoPedia API.
  */
 export function FetcherContainer() {
+  const { hasToken } = useToken();
   const progressLog = useDownloadProgress();
   const latestProgress = progressLog[progressLog.length - 1];
   const isActive =
@@ -86,7 +87,7 @@ export function FetcherContainer() {
             align="center"
             sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
           >
-            {getApiToken() ? 'No fetch operations yet.' : 'No API token set.'}
+            {hasToken ? 'No fetch operations yet.' : 'No API token set.'}
           </Typography>
         ) : (
           <Box

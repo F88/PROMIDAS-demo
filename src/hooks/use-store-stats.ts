@@ -4,24 +4,23 @@
 
 import { useState, useCallback } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
-import { useToken } from './use-token';
+import { useProtopediaRepository } from './repository-context';
 
 export type StoreStats = PrototypeInMemoryStats & {
   fetchedAt: number;
 };
 
 export function useStoreStats() {
-  const { hasToken } = useToken();
+  const repository = useProtopediaRepository();
   const [stats, setStats] = useState<StoreStats | null>(null);
 
-  const updateStats = useCallback(() => {
-    if (!hasToken) {
+  const updateStats = useCallback(async () => {
+    if (!repository) {
       setStats(null);
       return;
     }
     try {
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const result = repo.getStats();
       const fetchedAt = Date.now();
 
@@ -37,7 +36,9 @@ export function useStoreStats() {
       console.error('[PROMIDAS Playground] useStoreStats update failed:', err);
       setStats(null);
     }
-  }, [hasToken]);
+  }, [repository]);
+
+  // Stats are updated manually via updateStats() calls
 
   const clearStats = useCallback(() => {
     setStats(null);

@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
 
-import { TOKEN_KEYS, TokenManager } from '@f88/promidas-utils/token';
-
 import { resetRepository } from './lib/repository/protopedia-repository';
 
 import { AppHeader } from './components/common/app-header';
@@ -19,16 +17,13 @@ import {
   useDownloadProgress,
   useHeaderStats,
   useStoreStats,
+  useToken,
   type HeaderStats,
 } from './hooks';
 import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
 import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
 
 import './App.css';
-
-const tokenStorage = TokenManager.forSessionStorage(
-  TOKEN_KEYS.PROTOPEDIA_API_V2_TOKEN,
-);
 
 function isCacheAliveForTtlPolling(
   stats: HeaderStats | null,
@@ -114,20 +109,8 @@ function PromidasInfoSection() {
 }
 
 function App() {
-  const [token, setTokenInput] = useState('');
-  const [hasToken, setHasToken] = useState(false);
-
-  // Initialize token from storage
-  useEffect(() => {
-    const initToken = async () => {
-      const storedToken = await tokenStorage.get();
-      if (storedToken) {
-        setTokenInput(storedToken);
-      }
-      setHasToken(await tokenStorage.has());
-    };
-    void initToken();
-  }, []);
+  const { token, hasToken, saveToken, removeToken } = useToken();
+  const [tokenInput, setTokenInput] = useState(token || '');
 
   // Data flow visualization
   const {
@@ -202,18 +185,12 @@ function App() {
 
   // Initialize config and stats on mount
   useEffect(() => {
-    const initializeWithToken = async () => {
-      const hasToken = await tokenStorage.has();
-      if (hasToken) {
-        showStoreInfo();
-        return;
-      }
-
+    if (hasToken) {
+      showStoreInfo();
+    } else {
       hideStoreInfo();
-    };
-
-    void initializeWithToken();
-  }, [showStoreInfo, hideStoreInfo]);
+    }
+  }, [hasToken, showStoreInfo, hideStoreInfo]);
 
   // Periodically update stats to show remaining TTL changes
   useEffect(() => {
@@ -242,9 +219,8 @@ function App() {
   }, [headerStats, updateHeaderStats]);
 
   const handleSaveToken = async () => {
-    if (token.trim()) {
-      await tokenStorage.save(token.trim());
-      setHasToken(true);
+    if (tokenInput.trim()) {
+      await saveToken(tokenInput.trim());
       resetRepository();
       showStoreInfo();
     }
@@ -252,8 +228,7 @@ function App() {
 
   const handleDeleteToken = async () => {
     if (confirm('トークンを削除してよろしいですか？')) {
-      await tokenStorage.remove();
-      setHasToken(false);
+      await removeToken();
       resetRepository();
       setTokenInput('');
       hideStoreInfo();
@@ -301,7 +276,7 @@ function App() {
                   }}
                 >
                   <TokenConfiguration
-                    token={token}
+                    token={tokenInput}
                     setToken={setTokenInput}
                     hasToken={hasToken}
                     onSaveToken={handleSaveToken}

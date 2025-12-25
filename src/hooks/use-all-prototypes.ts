@@ -9,9 +9,10 @@
 
 import { useState } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 
 export function useAllPrototypes() {
+  const repository = useProtopediaRepository();
   const [prototypes, setPrototypes] = useState<NormalizedPrototype[] | null>(
     null,
   );
@@ -19,6 +20,8 @@ export function useAllPrototypes() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchAll = async () => {
+    if (!repository) return;
+
     setLoading(true);
     setError(null);
 
@@ -26,8 +29,7 @@ export function useAllPrototypes() {
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       console.debug('[PROMIDAS Playground] fetchAll: Fetching all prototypes');
 
-      const repo = getProtopediaRepository();
-      const all = await repo.getAllFromSnapshot();
+      const all = await repository.getAllFromSnapshot();
 
       // *** DEMO SITE: DO NOT REMOVE THIS LOG ***
       // Demo site: Log fetched prototypes count

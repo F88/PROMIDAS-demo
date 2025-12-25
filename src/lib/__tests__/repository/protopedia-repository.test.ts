@@ -8,7 +8,7 @@ type Repo = { dispose?: () => void };
 
 const mocks = vi.hoisted(() => {
   return {
-    getApiToken: vi.fn<() => string | null>(),
+    tokenStorageGet: vi.fn<() => Promise<string | null>>(),
     createRepositoryConfigs: vi.fn(),
     resolveRepositoryInitFailure: vi.fn(),
 
@@ -20,9 +20,19 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('../../token/token-storage', () => {
+vi.mock('@f88/promidas-utils/token', () => {
   return {
-    getApiToken: mocks.getApiToken,
+    TokenManager: {
+      forSessionStorage: () => ({
+        get: mocks.tokenStorageGet,
+        save: vi.fn(),
+        remove: vi.fn(),
+        has: vi.fn(),
+      }),
+    },
+    TOKEN_KEYS: {
+      PROTOPEDIA_API_V2_TOKEN: 'protopedia_api_v2_token',
+    },
   };
 });
 
@@ -72,7 +82,7 @@ describe('protopedia-repository', () => {
   beforeEach(() => {
     resetRepository();
 
-    mocks.getApiToken.mockReset();
+    mocks.tokenStorageGet.mockReset();
     mocks.createRepositoryConfigs.mockReset();
     mocks.resolveRepositoryInitFailure.mockReset();
 
@@ -84,8 +94,8 @@ describe('protopedia-repository', () => {
   });
 
   describe('singleton lifecycle', () => {
-    it('returns a singleton instance until reset', () => {
-      mocks.getApiToken.mockReturnValue('token');
+    it('returns a singleton instance until reset', async () => {
+      mocks.tokenStorageGet.mockResolvedValue('token');
 
       const repo1: Repo = { dispose: vi.fn() };
       const repo2: Repo = { dispose: vi.fn() };
@@ -98,8 +108,8 @@ describe('protopedia-repository', () => {
         apiClientConfig: { progressLog: true },
       });
 
-      const a = getProtopediaRepository();
-      const b = getProtopediaRepository();
+      const a = await getProtopediaRepository();
+      const b = await getProtopediaRepository();
 
       expect(a).toBe(repo1);
       expect(b).toBe(repo1);
@@ -109,7 +119,7 @@ describe('protopedia-repository', () => {
 
       expect(repo1.dispose).toHaveBeenCalledTimes(1);
 
-      const c = getProtopediaRepository();
+      const c = await getProtopediaRepository();
       expect(c).toBe(repo2);
       expect(mocks.build).toHaveBeenCalledTimes(2);
     });

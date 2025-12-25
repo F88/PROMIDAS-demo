@@ -4,39 +4,24 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import {
-  getProtopediaRepository,
-  REPOSITORY_TTL_MS,
-} from '../lib/repository/protopedia-repository';
-import { useToken } from './use-token';
+import { REPOSITORY_TTL_MS } from '../lib/repository/protopedia-repository';
+import { useProtopediaRepository } from './repository-context';
 
 export type HeaderStats = PrototypeInMemoryStats & {
   fetchedAt: number;
 };
 
 export function useHeaderStats() {
-  const { hasToken } = useToken();
-  const [stats, setStats] = useState<HeaderStats | null>(() => {
-    if (!hasToken) {
-      return null;
-    }
-    try {
-      const repo = getProtopediaRepository();
-      const result = repo.getStats();
-      return { ...result, fetchedAt: Date.now() };
-    } catch (err) {
-      console.error('[PROMIDAS Playground] useHeaderStats init failed:', err);
-      return null;
-    }
-  });
+  const repository = useProtopediaRepository();
+  const [stats, setStats] = useState<HeaderStats | null>(null);
 
-  const updateStats = useCallback(() => {
-    if (!hasToken) {
+  const updateStats = useCallback(async () => {
+    if (!repository) {
       setStats(null);
       return;
     }
     try {
-      const repo = getProtopediaRepository();
+      const repo = repository;
       const result = repo.getStats();
       const fetchedAt = Date.now();
 
@@ -51,17 +36,21 @@ export function useHeaderStats() {
       console.error('[PROMIDAS Playground] useHeaderStats update failed:', err);
       setStats(null);
     }
-  }, [hasToken]);
+  }, [repository]);
+
+  // Stats are updated manually via updateStats() calls
 
   useEffect(() => {
     // Schedule next update when TTL expires instead of polling
-    const scheduleNextUpdate = () => {
-      if (!hasToken) {
-        return undefined;
+    let timeoutId: number | undefined;
+
+    const scheduleNextUpdate = async () => {
+      if (!repository) {
+        return;
       }
 
       try {
-        const repo = getProtopediaRepository();
+        const repo = repository;
         const currentStats = repo.getStats();
 
         if (currentStats.cachedAt instanceof Date && !currentStats.isExpired) {
@@ -72,22 +61,24 @@ export function useHeaderStats() {
 
           if (timeUntilExpiry > 0) {
             // Schedule update at expiration time
-            const timeoutId = window.setTimeout(() => {
+            timeoutId = window.setTimeout(() => {
               updateStats();
             }, timeUntilExpiry + 100); // 100ms buffer
-
-            return () => window.clearTimeout(timeoutId);
           }
         }
       } catch {
         // Token not set yet or other error
       }
-      return undefined;
     };
 
-    const cleanup = scheduleNextUpdate();
-    return () => cleanup?.();
-  }, [stats, updateStats]);
+    scheduleNextUpdate();
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [repository, stats, updateStats]);
 
   const clearStats = useCallback(() => {
     setStats(null);

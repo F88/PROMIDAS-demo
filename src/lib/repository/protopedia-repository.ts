@@ -5,10 +5,11 @@
  * components. `resetRepository` exists mainly for tests and manual resets.
  */
 
-import { PromidasRepositoryBuilder } from '@f88/promidas';
 import type { ProtopediaInMemoryRepository } from '@f88/promidas';
-import { getApiToken } from '../token/token-storage';
+import { PromidasRepositoryBuilder } from '@f88/promidas';
 import type { LogLevel } from '@f88/promidas/logger';
+import { TOKEN_KEYS, TokenManager } from '@f88/promidas-utils/token';
+
 import { createRepositoryConfigs } from './repository-config';
 import { resolveRepositoryInitFailure } from './init-error';
 
@@ -21,19 +22,18 @@ let repository: ProtopediaInMemoryRepository | null = null;
  *
  * Throws if the API token is not configured.
  */
-export function getProtopediaRepository(): ProtopediaInMemoryRepository {
+export async function getProtopediaRepository(): Promise<ProtopediaInMemoryRepository> {
   if (!repository) {
-    const token: string | null = getApiToken();
-
-    // if (!token) {
-    //   throw new Error('API token is not set. Please configure it in Settings.');
-    // }
+    const tokenStorage = TokenManager.forSessionStorage(
+      TOKEN_KEYS.PROTOPEDIA_API_V2_TOKEN,
+    );
+    const token: string | null = await tokenStorage.get();
 
     // For demo site, set log level to debug to help with troubleshooting
     const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = 'debug';
 
     const { storeConfig, repositoryConfig, apiClientConfig } =
-      createRepositoryConfigs(token, LOG_LEVEL_FOR_DEMO_SITE);
+      createRepositoryConfigs(token ?? '', LOG_LEVEL_FOR_DEMO_SITE);
 
     try {
       repository = new PromidasRepositoryBuilder()

@@ -8,24 +8,38 @@
  */
 
 import { useState } from 'react';
-import type {
-  ProtopediaInMemoryRepository,
-  PrototypeInMemoryStats,
-} from '@f88/promidas';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
 import {
   ValidationError,
   type SnapshotOperationResult,
   type SnapshotOperationFailure,
 } from '@f88/promidas/repository';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
-import { getProtopediaRepository } from '../lib/repository/protopedia-repository';
+import {
+  useEnsureProtopediaRepository,
+  useProtopediaRepository,
+} from './repository-context';
 import {
   logFetchResult,
   handleSnapshotOperationError,
 } from './snapshot-helpers';
 import { emitDownloadProgress } from './use-download-progress';
+import { RepositoryConfigurationError } from '../lib/repository/init-error';
+
+function buildInitFailureMessage(err: unknown): string {
+  if (err instanceof RepositoryConfigurationError) {
+    const hints = err.diagnostics.hints ?? [];
+    const hinted = hints.length > 0 ? hints.join('\n') : undefined;
+    const fallback = err.message || hinted;
+    return fallback || 'Repository initialization failed.';
+  }
+
+  return 'Repository is not available. Please set API token first.';
+}
 
 export function useSnapshotManagement() {
+  const repository = useProtopediaRepository();
+  const ensureRepository = useEnsureProtopediaRepository();
   const [setupLoading, setSetupLoading] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [setupError, setSetupError] = useState<SnapshotOperationFailure | null>(
@@ -38,12 +52,30 @@ export function useSnapshotManagement() {
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
   const setupSnapshot = async (params: ListPrototypesParams = {}) => {
+    const repo =
+      repository ??
+      (await ensureRepository().catch((err) => {
+        console.error(
+          '[setupSnapshot] Repository initialization failed before setup:',
+          err,
+        );
+        setSetupError({
+          ok: false,
+          origin: 'unknown',
+          message: buildInitFailureMessage(err),
+        });
+        return null;
+      }));
+
+    if (!repo) {
+      return;
+    }
+
     setSetupLoading(true);
     setSetupError(null);
     setSetupSuccess(null);
 
     try {
-      const repo: ProtopediaInMemoryRepository = getProtopediaRepository();
       const result: SnapshotOperationResult = await repo.setupSnapshot(params);
 
       // Demo site: Log full error information to console for debugging
@@ -89,12 +121,30 @@ export function useSnapshotManagement() {
   };
 
   const refreshSnapshot = async () => {
+    const repo =
+      repository ??
+      (await ensureRepository().catch((err) => {
+        console.error(
+          '[refreshSnapshot] Repository initialization failed before refresh:',
+          err,
+        );
+        setRefreshError({
+          ok: false,
+          origin: 'unknown',
+          message: buildInitFailureMessage(err),
+        });
+        return null;
+      }));
+
+    if (!repo) {
+      return;
+    }
+
     setRefreshLoading(true);
     setRefreshError(null);
     setRefreshSuccess(null);
 
     try {
-      const repo = getProtopediaRepository();
       const result: SnapshotOperationResult = await repo.refreshSnapshot();
 
       // Demo site: Log full error information to console for debugging

@@ -6,6 +6,8 @@ const tokenStorage = TokenManager.forSessionStorage(
   TOKEN_KEYS.PROTOPEDIA_API_V2_TOKEN,
 );
 
+export { tokenStorage };
+
 export function useToken() {
   const [token, setTokenValue] = useState<string | null>(null);
   const [hasToken, setHasToken] = useState(false);

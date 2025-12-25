@@ -11,7 +11,10 @@ import { Analysis } from './analysis';
 import { GetConfig } from '../store/get-config';
 import { GetStats } from '../store/get-stats';
 import { useCallback, useState } from 'react';
-import { useSnapshotManagement } from '../../hooks';
+import {
+  useSnapshotManagement,
+  useResetProtopediaRepository,
+} from '../../hooks';
 import { SETUP_SNAPSHOT } from '../../App';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
@@ -64,6 +67,7 @@ export function RepositoryContainer({
     clearSetupState,
     // clearRefreshState,
   } = useSnapshotManagement();
+  const resetRepositoryInstance = useResetProtopediaRepository();
 
   // Event Handlers
   const handleResetSnapshotForm = () => {
@@ -74,6 +78,7 @@ export function RepositoryContainer({
     setSnapshotEventNm('');
     setSnapshotMaterialNm('');
     clearSetupState();
+    resetRepositoryInstance();
   };
 
   const handleSetupSnapshot = async () => {

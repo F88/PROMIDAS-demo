@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Box,
   TextField,
   IconButton,
   InputAdornment,
@@ -34,49 +35,65 @@ export function TokenConfiguration({
       description="ProtoPedia APIトークンを設定"
       category="Authentication"
     >
-      <TextField
-        fullWidth
-        type={showToken ? 'text' : 'password'}
-        value={token}
-        onChange={(e) => setToken(e.target.value)}
-        placeholder="ProtoPedia APIトークン"
-        size="small"
-        sx={{ mb: 2 }}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowToken(!showToken)}
-                  edge="end"
-                  aria-label={showToken ? 'Hide token' : 'Show token'}
-                  size="small"
-                >
-                  {showToken ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          },
+      <Box
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSaveToken();
         }}
-      />
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-        <ActionButton
-          startIcon={<Save />}
-          onClick={onSaveToken}
-          disabled={!token.trim()}
-        >
-          一時的に保存
-        </ActionButton>
-        {hasToken && (
+        autoComplete="on"
+      >
+        <TextField
+          fullWidth
+          type={showToken ? 'text' : 'password'}
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+          placeholder="ProtoPedia APIトークン"
+          size="small"
+          sx={{ mb: 2 }}
+          name="api_token"
+          id="api_token"
+          spellCheck={false}
+          autoCapitalize="off"
+          inputMode="text"
+          slotProps={{
+            input: {
+              autoComplete: 'on',
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowToken(!showToken)}
+                    edge="end"
+                    aria-label={showToken ? 'Hide token' : 'Show token'}
+                    size="small"
+                  >
+                    {showToken ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+        <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
           <ActionButton
-            variant="danger"
-            startIcon={<Delete />}
-            onClick={onDeleteToken}
+            type="submit"
+            startIcon={<Save />}
+            disabled={!token.trim()}
           >
-            削除
+            一時的に保存
           </ActionButton>
-        )}
-      </Stack>
+          {hasToken && (
+            <ActionButton
+              variant="danger"
+              startIcon={<Delete />}
+              onClick={onDeleteToken}
+            >
+              削除
+            </ActionButton>
+          )}
+        </Stack>
+        <button type="submit" hidden aria-hidden />
+      </Box>
       <Typography variant="body2" color="text.secondary">
         トークンは{' '}
         <Link
