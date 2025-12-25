@@ -110,7 +110,13 @@ function PromidasInfoSection() {
 
 function App() {
   const { token, hasToken, saveToken, removeToken } = useToken();
-  const [tokenInput, setTokenInput] = useState(token || '');
+  const [tokenInput, setTokenInput] = useState('');
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      setTokenInput(token ?? '');
+    });
+  }, [token]);
 
   // Data flow visualization
   const {
