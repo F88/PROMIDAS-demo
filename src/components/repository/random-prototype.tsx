@@ -1,12 +1,15 @@
-import { Stack, Alert, TextField, Box, Typography, Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
+
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { SectionCard } from '../common/section-card';
+import { getStoreState } from '@f88/promidas-utils/store';
+
+import { Alert, Box, Chip, Stack, TextField, Typography } from '@mui/material';
+
+import { useRandomPrototype } from '../../hooks';
+import { clampNumericInput } from '../../utils/number-utils';
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
-import { getStoreState } from '../../utils/store-state-utils';
-import { clampNumericInput } from '../../utils/number-utils';
-import { useRandomPrototype } from '../../hooks';
+import { SectionCard } from '../common/section-card';
 
 interface RandomPrototypeProps {
   stats: PrototypeInMemoryStats | null;

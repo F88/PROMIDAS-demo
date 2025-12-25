@@ -1,6 +1,11 @@
-import { Box, Container, Grid, Link, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import './App.css';
+
+import { Box, Container, Grid, Link, Typography } from '@mui/material';
+
+import { TOKEN_KEYS, TokenManager } from '@f88/promidas-utils/token';
+
+import { resetRepository } from './lib/repository/protopedia-repository';
+
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
 import { RepositorySettings } from './components/config/repository-settings';
@@ -8,6 +13,7 @@ import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
+
 import {
   useConfig,
   useDownloadProgress,
@@ -17,13 +23,12 @@ import {
 } from './hooks';
 import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
 import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
-import { resetRepository } from './lib/repository/protopedia-repository';
-import {
-  getApiToken,
-  hasApiToken,
-  removeApiToken,
-  setApiToken,
-} from './lib/token/token-storage';
+
+import './App.css';
+
+const tokenStorage = TokenManager.forSessionStorage(
+  TOKEN_KEYS.PROTOPEDIA_API_V2_TOKEN,
+);
 
 function isCacheAliveForTtlPolling(
   stats: HeaderStats | null,
@@ -109,7 +114,20 @@ function PromidasInfoSection() {
 }
 
 function App() {
-  const [token, setTokenInput] = useState(getApiToken() || '');
+  const [token, setTokenInput] = useState('');
+  const [hasToken, setHasToken] = useState(false);
+
+  // Initialize token from storage
+  useEffect(() => {
+    const initToken = async () => {
+      const storedToken = await tokenStorage.get();
+      if (storedToken) {
+        setTokenInput(storedToken);
+      }
+      setHasToken(await tokenStorage.has());
+    };
+    void initToken();
+  }, []);
 
   // Data flow visualization
   const {
@@ -184,12 +202,17 @@ function App() {
 
   // Initialize config and stats on mount
   useEffect(() => {
-    if (hasApiToken()) {
-      showStoreInfo();
-      return;
-    }
+    const initializeWithToken = async () => {
+      const hasToken = await tokenStorage.has();
+      if (hasToken) {
+        showStoreInfo();
+        return;
+      }
 
-    hideStoreInfo();
+      hideStoreInfo();
+    };
+
+    void initializeWithToken();
   }, [showStoreInfo, hideStoreInfo]);
 
   // Periodically update stats to show remaining TTL changes
@@ -218,17 +241,19 @@ function App() {
     };
   }, [headerStats, updateHeaderStats]);
 
-  const handleSaveToken = () => {
+  const handleSaveToken = async () => {
     if (token.trim()) {
-      setApiToken(token.trim());
+      await tokenStorage.save(token.trim());
+      setHasToken(true);
       resetRepository();
       showStoreInfo();
     }
   };
 
-  const handleDeleteToken = () => {
+  const handleDeleteToken = async () => {
     if (confirm('トークンを削除してよろしいですか？')) {
-      removeApiToken();
+      await tokenStorage.remove();
+      setHasToken(false);
       resetRepository();
       setTokenInput('');
       hideStoreInfo();
@@ -278,7 +303,7 @@ function App() {
                   <TokenConfiguration
                     token={token}
                     setToken={setTokenInput}
-                    hasToken={hasApiToken()}
+                    hasToken={hasToken}
                     onSaveToken={handleSaveToken}
                     onDeleteToken={handleDeleteToken}
                   />
