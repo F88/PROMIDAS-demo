@@ -11,10 +11,7 @@ import { Analysis } from './analysis';
 import { GetConfig } from '../store/get-config';
 import { GetStats } from '../store/get-stats';
 import { useCallback, useState } from 'react';
-import {
-  useSnapshotManagement,
-  useResetProtopediaRepository,
-} from '../../hooks';
+import { useSnapshotManagement } from '../../hooks';
 import { SETUP_SNAPSHOT } from '../../App';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
@@ -67,7 +64,6 @@ export function RepositoryContainer({
     clearSetupState,
     // clearRefreshState,
   } = useSnapshotManagement();
-  const resetRepositoryInstance = useResetProtopediaRepository();
 
   // Event Handlers
   const handleResetSnapshotForm = () => {
@@ -78,7 +74,6 @@ export function RepositoryContainer({
     setSnapshotEventNm('');
     setSnapshotMaterialNm('');
     clearSetupState();
-    resetRepositoryInstance();
   };
 
   const handleSetupSnapshot = async () => {
@@ -109,107 +104,167 @@ export function RepositoryContainer({
 
   return (
     <ContainerWrapper type="repository" label="Repository" isActive={isActive}>
-      {/* Store management */}
-      <Typography
-        variant="h6"
-        sx={{
-          // mt: 3,
-          // mb: 1,
-          my: 2,
-          fontSize: '1.1rem',
-          fontWeight: 600,
+      {/* Store, Snapshot */}
+      <Grid
+        container
+        spacing={2}
+        size={{
+          xs: 12,
+          // sm: 6,
+          // md: 6,
         }}
       >
-        Store management{' '}
-        {/* <Typography
-          component="span"
-          sx={{ fontSize: '0.85rem', fontWeight: 400, opacity: 0.7 }}
-        >
-          (returns data even if TTL expired)
-        </Typography> */}
-      </Typography>
-
-      <Grid container spacing={2}>
+        {/* Store management */}
         <Grid
-          size={{
-            // xs: 12,
-            xs: 6,
-            sm: 6,
-          }}
-        >
-          <GetConfig
-            configLoading={configLoading}
-            fetchConfig={fetchConfig}
-            onGetStoreInfo={onGetStoreInfo}
-          />
-        </Grid>
-        <Grid
-          size={{
-            // xs: 12,
-            xs: 6,
-            sm: 6,
-          }}
-        >
-          <GetStats fetchStats={fetchStats} onGetStoreInfo={onGetStoreInfo} />
-        </Grid>
-      </Grid>
-
-      {/* Snapshot Management */}
-      <Typography
-        variant="h6"
-        sx={{
-          // mt: 2,
-          // mb: 1,
-          my: 2,
-          fontSize: '1.1rem',
-          fontWeight: 600,
-        }}
-      >
-        Snapshot Management
-      </Typography>
-
-      <Grid container spacing={2}>
-        <Grid
+          // container
           size={{
             xs: 12,
-            sm: 6,
-            // md: 6,
+            sm: 12,
+            md: 6,
+            lg: 6,
+            xl: 6,
           }}
         >
-          <SetupSnapshot
-            snapshotLimit={snapshotLimit}
-            setSnapshotLimit={setSnapshotLimit}
-            snapshotOffset={snapshotOffset}
-            setSnapshotOffset={setSnapshotOffset}
-            snapshotUserNm={snapshotUserNm}
-            setSnapshotUserNm={setSnapshotUserNm}
-            snapshotTagNm={snapshotTagNm}
-            setSnapshotTagNm={setSnapshotTagNm}
-            snapshotEventNm={snapshotEventNm}
-            setSnapshotEventNm={setSnapshotEventNm}
-            snapshotMaterialNm={snapshotMaterialNm}
-            setSnapshotMaterialNm={setSnapshotMaterialNm}
-            snapshotLoading={setupLoading}
-            snapshotSuccess={setupSuccess}
-            snapshotError={setupError}
-            handleSetupSnapshot={handleSetupSnapshot}
-            handleResetSnapshotForm={handleResetSnapshotForm}
-          />
+          <Typography
+            variant="h6"
+            sx={{
+              my: 2,
+              fontSize: '1.1rem',
+              fontWeight: 600,
+            }}
+          >
+            Store management
+          </Typography>
+          <Grid
+            container
+            spacing={2}
+            size={{
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 12,
+              xl: 12,
+            }}
+          >
+            <Grid
+              size={{
+                xs: 6,
+                sm: 6,
+                md: 6,
+                lg: 6,
+                xl: 6,
+              }}
+            >
+              <GetConfig
+                configLoading={configLoading}
+                fetchConfig={fetchConfig}
+                onGetStoreInfo={onGetStoreInfo}
+              />
+            </Grid>
+            <Grid
+              size={{
+                xs: 6,
+                sm: 6,
+                md: 6,
+                lg: 6,
+                xl: 6,
+              }}
+            >
+              <GetStats
+                fetchStats={fetchStats}
+                onGetStoreInfo={onGetStoreInfo}
+              />
+            </Grid>
+          </Grid>
         </Grid>
 
+        {/* Snapshot Management */}
+
         <Grid
+          // container
+          // spacing={2}
           size={{
             xs: 12,
-            sm: 6,
+            sm: 12,
+            md: 6,
+            lg: 6,
+            xl: 6,
           }}
         >
-          <RefreshSnapshot
-            snapshotLoading={refreshLoading}
-            snapshotSuccess={refreshSuccess}
-            snapshotError={refreshError}
-            stats={stats}
-            handleRefreshSnapshot={handleRefreshSnapshot}
-          />
+          <Typography
+            variant="h6"
+            sx={{
+              // mt: 2,
+              // mb: 1,
+              my: 2,
+              fontSize: '1.1rem',
+              fontWeight: 600,
+            }}
+          >
+            Snapshot Management
+          </Typography>
+          <Grid
+            container
+            spacing={2}
+            size={{
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 12,
+              xl: 12,
+            }}
+          >
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                // md: 12,
+                md: 6,
+                lg: 6,
+                xl: 6,
+              }}
+            >
+              <SetupSnapshot
+                stats={stats}
+                snapshotLimit={snapshotLimit}
+                setSnapshotLimit={setSnapshotLimit}
+                snapshotOffset={snapshotOffset}
+                setSnapshotOffset={setSnapshotOffset}
+                snapshotUserNm={snapshotUserNm}
+                setSnapshotUserNm={setSnapshotUserNm}
+                snapshotTagNm={snapshotTagNm}
+                setSnapshotTagNm={setSnapshotTagNm}
+                snapshotEventNm={snapshotEventNm}
+                setSnapshotEventNm={setSnapshotEventNm}
+                snapshotMaterialNm={snapshotMaterialNm}
+                setSnapshotMaterialNm={setSnapshotMaterialNm}
+                snapshotLoading={setupLoading}
+                snapshotSuccess={setupSuccess}
+                snapshotError={setupError}
+                handleSetupSnapshot={handleSetupSnapshot}
+                handleResetSnapshotForm={handleResetSnapshotForm}
+              />
+            </Grid>
+
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                // md: 12,
+                md: 6,
+                lg: 6,
+                xl: 6,
+              }}
+            >
+              <RefreshSnapshot
+                snapshotLoading={refreshLoading}
+                snapshotSuccess={refreshSuccess}
+                snapshotError={refreshError}
+                stats={stats}
+                handleRefreshSnapshot={handleRefreshSnapshot}
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
 

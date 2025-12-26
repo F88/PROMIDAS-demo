@@ -1,23 +1,21 @@
+import { useEffect, useState } from 'react';
+
+import { RestartAlt, Save } from '@mui/icons-material';
 import {
-  Stack,
   Alert,
-  ToggleButtonGroup,
-  ToggleButton,
-  Typography,
   Box,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
 } from '@mui/material';
-import { useState } from 'react';
-import { Save, RestartAlt } from '@mui/icons-material';
-import { SectionCard } from '../common/section-card';
+
+import type { RepositoryStoreSettings } from '../../lib/repository/types';
+import { userSettingsStorage } from '../../lib/settings/user-settings-storage';
+import { useResetProtopediaRepository } from '../../hooks/repository-context';
+
 import { ActionButton } from '../common/action-button';
-import {
-  loadStoreSettings,
-  saveStoreSettings,
-  resetStoreSettings,
-  getDefaultStoreSettings,
-  type RepositoryStoreSettings,
-} from '../../lib/repository/repository-settings';
-import { resetRepository } from '../../lib/repository/protopedia-repository';
+import { SectionCard } from '../common/section-card';
 
 interface RepositorySettingsProps {
   onSettingsSaved?: () => void;
@@ -26,25 +24,33 @@ interface RepositorySettingsProps {
 export function RepositorySettings({
   onSettingsSaved,
 }: RepositorySettingsProps) {
-  const [settings, setSettings] =
-    useState<RepositoryStoreSettings>(loadStoreSettings);
+  const resetRepositoryInstance = useResetProtopediaRepository();
+  const [settings, setSettings] = useState<RepositoryStoreSettings>(
+    userSettingsStorage.getDefaults().repository.store,
+  );
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
-  const handleSave = () => {
-    saveStoreSettings(settings);
-    resetRepository();
+  useEffect(() => {
+    userSettingsStorage
+      .load()
+      .then((userSettings) => setSettings(userSettings.repository.store));
+  }, []);
+
+  const handleSave = async () => {
+    await userSettingsStorage.save({ repository: { store: settings } });
+    resetRepositoryInstance();
     onSettingsSaved?.();
-    setSaveSuccess('設定を保存しました');
+    setSaveSuccess('保存しました');
     setTimeout(() => setSaveSuccess(null), 3000);
   };
 
-  const handleReset = () => {
-    const defaults = getDefaultStoreSettings();
+  const handleReset = async () => {
+    const defaults = userSettingsStorage.getDefaults().repository.store;
     setSettings(defaults);
-    resetStoreSettings();
-    resetRepository();
+    await userSettingsStorage.reset();
+    resetRepositoryInstance();
     onSettingsSaved?.();
-    setSaveSuccess('設定をデフォルトに戻しました');
+    setSaveSuccess('デフォルトに戻しました');
     setTimeout(() => setSaveSuccess(null), 3000);
   };
 
@@ -74,6 +80,7 @@ export function RepositorySettings({
     { value: 10 * 1024 * 1024, label: '10 MB' },
     { value: 20 * 1024 * 1024, label: '20 MB' },
     { value: 30 * 1024 * 1024, label: '30 MB' },
+    // { value: 50 * 1024 * 1024, label: '50 MB' },
   ];
 
   return (

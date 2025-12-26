@@ -1,4 +1,4 @@
-import { useToken } from '../../hooks';
+import { useProtopediaRepository } from '../../hooks';
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
 
@@ -8,8 +8,8 @@ interface GetStatsProps {
 }
 
 export function GetStats({ fetchStats, onGetStoreInfo }: GetStatsProps) {
-  const { hasToken } = useToken();
-  const disabled = hasToken === false;
+  const repository = useProtopediaRepository();
+  const disabled = repository === null;
 
   const handleFetchStats = () => {
     fetchStats();

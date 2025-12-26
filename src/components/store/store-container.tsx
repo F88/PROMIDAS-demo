@@ -32,7 +32,13 @@ export function StoreContainer({
   return (
     <ContainerWrapper type="store" label="Store" isActive={isActive}>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 6,
+          }}
+        >
           <ConfigDisplay
             repoConfig={config}
             configLoading={configLoading}
@@ -43,7 +49,13 @@ export function StoreContainer({
         {/* <Grid size={{ xs: 12, md: 6 }}>
           <GetConfig configLoading={configLoading} fetchConfig={fetchConfig} />
         </Grid> */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 6,
+          }}
+        >
           <StatsDisplay stats={stats} onGetStoreInfo={onGetStoreInfo} />
         </Grid>
         {/* <Grid size={{ xs: 12, md: 6 }}>

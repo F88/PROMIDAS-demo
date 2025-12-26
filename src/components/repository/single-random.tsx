@@ -26,6 +26,13 @@ export function SingleRandom({ stats, onUseSnapshot }: SingleRandomProps) {
     hasExecuted: singleRandomHasExecuted,
   } = useSingleRandom();
 
+  // Clear results and errors when repository is destroyed
+  useEffect(() => {
+    if (getStoreState(stats) === 'not-stored') {
+      clearSingleRandom();
+    }
+  }, [stats, clearSingleRandom]);
+
   // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (singleRandomPrototype && !singleRandomLoading) {

@@ -7,7 +7,7 @@ import { LIMIT_DATA_SIZE_BYTES } from '@f88/promidas/store';
 import {
   RepositoryConfigurationError,
   resolveRepositoryInitFailure,
-} from '../../repository/init-error';
+} from '../init-error';
 
 function createMinimalInput(overrides?: {
   error?: unknown;

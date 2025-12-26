@@ -1,7 +1,12 @@
 import { Box, Chip } from '@mui/material';
 import { type ReactNode } from 'react';
 
-type ContainerType = 'fetcher' | 'store' | 'repository' | 'config';
+type ContainerType =
+  | 'config'
+  | 'management'
+  | 'fetcher'
+  | 'store'
+  | 'repository';
 
 interface ContainerWrapperProps {
   type: ContainerType;
@@ -11,10 +16,11 @@ interface ContainerWrapperProps {
 }
 
 const containerColors: Record<ContainerType, string> = {
+  config: '#8b5cf6',
+  management: '#ef4444',
   fetcher: '#10b981',
   store: '#f59e0b',
   repository: '#667eea',
-  config: '#8b5cf6',
 };
 
 export function ContainerWrapper({

@@ -30,6 +30,13 @@ export function Analysis({ stats, onUseSnapshot }: AnalysisProps) {
     clear: clearAnalysis,
   } = usePrototypeAnalysis();
 
+  // Clear results and errors when repository is destroyed
+  useEffect(() => {
+    if (getStoreState(stats) === 'not-stored') {
+      clearAnalysis();
+    }
+  }, [stats, clearAnalysis]);
+
   // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (analysis && !analysisLoading) {

@@ -24,6 +24,13 @@ export function AllPrototypes({ stats, onUseSnapshot }: AllPrototypesProps) {
     clear: clearAll,
   } = useAllPrototypes();
 
+  // Clear results and errors when repository is destroyed
+  useEffect(() => {
+    if (getStoreState(stats) === 'not-stored') {
+      clearAll();
+    }
+  }, [stats, clearAll]);
+
   // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (allPrototypes && !allLoading) {

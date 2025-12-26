@@ -7,7 +7,7 @@
  * behavior to demo site users.
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useProtopediaRepository } from './repository-context';
 
 export function usePrototypeAnalysis() {
@@ -51,10 +51,10 @@ export function usePrototypeAnalysis() {
     }
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setAnalysis(null);
     setError(null);
-  };
+  }, []);
 
   return { analysis, loading, error, analyze, clear };
 }

@@ -5,7 +5,7 @@
  * This can be used to group configuration settings and controls.
  */
 
-import { Box } from '@mui/material';
+import { Grid } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 
 interface ConfigContainerProps {
@@ -19,7 +19,17 @@ export function ConfigContainer({
 }: ConfigContainerProps) {
   return (
     <ContainerWrapper type="config" label="Config" isActive={isActive}>
-      <Box mt={1}>{children}</Box>
+      <Grid container spacing={2}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12,
+          }}
+        >
+          {children}
+        </Grid>
+      </Grid>
     </ContainerWrapper>
   );
 }

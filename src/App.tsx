@@ -2,13 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
 
-import { resetRepository } from './lib/repository/protopedia-repository';
-
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
 import { RepositorySettings } from './components/config/repository-settings';
 import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
+import { ManagementContainer } from './components/management/management-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
 
@@ -20,6 +19,7 @@ import {
   useToken,
   type HeaderStats,
 } from './hooks';
+import { useResetProtopediaRepository } from './hooks/repository-context';
 import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
 import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
 
@@ -110,6 +110,7 @@ function PromidasInfoSection() {
 
 function App() {
   const { token, hasToken, saveToken, removeToken } = useToken();
+  const resetRepositoryInstance = useResetProtopediaRepository();
   const [tokenInput, setTokenInput] = useState('');
 
   useEffect(() => {
@@ -227,7 +228,7 @@ function App() {
   const handleSaveToken = async () => {
     if (tokenInput.trim()) {
       await saveToken(tokenInput.trim());
-      resetRepository();
+      resetRepositoryInstance();
       showStoreInfo();
     }
   };
@@ -235,7 +236,7 @@ function App() {
   const handleDeleteToken = async () => {
     if (confirm('トークンを削除してよろしいですか？')) {
       await removeToken();
-      resetRepository();
+      resetRepositoryInstance();
       setTokenInput('');
       hideStoreInfo();
     }
@@ -264,14 +265,25 @@ function App() {
           mb: 6,
         }}
       >
-        <Grid container spacing={2}>
+        {/* Config */}
+        <Grid
+          container
+          spacing={2}
+          sx={
+            {
+              // backgroundColor: 'orange',
+            }
+          }
+        >
           <Grid
             size={{
               xs: 12,
               sm: 12,
               md: 12,
               lg: 6,
+              xl: 6,
             }}
+            // sx={{ backgroundColor: 'orange' }}
           >
             <ConfigContainer>
               <Grid container spacing={2}>
@@ -301,7 +313,7 @@ function App() {
             </ConfigContainer>
           </Grid>
 
-          <Grid
+          {/* <Grid
             size={{
               xs: 12,
               sm: 12,
@@ -309,10 +321,39 @@ function App() {
               lg: 6,
             }}
           >
+            <ManagementContainer />
+          </Grid> */}
+
+          <Grid
+            container
+            spacing={2}
+            size={{
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 6,
+            }}
+            // sx={{ backgroundColor: 'orange' }}
+          >
             <Grid
               size={{
                 xs: 12,
+                sm: 6,
+                md: 6,
+                lg: 12,
               }}
+              // sx={{ backgroundColor: 'orange' }}
+            >
+              <ManagementContainer />
+            </Grid>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 6,
+                lg: 12,
+              }}
+              // sx={{ backgroundColor: 'orange' }}
             >
               <FetcherContainer />
             </Grid>

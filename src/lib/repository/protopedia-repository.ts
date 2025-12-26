@@ -15,7 +15,10 @@ import type { LogLevel } from '@f88/promidas/logger';
 import { resolveRepositoryInitFailure } from './init-error';
 import { createRepositoryConfigs } from './repository-config';
 
-export { REPOSITORY_MAX_DATA_SIZE, REPOSITORY_TTL_MS } from './constants';
+export {
+  DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+  DEFAULT_REPOSITORY_TTL_MS,
+} from './constants';
 
 let repository: ProtopediaInMemoryRepository | null = null;
 
@@ -35,7 +38,7 @@ export async function getProtopediaRepository(): Promise<ProtopediaInMemoryRepos
     const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = 'debug';
 
     const { storeConfig, repositoryConfig, apiClientConfig } =
-      createRepositoryConfigs(token ?? '', LOG_LEVEL_FOR_DEMO_SITE);
+      await createRepositoryConfigs(token ?? '', LOG_LEVEL_FOR_DEMO_SITE);
 
     try {
       repository = new PromidasRepositoryBuilder()

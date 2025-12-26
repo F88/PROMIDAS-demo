@@ -1,4 +1,4 @@
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Grid } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { useDownloadProgress } from '../../hooks/use-download-progress';
 import { useToken } from '../../hooks/use-token';
@@ -79,50 +79,60 @@ export function FetcherContainer() {
 
   return (
     <ContainerWrapper type="fetcher" label="Fetcher" isActive={isActive}>
-      <Box sx={{ width: '100%' }}>
-        {progressLog.length === 0 ? (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            align="center"
-            sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
-          >
-            {hasToken ? 'No fetch operations yet.' : 'No API token set.'}
-          </Typography>
-        ) : (
-          <Box
-            sx={{
-              fontFamily: 'monospace',
-              fontSize: '0.75rem',
-            }}
-          >
-            {progressLog.map((progress, index) => (
+      <Grid container spacing={2}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12,
+          }}
+        >
+          <Box sx={{ width: '100%' }}>
+            {progressLog.length === 0 ? (
               <Typography
-                key={index}
                 variant="body2"
-                color={
-                  progress.status === 'error'
-                    ? 'error'
-                    : progress.status === 'completed'
-                      ? 'success.main'
-                      : progress.status === 'started'
-                        ? 'warning.main'
-                        : progress.status === 'in-progress'
-                          ? 'info.main'
-                          : 'text.secondary'
-                }
+                color="text.secondary"
+                align="center"
+                sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
+              >
+                {hasToken ? 'No fetch operations yet.' : 'No API token set.'}
+              </Typography>
+            ) : (
+              <Box
                 sx={{
                   fontFamily: 'monospace',
                   fontSize: '0.75rem',
-                  lineHeight: 1.5,
                 }}
               >
-                {formatLogEntry(progress)}
-              </Typography>
-            ))}
+                {progressLog.map((progress, index) => (
+                  <Typography
+                    key={index}
+                    variant="body2"
+                    color={
+                      progress.status === 'error'
+                        ? 'error'
+                        : progress.status === 'completed'
+                          ? 'success.main'
+                          : progress.status === 'started'
+                            ? 'warning.main'
+                            : progress.status === 'in-progress'
+                              ? 'info.main'
+                              : 'text.secondary'
+                    }
+                    sx={{
+                      fontFamily: 'monospace',
+                      fontSize: '0.75rem',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {formatLogEntry(progress)}
+                  </Typography>
+                ))}
+              </Box>
+            )}
           </Box>
-        )}
-      </Box>
+        </Grid>
+      </Grid>
     </ContainerWrapper>
   );
 }

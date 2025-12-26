@@ -10,13 +10,13 @@ import type {
   PrototypeInMemoryStoreConfig,
 } from '@f88/promidas';
 import type {
-  ProtopediaApiCustomClientConfig,
   FetchProgressEvent,
+  ProtopediaApiCustomClientConfig,
 } from '@f88/promidas/fetcher';
 import type { LogLevel } from '@f88/promidas/logger';
 import { emitDownloadProgress } from '../../hooks/use-download-progress';
+import { userSettingsStorage } from '../settings/user-settings-storage';
 import { createFetch } from './create-fetch';
-import { loadStoreSettings } from './repository-settings';
 
 type CreateRepositoryConfigResult = {
   storeConfig: PrototypeInMemoryStoreConfig;
@@ -27,15 +27,15 @@ type CreateRepositoryConfigResult = {
 /**
  * Creates PROMIDAS configuration objects used to build the repository.
  */
-export function createRepositoryConfigs(
+export async function createRepositoryConfigs(
   token: string | null,
   logLevel: LogLevel,
-): CreateRepositoryConfigResult {
-  const settings = loadStoreSettings();
+): Promise<CreateRepositoryConfigResult> {
+  const userSettings = await userSettingsStorage.load();
 
   const storeConfig: PrototypeInMemoryStoreConfig = {
-    ttlMs: settings.ttlMs,
-    maxDataSizeBytes: settings.maxDataSizeBytes,
+    ttlMs: userSettings.repository.store.ttlMs,
+    maxDataSizeBytes: userSettings.repository.store.maxDataSizeBytes,
     logLevel,
   };
 

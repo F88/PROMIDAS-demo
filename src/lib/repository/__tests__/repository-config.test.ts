@@ -2,7 +2,7 @@
  * @file Unit tests for repository configuration builder utilities.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -16,11 +16,11 @@ vi.mock('../../../hooks/use-download-progress', () => {
   };
 });
 
-import { createRepositoryConfigs } from '../../repository/repository-config';
 import {
-  REPOSITORY_TTL_MS,
-  REPOSITORY_MAX_DATA_SIZE,
-} from '../../repository/constants';
+  DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+  DEFAULT_REPOSITORY_TTL_MS,
+} from '../constants';
+import { createRepositoryConfigs } from '../repository-config';
 
 describe('repository-config', () => {
   const originalFetch = globalThis.fetch;
@@ -37,12 +37,14 @@ describe('repository-config', () => {
   });
 
   describe('store defaults', () => {
-    it('creates configs with expected store defaults', () => {
+    it('creates configs with expected store defaults', async () => {
       const { storeConfig, repositoryConfig, apiClientConfig } =
-        createRepositoryConfigs('token', 'debug');
+        await createRepositoryConfigs('token', 'debug');
 
-      expect(storeConfig.ttlMs).toBe(REPOSITORY_TTL_MS);
-      expect(storeConfig.maxDataSizeBytes).toBe(REPOSITORY_MAX_DATA_SIZE);
+      expect(storeConfig.ttlMs).toBe(DEFAULT_REPOSITORY_TTL_MS);
+      expect(storeConfig.maxDataSizeBytes).toBe(
+        DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+      );
       expect(repositoryConfig.enableEvents).toBe(true);
 
       expect(apiClientConfig.progressLog).toBe(true);
@@ -54,7 +56,10 @@ describe('repository-config', () => {
 
   describe('custom fetch', () => {
     it('forwards RequestInit.headers as-is', async () => {
-      const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+      const { apiClientConfig } = await createRepositoryConfigs(
+        'token',
+        'debug',
+      );
       const customFetch = apiClientConfig.protoPediaApiClientOptions?.fetch;
 
       expect(customFetch).toBeDefined();
@@ -85,8 +90,11 @@ describe('repository-config', () => {
 
   describe('download progress', () => {
     describe('success flow', () => {
-      it('emits events for complete download lifecycle', () => {
-        const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+      it('emits events for complete download lifecycle', async () => {
+        const { apiClientConfig } = await createRepositoryConfigs(
+          'token',
+          'debug',
+        );
         const cb = apiClientConfig.progressCallback;
 
         if (!cb) {
@@ -139,8 +147,11 @@ describe('repository-config', () => {
     });
 
     describe('error handling', () => {
-      it('emits error event when stream reading fails (PROMIDAS v0.15.0)', () => {
-        const { apiClientConfig } = createRepositoryConfigs('token', 'debug');
+      it('emits error event when stream reading fails (PROMIDAS v0.15.0)', async () => {
+        const { apiClientConfig } = await createRepositoryConfigs(
+          'token',
+          'debug',
+        );
         const cb = apiClientConfig.progressCallback;
 
         if (!cb) {

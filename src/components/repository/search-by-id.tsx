@@ -29,6 +29,13 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
     clear: clearSearch,
   } = usePrototypeSearch();
 
+  // Clear results and errors when repository is destroyed
+  useEffect(() => {
+    if (getStoreState(stats) === 'not-stored') {
+      clearSearch();
+    }
+  }, [stats, clearSearch]);
+
   // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (searchPrototype && !searchLoading) {
@@ -83,14 +90,15 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
         }}
       >
         <ActionButton
-          onClick={handleSearch}
           disabled={disabled}
+          onClick={handleSearch}
           loading={searchLoading}
         >
           実行
         </ActionButton>
         <ActionButton
           disabled={!searchPrototype}
+          // disabled={disabled}
           onClick={clearSearch}
           variant="secondary"
         >

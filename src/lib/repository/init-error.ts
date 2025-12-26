@@ -12,29 +12,31 @@ import type {
 } from '@f88/promidas';
 import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
 import {
-  ConfigurationError as PromidasStoreConfigurationError,
   DataSizeExceededError,
   LIMIT_DATA_SIZE_BYTES,
+  ConfigurationError as PromidasStoreConfigurationError,
   SizeEstimationError,
   StoreError,
 } from '@f88/promidas/store';
-import { REPOSITORY_MAX_DATA_SIZE, REPOSITORY_TTL_MS } from './constants';
+
+import {
+  DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+  DEFAULT_REPOSITORY_TTL_MS,
+} from './constants';
 
 export type RepositoryInitErrorCategory =
   | 'STORE_MAX_DATA_SIZE_EXCEEDED'
   | 'STORE_SIZE_ESTIMATION_FAILED'
   | 'STORE_ERROR'
   | 'MISSING_TOKEN'
-  | 'NETWORK_ERROR'
-  | 'CORS_ERROR'
   | 'UNKNOWN';
 
 export type RepositoryInitDiagnostics = {
   category: RepositoryInitErrorCategory;
   message: string;
   constants: {
-    REPOSITORY_TTL_MS: number;
-    REPOSITORY_MAX_DATA_SIZE: number;
+    DEFAULT_REPOSITORY_TTL_MS: number;
+    DEFAULT_REPOSITORY_MAX_DATA_SIZE: number; // ← REPOSITORY_MAX_DATA_SIZE から変更
     LIMIT_DATA_SIZE_BYTES: number;
   };
   effectiveConfig: {
@@ -85,6 +87,7 @@ function categorizeRepositoryInitError(
   errorMessage: string,
   token: string | null,
 ): RepositoryInitErrorCategory {
+  // Check for store-related errors first (most specific)
   if (error instanceof DataSizeExceededError) {
     return 'STORE_MAX_DATA_SIZE_EXCEEDED';
   }
@@ -110,8 +113,8 @@ function categorizeRepositoryInitError(
     return 'STORE_ERROR';
   }
 
+  // Check for token-related errors
   const messageLower = errorMessage.toLowerCase();
-
   const tokenMissingByValue = token == null || token.length === 0;
   const tokenMissingByMessage =
     messageLower.includes('missing protopedia_api_v2_token') ||
@@ -121,26 +124,12 @@ function categorizeRepositoryInitError(
     return 'MISSING_TOKEN';
   }
 
+  // Fallback check for maxDataSizeBytes in error message
   if (
     messageLower.includes('maxdatasizebytes') &&
     messageLower.includes('must be <=')
   ) {
     return 'STORE_MAX_DATA_SIZE_EXCEEDED';
-  }
-
-  if (
-    messageLower.includes('failed to fetch') ||
-    messageLower.includes('networkerror') ||
-    messageLower.includes('network error')
-  ) {
-    return 'NETWORK_ERROR';
-  }
-
-  if (
-    messageLower.includes('cors') ||
-    messageLower.includes('blocked by cors')
-  ) {
-    return 'CORS_ERROR';
   }
 
   return 'UNKNOWN';
@@ -189,81 +178,86 @@ export function resolveRepositoryInitFailure(
 
   const hints: string[] = [];
 
-  if (category === 'STORE_MAX_DATA_SIZE_EXCEEDED') {
-    const maxDataSizeBytes = storeConfig.maxDataSizeBytes;
+  switch (category) {
+    case 'STORE_MAX_DATA_SIZE_EXCEEDED': {
+      const maxDataSizeBytes = storeConfig.maxDataSizeBytes;
 
-    if (error instanceof DataSizeExceededError) {
+      if (error instanceof DataSizeExceededError) {
+        hints.push(
+          `Snapshot data size (${formatBytes(
+            error.dataSizeBytes,
+          )}) exceeds configured maxDataSizeBytes (${formatBytes(
+            error.maxDataSizeBytes,
+          )}).`,
+        );
+      }
+
       hints.push(
-        `Snapshot data size (${formatBytes(
-          error.dataSizeBytes,
-        )}) exceeds configured maxDataSizeBytes (${formatBytes(
-          error.maxDataSizeBytes,
+        `Reduce storeConfig.maxDataSizeBytes to <= LIMIT_DATA_SIZE_BYTES (${formatBytes(
+          LIMIT_DATA_SIZE_BYTES,
         )}).`,
       );
+
+      if (
+        typeof maxDataSizeBytes === 'number' &&
+        maxDataSizeBytes > LIMIT_DATA_SIZE_BYTES
+      ) {
+        hints.push(
+          `Current maxDataSizeBytes is intentionally above the limit (${formatBytes(
+            maxDataSizeBytes,
+          )}).`,
+        );
+      }
+      break;
     }
 
-    hints.push(
-      `Reduce storeConfig.maxDataSizeBytes to <= LIMIT_DATA_SIZE_BYTES (${formatBytes(
-        LIMIT_DATA_SIZE_BYTES,
-      )}).`,
-    );
+    case 'STORE_SIZE_ESTIMATION_FAILED': {
+      if (error instanceof SizeEstimationError) {
+        hints.push(
+          'Snapshot size estimation failed. This can happen with circular references or unsupported values (e.g. BigInt) in the stored data.',
+        );
 
-    if (
-      typeof maxDataSizeBytes === 'number' &&
-      maxDataSizeBytes > LIMIT_DATA_SIZE_BYTES
-    ) {
+        if (error.cause) {
+          hints.push(
+            `Estimation error cause: ${normalizeErrorMessage(error.cause)}`,
+          );
+        }
+      }
+      break;
+    }
+
+    case 'STORE_ERROR': {
+      if (error instanceof StoreError) {
+        hints.push(`Store error: ${error.name}`);
+        hints.push(`Store dataState: ${error.dataState}`);
+
+        if (error instanceof DataSizeExceededError) {
+          hints.push(
+            `DataSizeExceededError details: dataSizeBytes=${error.dataSizeBytes}, maxDataSizeBytes=${error.maxDataSizeBytes}`,
+          );
+        }
+      }
+      break;
+    }
+
+    case 'MISSING_TOKEN': {
+      hints.push('APIトークンが未設定または空です');
       hints.push(
-        `Current maxDataSizeBytes is intentionally above the limit (${formatBytes(
-          maxDataSizeBytes,
-        )}).`,
+        'ここはPROMIDASのデモサイトなので、トークン無しの動作を確認出来ますが、実際のAPI操作は出来ません。',
       );
+      break;
     }
-  }
 
-  if (
-    category === 'STORE_SIZE_ESTIMATION_FAILED' &&
-    error instanceof SizeEstimationError
-  ) {
-    hints.push(
-      'Snapshot size estimation failed. This can happen with circular references or unsupported values (e.g. BigInt) in the stored data.',
-    );
-
-    if (error.cause) {
-      hints.push(
-        `Estimation error cause: ${normalizeErrorMessage(error.cause)}`,
-      );
+    case 'UNKNOWN': {
+      break;
     }
-  }
 
-  if (category === 'STORE_ERROR' && error instanceof StoreError) {
-    hints.push(`Store error: ${error.name}`);
-    hints.push(`Store dataState: ${error.dataState}`);
-
-    if (error instanceof DataSizeExceededError) {
-      hints.push(
-        `DataSizeExceededError details: dataSizeBytes=${error.dataSizeBytes}, maxDataSizeBytes=${error.maxDataSizeBytes}`,
-      );
+    default: {
+      // Exhaustiveness check: ensures all cases are handled
+      const _exhaustiveCheck: never = category;
+      console.error('Unhandled category:', _exhaustiveCheck);
+      break;
     }
-  }
-
-  if (category === 'MISSING_TOKEN') {
-    hints.push('APIトークンが未設定または空です');
-    hints.push(
-      'ここはPROMIDASのデモサイトなので、トークン無しの動作を確認出来ますが、実際のAPI操作は出来ません。',
-    );
-  }
-
-  if (category === 'CORS_ERROR') {
-    hints.push(
-      'Browser CORS may block custom headers. PROMIDAS v0.13.0 removes x-client-user-agent in browser runtimes to avoid preflight failures.',
-    );
-  }
-
-  if (category === 'NETWORK_ERROR') {
-    hints.push('Check connectivity and ProtoPedia API availability.');
-    hints.push(
-      'If running on GitHub Pages, verify the API endpoint allows your origin.',
-    );
   }
 
   if (hints.length === 0) {
@@ -274,8 +268,8 @@ export function resolveRepositoryInitFailure(
     category,
     message: errorMessage,
     constants: {
-      REPOSITORY_TTL_MS,
-      REPOSITORY_MAX_DATA_SIZE,
+      DEFAULT_REPOSITORY_TTL_MS,
+      DEFAULT_REPOSITORY_MAX_DATA_SIZE,
       LIMIT_DATA_SIZE_BYTES,
     },
     effectiveConfig: {

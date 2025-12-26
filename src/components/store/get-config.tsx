@@ -1,4 +1,4 @@
-import { useToken } from '../../hooks';
+import { useProtopediaRepository } from '../../hooks';
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
 
@@ -13,8 +13,8 @@ export function GetConfig({
   fetchConfig,
   onGetStoreInfo,
 }: GetConfigProps) {
-  const { hasToken } = useToken();
-  const disabled = hasToken === false;
+  const repository = useProtopediaRepository();
+  const disabled = repository === null;
 
   const handleFetchConfig = () => {
     fetchConfig();
