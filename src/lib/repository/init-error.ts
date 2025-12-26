@@ -36,7 +36,7 @@ export type RepositoryInitDiagnostics = {
   message: string;
   constants: {
     DEFAULT_REPOSITORY_TTL_MS: number;
-    REPOSITORY_MAX_DATA_SIZE: number;
+    DEFAULT_REPOSITORY_MAX_DATA_SIZE: number; // ← REPOSITORY_MAX_DATA_SIZE から変更
     LIMIT_DATA_SIZE_BYTES: number;
   };
   effectiveConfig: {
@@ -269,7 +269,7 @@ export function resolveRepositoryInitFailure(
     message: errorMessage,
     constants: {
       DEFAULT_REPOSITORY_TTL_MS,
-      REPOSITORY_MAX_DATA_SIZE: DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+      DEFAULT_REPOSITORY_MAX_DATA_SIZE,
       LIMIT_DATA_SIZE_BYTES,
     },
     effectiveConfig: {
