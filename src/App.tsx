@@ -2,13 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
 
-import { resetRepository } from './lib/repository/protopedia-repository';
-
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
 import { RepositorySettings } from './components/config/repository-settings';
 import { TokenConfiguration } from './components/config/token-configuration';
 import { FetcherContainer } from './components/fetcher/fetcher-container';
+import { ManagementContainer } from './components/management/management-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
 
@@ -20,6 +19,7 @@ import {
   useToken,
   type HeaderStats,
 } from './hooks';
+import { useResetProtopediaRepository } from './hooks/repository-context';
 import { useDataFlowIndicators } from './hooks/use-data-flow-indicators';
 import { useSnapshotEventHandlers } from './hooks/use-snapshot-event-handlers';
 
@@ -110,6 +110,7 @@ function PromidasInfoSection() {
 
 function App() {
   const { token, hasToken, saveToken, removeToken } = useToken();
+  const resetRepositoryInstance = useResetProtopediaRepository();
   const [tokenInput, setTokenInput] = useState('');
 
   useEffect(() => {
@@ -227,7 +228,7 @@ function App() {
   const handleSaveToken = async () => {
     if (tokenInput.trim()) {
       await saveToken(tokenInput.trim());
-      resetRepository();
+      resetRepositoryInstance();
       showStoreInfo();
     }
   };
@@ -235,7 +236,7 @@ function App() {
   const handleDeleteToken = async () => {
     if (confirm('トークンを削除してよろしいですか？')) {
       await removeToken();
-      resetRepository();
+      resetRepositoryInstance();
       setTokenInput('');
       hideStoreInfo();
     }
@@ -301,6 +302,17 @@ function App() {
             </ConfigContainer>
           </Grid>
 
+          {/* <Grid
+            size={{
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 6,
+            }}
+          >
+            <ManagementContainer />
+          </Grid> */}
+
           <Grid
             size={{
               xs: 12,
@@ -312,6 +324,19 @@ function App() {
             <Grid
               size={{
                 xs: 12,
+                sm: 12,
+                md: 12,
+                lg: 12,
+              }}
+            >
+              <ManagementContainer />
+            </Grid>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 12,
+                md: 12,
+                lg: 12,
               }}
             >
               <FetcherContainer />

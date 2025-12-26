@@ -31,6 +31,13 @@ export function RandomPrototype({
     hasExecuted: randomHasExecuted,
   } = useRandomPrototype();
 
+  // Clear results and errors when repository is destroyed
+  useEffect(() => {
+    if (getStoreState(stats) === 'not-stored') {
+      clearRandom();
+    }
+  }, [stats, clearRandom]);
+
   // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (randomPrototypes.length > 0 && !randomLoading) {

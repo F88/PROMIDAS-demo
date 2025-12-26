@@ -7,7 +7,7 @@
  * behavior to demo site users.
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { useProtopediaRepository } from './repository-context';
 
@@ -53,10 +53,10 @@ export function useAllPrototypes() {
     }
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setPrototypes(null);
     setError(null);
-  };
+  }, []);
 
   return { prototypes, loading, error, fetchAll, clear };
 }

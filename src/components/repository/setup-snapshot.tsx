@@ -6,8 +6,11 @@ import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { clampNumericInput } from '../../utils/number-utils';
 import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils';
+import { useProtopediaRepository } from '../../hooks';
+import type { PrototypeInMemoryStats } from '@f88/promidas';
 
 interface SetupSnapshotProps {
+  stats: PrototypeInMemoryStats | null;
   snapshotLimit: string;
   setSnapshotLimit: (value: string) => void;
   snapshotOffset: string;
@@ -28,6 +31,7 @@ interface SetupSnapshotProps {
 }
 
 export function SetupSnapshot({
+  stats,
   snapshotLimit,
   setSnapshotLimit,
   snapshotOffset,
@@ -48,6 +52,11 @@ export function SetupSnapshot({
 }: SetupSnapshotProps) {
   const [areFiltersExpanded, setAreFiltersExpanded] = useState(false);
   const localizedSnapshotError = localizeSnapshotOperationError(snapshotError);
+  const repository = useProtopediaRepository();
+
+  const disabled = snapshotLoading || repository === null;
+
+  console.debug('[SetupSnapshot] stats:', stats, 'repository:', repository);
 
   return (
     <SectionCard
@@ -68,6 +77,7 @@ export function SetupSnapshot({
           }}
         >
           <TextField
+            disabled={disabled}
             label="Limit"
             type="number"
             value={snapshotLimit}
@@ -98,6 +108,7 @@ export function SetupSnapshot({
           }}
         >
           <TextField
+            disabled={disabled}
             label="Offset"
             type="number"
             value={snapshotOffset}
@@ -143,6 +154,7 @@ export function SetupSnapshot({
         >
           <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
+              disabled={disabled}
               label="User Name"
               type="text"
               value={snapshotUserNm}
@@ -155,6 +167,7 @@ export function SetupSnapshot({
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
+              disabled={disabled}
               label="Tag Name"
               type="text"
               value={snapshotTagNm}
@@ -167,6 +180,7 @@ export function SetupSnapshot({
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
+              disabled={disabled}
               label="Event Name"
               type="text"
               value={snapshotEventNm}
@@ -179,6 +193,7 @@ export function SetupSnapshot({
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
+              disabled={disabled}
               label="Material Name"
               type="text"
               value={snapshotMaterialNm}
@@ -203,7 +218,7 @@ export function SetupSnapshot({
       >
         <ActionButton
           onClick={handleSetupSnapshot}
-          disabled={snapshotLoading}
+          disabled={disabled || snapshotLoading}
           loading={snapshotLoading}
         >
           実行
@@ -211,7 +226,7 @@ export function SetupSnapshot({
         <ActionButton
           onClick={handleResetSnapshotForm}
           variant="secondary"
-          disabled={snapshotLoading}
+          disabled={disabled || snapshotLoading}
         >
           リセット
         </ActionButton>

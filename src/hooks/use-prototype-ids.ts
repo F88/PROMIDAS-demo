@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+
 import { useProtopediaRepository } from './repository-context';
 
 /**
@@ -40,10 +41,10 @@ export function usePrototypeIds() {
     }
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setIds(null);
     setError(null);
-  };
+  }, []);
 
   return { ids, loading, error, fetchIds, clear };
 }

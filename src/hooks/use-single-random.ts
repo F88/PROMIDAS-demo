@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { useProtopediaRepository } from './repository-context';
+import { useState, useCallback } from 'react';
+
 import type { NormalizedPrototype } from '@f88/promidas/types';
+
+import { useProtopediaRepository } from './repository-context';
 
 /**
  * Custom hook for retrieving a single random prototype from the current snapshot.
@@ -43,11 +45,18 @@ export function useSingleRandom() {
     }
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setPrototype(null);
     setError(null);
     setHasExecuted(false);
-  };
+  }, []);
 
-  return { prototype, loading, error, fetchSingleRandom, clear, hasExecuted };
+  return {
+    prototype,
+    loading,
+    error,
+    fetchSingleRandom,
+    clear,
+    hasExecuted,
+  };
 }

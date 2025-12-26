@@ -7,39 +7,26 @@
  * behavior to demo site users.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import {
   ValidationError,
-  type SnapshotOperationResult,
   type SnapshotOperationFailure,
+  type SnapshotOperationResult,
 } from '@f88/promidas/repository';
+
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+
+import { useProtopediaRepository } from './repository-context';
 import {
-  useEnsureProtopediaRepository,
-  useProtopediaRepository,
-} from './repository-context';
-import {
-  logFetchResult,
   handleSnapshotOperationError,
+  logFetchResult,
 } from './snapshot-helpers';
 import { emitDownloadProgress } from './use-download-progress';
-import { RepositoryConfigurationError } from '../lib/repository/init-error';
-
-function buildInitFailureMessage(err: unknown): string {
-  if (err instanceof RepositoryConfigurationError) {
-    const hints = err.diagnostics.hints ?? [];
-    const hinted = hints.length > 0 ? hints.join('\n') : undefined;
-    const fallback = err.message || hinted;
-    return fallback || 'Repository initialization failed.';
-  }
-
-  return 'Repository is not available. Please set API token first.';
-}
 
 export function useSnapshotManagement() {
   const repository = useProtopediaRepository();
-  const ensureRepository = useEnsureProtopediaRepository();
   const [setupLoading, setSetupLoading] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [setupError, setSetupError] = useState<SnapshotOperationFailure | null>(
@@ -51,23 +38,24 @@ export function useSnapshotManagement() {
   const [refreshSuccess, setRefreshSuccess] = useState<string | null>(null);
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
-  const setupSnapshot = async (params: ListPrototypesParams = {}) => {
-    const repo =
-      repository ??
-      (await ensureRepository().catch((err) => {
-        console.error(
-          '[setupSnapshot] Repository initialization failed before setup:',
-          err,
-        );
-        setSetupError({
-          ok: false,
-          origin: 'unknown',
-          message: buildInitFailureMessage(err),
-        });
-        return null;
-      }));
+  // Clear errors when repository is destroyed
+  useEffect(() => {
+    if (!repository) {
+      setSetupError(null);
+      setSetupSuccess(null);
+      setRefreshError(null);
+      setRefreshSuccess(null);
+    }
+  }, [repository]);
 
-    if (!repo) {
+  const setupSnapshot = async (params: ListPrototypesParams = {}) => {
+    if (!repository) {
+      setSetupError({
+        ok: false,
+        origin: 'unknown',
+        message:
+          'Repository is not initialized. Please create repository first.',
+      });
       return;
     }
 
@@ -76,7 +64,8 @@ export function useSnapshotManagement() {
     setSetupSuccess(null);
 
     try {
-      const result: SnapshotOperationResult = await repo.setupSnapshot(params);
+      const result: SnapshotOperationResult =
+        await repository.setupSnapshot(params);
 
       // Demo site: Log full error information to console for debugging
       // DO NOT REMOVE: This helps users understand PROMIDAS error responses
@@ -121,22 +110,13 @@ export function useSnapshotManagement() {
   };
 
   const refreshSnapshot = async () => {
-    const repo =
-      repository ??
-      (await ensureRepository().catch((err) => {
-        console.error(
-          '[refreshSnapshot] Repository initialization failed before refresh:',
-          err,
-        );
-        setRefreshError({
-          ok: false,
-          origin: 'unknown',
-          message: buildInitFailureMessage(err),
-        });
-        return null;
-      }));
-
-    if (!repo) {
+    if (!repository) {
+      setRefreshError({
+        ok: false,
+        origin: 'unknown',
+        message:
+          'Repository is not initialized. Please create repository first.',
+      });
       return;
     }
 
@@ -145,7 +125,8 @@ export function useSnapshotManagement() {
     setRefreshSuccess(null);
 
     try {
-      const result: SnapshotOperationResult = await repo.refreshSnapshot();
+      const result: SnapshotOperationResult =
+        await repository.refreshSnapshot();
 
       // Demo site: Log full error information to console for debugging
       // DO NOT REMOVE: This helps users understand PROMIDAS error responses

@@ -7,9 +7,11 @@
  * behavior to demo site users.
  */
 
-import { useState } from 'react';
-import type { NormalizedPrototype } from '@f88/promidas/types';
+import { useState, useCallback } from 'react';
+
 import { ValidationError } from '@f88/promidas/repository';
+import type { NormalizedPrototype } from '@f88/promidas/types';
+
 import { useProtopediaRepository } from './repository-context';
 
 export function useRandomPrototype() {
@@ -64,11 +66,18 @@ export function useRandomPrototype() {
     }
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setPrototypes([]);
     setError(null);
     setHasExecuted(false);
-  };
+  }, []);
 
-  return { prototypes, loading, error, fetchRandom, clear, hasExecuted };
+  return {
+    prototypes,
+    loading,
+    error,
+    fetchRandom,
+    clear,
+    hasExecuted,
+  };
 }

@@ -45,7 +45,7 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
   const [repository, setRepository] =
     useState<ProtopediaInMemoryRepository | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(false);
   const pendingInitRef = useRef<Promise<ProtopediaInMemoryRepository> | null>(
     null,
   );
@@ -115,15 +115,6 @@ export function RepositoryProvider({ children }: RepositoryProviderProps) {
       setRepository(null);
       setError(null);
       setIsInitializing(false);
-    });
-
-    // Do not attempt initialization until a token exists
-    if (!token) {
-      return;
-    }
-
-    queueMicrotask(() => {
-      void ensureRepository();
     });
   }, [token, isTokenLoading, ensureRepository]);
 

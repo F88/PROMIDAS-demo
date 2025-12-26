@@ -24,6 +24,13 @@ export function PrototypeIds({ stats, onUseSnapshot }: PrototypeIdsProps) {
     clear: clearIds,
   } = usePrototypeIds();
 
+  // Clear results and errors when repository is destroyed
+  useEffect(() => {
+    if (getStoreState(stats) === 'not-stored') {
+      clearIds();
+    }
+  }, [stats, clearIds]);
+
   // Control store/repo indicator when data is retrieved
   useEffect(() => {
     if (prototypeIds && !idsLoading) {

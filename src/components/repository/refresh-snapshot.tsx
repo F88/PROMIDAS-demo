@@ -1,6 +1,7 @@
 import { Stack, Alert } from '@mui/material';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import type { SnapshotOperationFailure } from '@f88/promidas/repository';
+import { getStoreState } from '@f88/promidas-utils/store';
 import { SectionCard } from '../common/section-card';
 import { ActionButton } from '../common/action-button';
 import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils';
@@ -22,6 +23,8 @@ export function RefreshSnapshot({
 }: RefreshSnapshotProps) {
   const localizedSnapshotError = localizeSnapshotOperationError(snapshotError);
 
+  const disabled = snapshotLoading || getStoreState(stats) === 'not-stored';
+
   return (
     <SectionCard
       title="refreshSnapshot"
@@ -39,7 +42,7 @@ export function RefreshSnapshot({
       >
         <ActionButton
           onClick={handleRefreshSnapshot}
-          disabled={snapshotLoading || !stats || stats.size === 0}
+          disabled={disabled}
           loading={snapshotLoading}
         >
           実行

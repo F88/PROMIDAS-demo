@@ -7,7 +7,7 @@
  * behavior to demo site users.
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 import { ValidationError } from '@f88/promidas/repository';
 import { useProtopediaRepository } from './repository-context';
@@ -67,10 +67,10 @@ export function usePrototypeSearch() {
     }
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setPrototype(null);
     setError(null);
-  };
+  }, []);
 
   return { prototype, loading, error, searchById, clear };
 }
