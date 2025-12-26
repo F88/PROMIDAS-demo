@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { PrototypeCard } from '../components/common/prototype-card';
+import { PrototypeCard } from './prototype-card';
 import type { NormalizedPrototype } from '@f88/promidas/types';
 
 describe('PrototypeCard', () => {
