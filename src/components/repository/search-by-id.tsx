@@ -97,8 +97,8 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
           実行
         </ActionButton>
         <ActionButton
-          // disabled={!searchPrototype}
-          disabled={disabled}
+          disabled={!searchPrototype}
+          // disabled={disabled}
           onClick={clearSearch}
           variant="secondary"
         >

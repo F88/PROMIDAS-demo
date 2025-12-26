@@ -265,14 +265,25 @@ function App() {
           mb: 6,
         }}
       >
-        <Grid container spacing={2}>
+        {/* Config */}
+        <Grid
+          container
+          spacing={2}
+          sx={
+            {
+              // backgroundColor: 'orange',
+            }
+          }
+        >
           <Grid
             size={{
               xs: 12,
               sm: 12,
               md: 12,
               lg: 6,
+              xl: 6,
             }}
+            // sx={{ backgroundColor: 'orange' }}
           >
             <ConfigContainer>
               <Grid container spacing={2}>
@@ -314,30 +325,35 @@ function App() {
           </Grid> */}
 
           <Grid
+            container
+            spacing={2}
             size={{
               xs: 12,
               sm: 12,
               md: 12,
               lg: 6,
             }}
+            // sx={{ backgroundColor: 'orange' }}
           >
             <Grid
               size={{
                 xs: 12,
-                sm: 12,
-                md: 12,
+                sm: 6,
+                md: 6,
                 lg: 12,
               }}
+              // sx={{ backgroundColor: 'orange' }}
             >
               <ManagementContainer />
             </Grid>
             <Grid
               size={{
                 xs: 12,
-                sm: 12,
-                md: 12,
+                sm: 6,
+                md: 6,
                 lg: 12,
               }}
+              // sx={{ backgroundColor: 'orange' }}
             >
               <FetcherContainer />
             </Grid>

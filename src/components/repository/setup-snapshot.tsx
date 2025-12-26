@@ -104,7 +104,7 @@ export function SetupSnapshot({
         <Grid
           size={{
             xs: 6,
-            // sm: 3
+            // sm: 3,
           }}
         >
           <TextField
@@ -152,7 +152,12 @@ export function SetupSnapshot({
             mb: 2,
           }}
         >
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              // sm: 3,
+            }}
+          >
             <TextField
               disabled={disabled}
               label="User Name"
@@ -165,7 +170,12 @@ export function SetupSnapshot({
               slotProps={{ htmlInput: { maxLength: 20 } }}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              // sm: 3,
+            }}
+          >
             <TextField
               disabled={disabled}
               label="Tag Name"
@@ -178,7 +188,12 @@ export function SetupSnapshot({
               slotProps={{ htmlInput: { maxLength: 20 } }}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              // sm: 3,
+            }}
+          >
             <TextField
               disabled={disabled}
               label="Event Name"
@@ -191,7 +206,12 @@ export function SetupSnapshot({
               slotProps={{ htmlInput: { maxLength: 20 } }}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              // sm: 3,
+            }}
+          >
             <TextField
               disabled={disabled}
               label="Material Name"
