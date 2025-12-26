@@ -7,6 +7,7 @@ import {
   Stack,
   Typography,
   Link,
+  Alert,
 } from '@mui/material';
 import { Visibility, VisibilityOff, Save, Delete } from '@mui/icons-material';
 import { SectionCard } from '../common/section-card';
@@ -28,6 +29,19 @@ export function TokenConfiguration({
   onDeleteToken,
 }: TokenConfigurationProps) {
   const [showToken, setShowToken] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  const handleSave = () => {
+    onSaveToken();
+    setSaveSuccess('トークンを保存しました');
+    setTimeout(() => setSaveSuccess(null), 3000);
+  };
+
+  const handleDelete = () => {
+    onDeleteToken();
+    setSaveSuccess('トークンを削除しました');
+    setTimeout(() => setSaveSuccess(null), 3000);
+  };
 
   return (
     <SectionCard
@@ -39,7 +53,7 @@ export function TokenConfiguration({
         component="form"
         onSubmit={(e) => {
           e.preventDefault();
-          onSaveToken();
+          handleSave();
         }}
         autoComplete="on"
       >
@@ -86,7 +100,7 @@ export function TokenConfiguration({
             <ActionButton
               variant="danger"
               startIcon={<Delete />}
-              onClick={onDeleteToken}
+              onClick={handleDelete}
             >
               削除
             </ActionButton>
@@ -105,6 +119,11 @@ export function TokenConfiguration({
         </Link>{' '}
         で確認して下さい
       </Typography>
+      {saveSuccess && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          {saveSuccess}
+        </Alert>
+      )}
     </SectionCard>
   );
 }
