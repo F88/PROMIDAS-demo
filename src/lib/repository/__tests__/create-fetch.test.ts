@@ -2,9 +2,9 @@
  * @file Unit tests for the `createFetch` wrapper factory.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createFetch } from '../../repository/create-fetch';
+import { createFetch } from '../create-fetch';
 
 describe('createFetch', () => {
   const originalFetch = globalThis.fetch;

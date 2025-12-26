@@ -2,10 +2,13 @@
  * @file Hook for header stats with auto-refresh for TTL display
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
 import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { REPOSITORY_TTL_MS } from '../lib/repository/protopedia-repository';
+
 import { useProtopediaRepository } from './repository-context';
+
+import { DEFAULT_REPOSITORY_TTL_MS } from '../lib/repository/protopedia-repository';
 
 export type HeaderStats = PrototypeInMemoryStats & {
   fetchedAt: number;
@@ -56,7 +59,8 @@ export function useHeaderStats() {
         if (currentStats.cachedAt instanceof Date && !currentStats.isExpired) {
           // Calculate time until expiration
           const now = Date.now();
-          const expiresAt = currentStats.cachedAt.getTime() + REPOSITORY_TTL_MS;
+          const expiresAt =
+            currentStats.cachedAt.getTime() + DEFAULT_REPOSITORY_TTL_MS;
           const timeUntilExpiry = expiresAt - now;
 
           if (timeUntilExpiry > 0) {

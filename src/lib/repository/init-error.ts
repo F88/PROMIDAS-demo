@@ -12,13 +12,16 @@ import type {
 } from '@f88/promidas';
 import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
 import {
-  ConfigurationError as PromidasStoreConfigurationError,
   DataSizeExceededError,
   LIMIT_DATA_SIZE_BYTES,
+  ConfigurationError as PromidasStoreConfigurationError,
   SizeEstimationError,
   StoreError,
 } from '@f88/promidas/store';
-import { REPOSITORY_MAX_DATA_SIZE, REPOSITORY_TTL_MS } from './constants';
+import {
+  DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+  DEFAULT_REPOSITORY_TTL_MS,
+} from './constants';
 
 export type RepositoryInitErrorCategory =
   | 'STORE_MAX_DATA_SIZE_EXCEEDED'
@@ -33,7 +36,7 @@ export type RepositoryInitDiagnostics = {
   category: RepositoryInitErrorCategory;
   message: string;
   constants: {
-    REPOSITORY_TTL_MS: number;
+    DEFAULT_REPOSITORY_TTL_MS: number;
     REPOSITORY_MAX_DATA_SIZE: number;
     LIMIT_DATA_SIZE_BYTES: number;
   };
@@ -274,8 +277,8 @@ export function resolveRepositoryInitFailure(
     category,
     message: errorMessage,
     constants: {
-      REPOSITORY_TTL_MS,
-      REPOSITORY_MAX_DATA_SIZE,
+      DEFAULT_REPOSITORY_TTL_MS,
+      REPOSITORY_MAX_DATA_SIZE: DEFAULT_REPOSITORY_MAX_DATA_SIZE,
       LIMIT_DATA_SIZE_BYTES,
     },
     effectiveConfig: {

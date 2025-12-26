@@ -2,7 +2,7 @@
  * @file Unit tests for the singleton repository accessor.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 type Repo = { dispose?: () => void };
 
@@ -36,13 +36,13 @@ vi.mock('@f88/promidas-utils/token', () => {
   };
 });
 
-vi.mock('../../repository/repository-config', () => {
+vi.mock('../repository-config', () => {
   return {
     createRepositoryConfigs: mocks.createRepositoryConfigs,
   };
 });
 
-vi.mock('../../repository/init-error', () => {
+vi.mock('../init-error', () => {
   return {
     resolveRepositoryInitFailure: mocks.resolveRepositoryInitFailure,
   };
@@ -76,7 +76,7 @@ vi.mock('@f88/promidas', () => {
 import {
   getProtopediaRepository,
   resetRepository,
-} from '../../repository/protopedia-repository';
+} from '../protopedia-repository';
 
 describe('protopedia-repository', () => {
   beforeEach(() => {
@@ -102,7 +102,7 @@ describe('protopedia-repository', () => {
 
       mocks.build.mockReturnValueOnce(repo1).mockReturnValueOnce(repo2);
 
-      mocks.createRepositoryConfigs.mockReturnValue({
+      mocks.createRepositoryConfigs.mockResolvedValue({
         storeConfig: { ttlMs: 1 },
         repositoryConfig: { enableEvents: true },
         apiClientConfig: { progressLog: true },
