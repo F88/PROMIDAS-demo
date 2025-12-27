@@ -18,6 +18,7 @@ import {
   SizeEstimationError,
   StoreError,
 } from '@f88/promidas/store';
+import { toErrorMessage } from '@f88/promidas-utils/builder';
 
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
@@ -76,7 +77,7 @@ function formatBytes(bytes: number): string {
 
 function normalizeErrorMessage(error: unknown): string {
   if (error instanceof Error) {
-    return error.message;
+    return toErrorMessage(error);
   }
 
   return `Unknown error: ${String(error)}`;
