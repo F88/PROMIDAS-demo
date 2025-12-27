@@ -5,20 +5,19 @@
  * reasons. This module normalizes errors into a consistent diagnostic shape and
  * throws a typed error to aid debugging in the demo.
  */
-
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
 } from '@f88/promidas';
+import { toErrorMessage } from '@f88/promidas-utils/builder';
 import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
 import {
+  ConfigurationError,
   DataSizeExceededError,
   LIMIT_DATA_SIZE_BYTES,
-  ConfigurationError as PromidasStoreConfigurationError,
   SizeEstimationError,
   StoreError,
 } from '@f88/promidas/store';
-import { toErrorMessage } from '@f88/promidas-utils/builder';
 
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
@@ -93,7 +92,7 @@ function categorizeRepositoryInitError(
     return 'STORE_MAX_DATA_SIZE_EXCEEDED';
   }
 
-  if (error instanceof PromidasStoreConfigurationError) {
+  if (error instanceof ConfigurationError) {
     const messageLower = errorMessage.toLowerCase();
 
     if (
