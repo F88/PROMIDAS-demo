@@ -1,13 +1,17 @@
-import { Stack, TextField, Grid, Alert, Collapse } from '@mui/material';
 import { useState } from 'react';
-import type { SnapshotOperationFailure } from '@f88/promidas/repository';
-import { SETUP_SNAPSHOT } from '../../App';
-import { SectionCard } from '../common/section-card';
-import { ActionButton } from '../common/action-button';
-import { clampNumericInput } from '../../utils/number-utils';
-import { localizeSnapshotOperationError } from '../../utils/snapshot-error-utils';
-import { useProtopediaRepository } from '../../hooks';
+
 import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { toLocalizedMessage } from '@f88/promidas-utils/repository';
+import type { SnapshotOperationFailure } from '@f88/promidas/repository';
+
+import { Alert, Collapse, Grid, Stack, TextField } from '@mui/material';
+
+import { SETUP_SNAPSHOT } from '../../App';
+
+import { useProtopediaRepository } from '../../hooks';
+import { clampNumericInput } from '../../utils/number-utils';
+import { ActionButton } from '../common/action-button';
+import { SectionCard } from '../common/section-card';
 
 interface SetupSnapshotProps {
   stats: PrototypeInMemoryStats | null;
@@ -51,7 +55,7 @@ export function SetupSnapshot({
   handleResetSnapshotForm,
 }: SetupSnapshotProps) {
   const [areFiltersExpanded, setAreFiltersExpanded] = useState(false);
-  const localizedSnapshotError = localizeSnapshotOperationError(snapshotError);
+  const localizedSnapshotError = toLocalizedMessage(snapshotError);
   const repository = useProtopediaRepository();
 
   const disabled = snapshotLoading || repository === null;
