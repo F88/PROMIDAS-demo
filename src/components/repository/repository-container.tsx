@@ -313,6 +313,7 @@ export function RepositoryContainer({
                 importSuccess={importSuccess}
                 importError={importError}
                 handleImportSnapshot={handleImportSnapshot}
+                clearImportState={clearImportState}
               />
             </Grid>
           </Grid>

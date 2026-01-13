@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Alert, Typography, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -23,6 +24,7 @@ interface ImportSnapshotDataProps {
   importSuccess: string | null;
   importError: SnapshotOperationFailure | null;
   handleImportSnapshot: (data: SerializableSnapshot) => void;
+  clearImportState: () => void;
 }
 
 export function ImportSnapshotData({
@@ -30,10 +32,20 @@ export function ImportSnapshotData({
   importSuccess,
   importError,
   handleImportSnapshot,
+  clearImportState,
 }: ImportSnapshotDataProps) {
+  const [parseError, setParseError] = useState<string | null>(null);
+
+  const handleStartImport = () => {
+    setParseError(null);
+    clearImportState();
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    setParseError(null);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -43,8 +55,7 @@ export function ImportSnapshotData({
         handleImportSnapshot(data);
       } catch (error) {
         console.error('Failed to parse snapshot file', error);
-        // Using alert for parse error since hook error is for operation failure
-        alert('Invalid JSON file');
+        setParseError('Invalid JSON file');
       }
     };
     reader.readAsText(file);
@@ -71,6 +82,7 @@ export function ImportSnapshotData({
           disabled={importLoading}
           loading={importLoading}
           startIcon={<CloudUploadIcon />}
+          onClick={handleStartImport}
         >
           JSON
           <VisuallyHiddenInput
@@ -89,6 +101,16 @@ export function ImportSnapshotData({
           }}
         >
           {importSuccess}
+        </Alert>
+      )}
+      {parseError && (
+        <Alert
+          severity="error"
+          sx={{
+            mt: 2,
+          }}
+        >
+          {parseError}
         </Alert>
       )}
       {importError && (
