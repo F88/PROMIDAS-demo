@@ -45,7 +45,6 @@ export function ExportSnapshotData({
           onClick={handleExportSnapshotToJson}
           disabled={!hasData}
           startIcon={<CloudDownloadIcon />}
-          sx={{ mr: 1 }}
         >
           JSON
         </ActionButton>
