@@ -72,7 +72,7 @@ export function ImportSnapshotData({
           startIcon={<CloudUploadIcon />}
           variant="primary"
         >
-          Import
+          JSON
           <VisuallyHiddenInput
             type="file"
             onChange={handleFileChange}

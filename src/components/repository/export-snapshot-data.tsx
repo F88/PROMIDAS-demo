@@ -35,7 +35,7 @@ export function ExportSnapshotData({
         startIcon={<CloudDownloadIcon />}
         variant="secondary"
       >
-        Export
+        JSON
       </ActionButton>
 
       {exportSuccess && (
