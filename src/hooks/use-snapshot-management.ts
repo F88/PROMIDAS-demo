@@ -15,6 +15,7 @@ import {
   type SnapshotOperationFailure,
   type SnapshotOperationResult,
 } from '@f88/promidas/repository';
+import type { SerializableSnapshot } from '@f88/promidas/repository/types';
 
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
@@ -29,6 +30,7 @@ export function useSnapshotManagement() {
   const repository = useProtopediaRepository();
   const [setupLoading, setSetupLoading] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
   const [setupError, setSetupError] = useState<SnapshotOperationFailure | null>(
     null,
   );
@@ -36,6 +38,10 @@ export function useSnapshotManagement() {
   const [refreshError, setRefreshError] =
     useState<SnapshotOperationFailure | null>(null);
   const [refreshSuccess, setRefreshSuccess] = useState<string | null>(null);
+  const [importError, setImportError] =
+    useState<SnapshotOperationFailure | null>(null);
+  const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const [exportSuccess, setExportSuccess] = useState<string | null>(null);
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
   // Clear errors when repository is destroyed
@@ -45,6 +51,9 @@ export function useSnapshotManagement() {
       setSetupSuccess(null);
       setRefreshError(null);
       setRefreshSuccess(null);
+      setImportError(null);
+      setImportSuccess(null);
+      setExportSuccess(null);
     }
   }, [repository]);
 
@@ -168,6 +177,79 @@ export function useSnapshotManagement() {
     }
   };
 
+  const exportSnapshot = () => {
+    if (!repository) {
+      console.error('Repository not initialized for export');
+      return;
+    }
+
+    setExportSuccess(null);
+
+    try {
+      const snapshot: SerializableSnapshot =
+        repository.getSerializableSnapshot();
+      const prototypeCount = snapshot.prototypes.length;
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const fileName = `promidas-snapshot-${new Date().toISOString()}.json`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      console.info(
+        `Snapshot exported successfully with ${prototypeCount.toLocaleString()} prototypes`,
+      );
+      setExportSuccess(
+        `Snapshot exported to ${fileName} (${prototypeCount.toLocaleString()} prototypes)`,
+      );
+    } catch (err) {
+      console.error('Failed to export snapshot:', err);
+    }
+  };
+
+  const importSnapshot = (data: SerializableSnapshot) => {
+    if (!repository) {
+      setImportError({
+        ok: false,
+        origin: 'unknown',
+        message: 'Repository not initialized',
+      });
+      return;
+    }
+
+    setImportLoading(true);
+    setImportError(null);
+    setImportSuccess(null);
+
+    try {
+      const result: SnapshotOperationResult =
+        repository.setupSnapshotFromSerializedData(data);
+
+      logFetchResult('importSnapshot', result);
+
+      if (!result.ok) {
+        handleSnapshotOperationError(result, setImportError);
+      } else {
+        setImportSuccess('Snapshot imported successfully');
+        setStats(result.stats);
+      }
+    } catch (err) {
+      setImportError({
+        ok: false,
+        origin: 'unknown',
+        message:
+          err instanceof Error ? err.message : 'Failed to import snapshot',
+      });
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
   const clearSetupState = () => {
     setSetupError(null);
     setSetupSuccess(null);
@@ -178,17 +260,34 @@ export function useSnapshotManagement() {
     setRefreshSuccess(null);
   };
 
+  const clearImportState = () => {
+    setImportError(null);
+    setImportSuccess(null);
+  };
+
+  const clearExportState = () => {
+    setExportSuccess(null);
+  };
+
   return {
     setupLoading,
     refreshLoading,
+    importLoading,
     setupError,
     setupSuccess,
     refreshError,
     refreshSuccess,
+    importError,
+    importSuccess,
+    exportSuccess,
     stats,
     setupSnapshot,
     refreshSnapshot,
+    exportSnapshot,
+    importSnapshot,
     clearSetupState,
     clearRefreshState,
+    clearImportState,
+    clearExportState,
   };
 }
