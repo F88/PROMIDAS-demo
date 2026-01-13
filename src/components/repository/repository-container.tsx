@@ -239,7 +239,7 @@ export function RepositoryContainer({
                 sm: 6,
                 md: 6,
                 lg: 6,
-                xl: 3,
+                xl: 6,
               }}
             >
               <SetupSnapshot
@@ -270,7 +270,7 @@ export function RepositoryContainer({
                 sm: 6,
                 md: 6,
                 lg: 6,
-                xl: 3,
+                xl: 6,
               }}
             >
               <RefreshSnapshot
@@ -288,7 +288,7 @@ export function RepositoryContainer({
                 sm: 6,
                 md: 6,
                 lg: 6,
-                xl: 3,
+                xl: 6,
               }}
             >
               <ExportSnapshotData
@@ -305,7 +305,7 @@ export function RepositoryContainer({
                 sm: 6,
                 md: 6,
                 lg: 6,
-                xl: 3,
+                xl: 6,
               }}
             >
               <ImportSnapshotData
