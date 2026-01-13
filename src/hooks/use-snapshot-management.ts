@@ -193,7 +193,7 @@ export function useSnapshotManagement() {
         type: 'application/json',
       });
       const url = URL.createObjectURL(blob);
-      const fileName = `promidas-snapshot-${new Date().toISOString()}.json`;
+      const fileName = `promidas-snapshot-${new Date().toISOString().replace(/:/g, '-')}.json`;
       const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
@@ -298,7 +298,7 @@ export function useSnapshotManagement() {
         type: 'text/tab-separated-values;charset=utf-8',
       });
       const url = URL.createObjectURL(blob);
-      const fileName = `promidas-snapshot-${new Date().toISOString()}.tsv`;
+      const fileName = `promidas-snapshot-${new Date().toISOString().replace(/:/g, '-')}.tsv`;
       const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
