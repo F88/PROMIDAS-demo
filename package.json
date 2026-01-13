@@ -26,7 +26,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@f88/promidas": "github:f88/promidas#v1.0.0",
+    "@f88/promidas": "github:f88/promidas#v1.1.0",
     "@f88/promidas-utils": "github:f88/promidas-utils#v0.3.0",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
