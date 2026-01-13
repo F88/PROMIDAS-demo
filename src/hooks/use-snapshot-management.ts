@@ -15,6 +15,7 @@ import {
   type SnapshotOperationFailure,
   type SnapshotOperationResult,
 } from '@f88/promidas/repository';
+import type { SerializableSnapshot } from '@f88/promidas/repository/types';
 
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
@@ -29,6 +30,7 @@ export function useSnapshotManagement() {
   const repository = useProtopediaRepository();
   const [setupLoading, setSetupLoading] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
   const [setupError, setSetupError] = useState<SnapshotOperationFailure | null>(
     null,
   );
@@ -36,6 +38,10 @@ export function useSnapshotManagement() {
   const [refreshError, setRefreshError] =
     useState<SnapshotOperationFailure | null>(null);
   const [refreshSuccess, setRefreshSuccess] = useState<string | null>(null);
+  const [importError, setImportError] =
+    useState<SnapshotOperationFailure | null>(null);
+  const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const [exportSuccess, setExportSuccess] = useState<string | null>(null);
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
   // Clear errors when repository is destroyed
@@ -45,6 +51,9 @@ export function useSnapshotManagement() {
       setSetupSuccess(null);
       setRefreshError(null);
       setRefreshSuccess(null);
+      setImportError(null);
+      setImportSuccess(null);
+      setExportSuccess(null);
     }
   }, [repository]);
 
@@ -168,6 +177,184 @@ export function useSnapshotManagement() {
     }
   };
 
+  const exportSnapshotToJson = () => {
+    if (!repository) {
+      console.error('Repository not initialized for export');
+      return;
+    }
+
+    setExportSuccess(null);
+
+    try {
+      const snapshot: SerializableSnapshot =
+        repository.getSerializableSnapshot();
+      const prototypeCount = snapshot.prototypes.length;
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const fileName = `promidas-snapshot-${new Date().toISOString().replace(/:/g, '-')}.json`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      console.info(
+        `Snapshot exported successfully with ${prototypeCount.toLocaleString()} prototypes`,
+      );
+      setExportSuccess(
+        `Snapshot exported to ${fileName} (${prototypeCount.toLocaleString()} prototypes)`,
+      );
+    } catch (err) {
+      console.error('Failed to export snapshot:', err);
+    }
+  };
+
+  const exportSnapshotToTsv = () => {
+    if (!repository) {
+      console.error('Repository not initialized for export');
+      return;
+    }
+
+    setExportSuccess(null);
+
+    try {
+      const snapshot: SerializableSnapshot =
+        repository.getSerializableSnapshot();
+      const prototypeCount = snapshot.prototypes.length;
+      const headers = [
+        'id',
+        'prototypeNm',
+        'teamNm',
+        'users',
+        'tags',
+        'materials',
+        'events',
+        'awards',
+        'status',
+        'releaseFlg',
+        'licenseType',
+        'thanksFlg',
+        'viewCount',
+        'goodCount',
+        'commentCount',
+        'createDate',
+        'updateDate',
+        'releaseDate',
+        'mainUrl',
+        'officialLink',
+        'videoUrl',
+        'relatedLink',
+        'relatedLink2',
+        'relatedLink3',
+        'relatedLink4',
+        'relatedLink5',
+      ];
+
+      const sanitize = (value: unknown): string => {
+        if (value === undefined || value === null) return '';
+        const normalizedValue = Array.isArray(value)
+          ? value.join('|')
+          : String(value);
+        return normalizedValue.replace(/\t/g, ' ').replace(/\r?\n/g, ' ');
+      };
+
+      const rows = snapshot.prototypes.map((prototype) => [
+        sanitize(prototype.id),
+        sanitize(prototype.prototypeNm),
+        sanitize(prototype.teamNm),
+        sanitize(prototype.users),
+        sanitize(prototype.tags),
+        sanitize(prototype.materials),
+        sanitize(prototype.events),
+        sanitize(prototype.awards),
+        sanitize(prototype.status),
+        sanitize(prototype.releaseFlg),
+        sanitize(prototype.licenseType),
+        sanitize(prototype.thanksFlg),
+        sanitize(prototype.viewCount),
+        sanitize(prototype.goodCount),
+        sanitize(prototype.commentCount),
+        sanitize(prototype.createDate),
+        sanitize(prototype.updateDate),
+        sanitize(prototype.releaseDate),
+        sanitize(prototype.mainUrl),
+        sanitize(prototype.officialLink),
+        sanitize(prototype.videoUrl),
+        sanitize(prototype.relatedLink),
+        sanitize(prototype.relatedLink2),
+        sanitize(prototype.relatedLink3),
+        sanitize(prototype.relatedLink4),
+        sanitize(prototype.relatedLink5),
+      ]);
+
+      const tsvContent =
+        [headers.join('\t'), ...rows.map((row) => row.join('\t'))].join('\n') +
+        '\n';
+
+      const blob = new Blob([tsvContent], {
+        type: 'text/tab-separated-values;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const fileName = `promidas-snapshot-${new Date().toISOString().replace(/:/g, '-')}.tsv`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      console.info(
+        `Snapshot TSV exported successfully with ${prototypeCount.toLocaleString()} prototypes`,
+      );
+      setExportSuccess(
+        `Snapshot TSV exported to ${fileName} (${prototypeCount.toLocaleString()} prototypes)`,
+      );
+    } catch (err) {
+      console.error('Failed to export snapshot as TSV:', err);
+    }
+  };
+
+  const importSnapshot = (data: SerializableSnapshot) => {
+    if (!repository) {
+      setImportError({
+        ok: false,
+        origin: 'unknown',
+        message: 'Repository not initialized',
+      });
+      return;
+    }
+
+    setImportLoading(true);
+    setImportError(null);
+    setImportSuccess(null);
+
+    try {
+      const result: SnapshotOperationResult =
+        repository.setupSnapshotFromSerializedData(data);
+
+      logFetchResult('importSnapshot', result);
+
+      if (!result.ok) {
+        handleSnapshotOperationError(result, setImportError);
+      } else {
+        setImportSuccess('Snapshot imported successfully');
+        setStats(result.stats);
+      }
+    } catch (err) {
+      setImportError({
+        ok: false,
+        origin: 'unknown',
+        message:
+          err instanceof Error ? err.message : 'Failed to import snapshot',
+      });
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
   const clearSetupState = () => {
     setSetupError(null);
     setSetupSuccess(null);
@@ -178,17 +365,35 @@ export function useSnapshotManagement() {
     setRefreshSuccess(null);
   };
 
+  const clearImportState = () => {
+    setImportError(null);
+    setImportSuccess(null);
+  };
+
+  const clearExportState = () => {
+    setExportSuccess(null);
+  };
+
   return {
     setupLoading,
     refreshLoading,
+    importLoading,
     setupError,
     setupSuccess,
     refreshError,
     refreshSuccess,
+    importError,
+    importSuccess,
+    exportSuccess,
     stats,
     setupSnapshot,
     refreshSnapshot,
+    exportSnapshotToJson,
+    exportSnapshotToTsv,
+    importSnapshot,
     clearSetupState,
     clearRefreshState,
+    clearImportState,
+    clearExportState,
   };
 }
