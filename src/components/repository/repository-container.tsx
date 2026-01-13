@@ -2,6 +2,8 @@ import { Typography, Grid } from '@mui/material';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { SetupSnapshot } from './setup-snapshot';
 import { RefreshSnapshot } from './refresh-snapshot';
+import { ExportSnapshotData } from './export-snapshot-data';
+import { ImportSnapshotData } from './import-snapshot-data';
 import { RandomPrototype } from './random-prototype';
 import { SearchById } from './search-by-id';
 import { SingleRandom } from './single-random';
@@ -14,6 +16,7 @@ import { useCallback, useState } from 'react';
 import { useSnapshotManagement } from '../../hooks';
 import { SETUP_SNAPSHOT } from '../../App';
 import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { SerializableSnapshot } from '@f88/promidas/repository/types';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 import type { StoreConfig } from '../../hooks/use-config';
 
@@ -55,13 +58,21 @@ export function RepositoryContainer({
   const {
     setupLoading,
     refreshLoading,
+    importLoading,
     setupError,
     setupSuccess,
     refreshError,
     refreshSuccess,
+    importError,
+    importSuccess,
+    exportSuccess,
     setupSnapshot,
     refreshSnapshot,
+    exportSnapshot,
+    importSnapshot,
     clearSetupState,
+    clearImportState,
+    clearExportState,
     // clearRefreshState,
   } = useSnapshotManagement();
 
@@ -74,6 +85,8 @@ export function RepositoryContainer({
     setSnapshotEventNm('');
     setSnapshotMaterialNm('');
     clearSetupState();
+    clearImportState();
+    clearExportState();
   };
 
   const handleSetupSnapshot = async () => {
@@ -92,6 +105,11 @@ export function RepositoryContainer({
 
   const handleRefreshSnapshot = async () => {
     await refreshSnapshot();
+    fetchStats();
+  };
+
+  const handleImportSnapshot = async (data: SerializableSnapshot) => {
+    importSnapshot(data);
     fetchStats();
   };
 
@@ -218,10 +236,9 @@ export function RepositoryContainer({
               size={{
                 xs: 12,
                 sm: 6,
-                // md: 12,
                 md: 6,
                 lg: 6,
-                xl: 6,
+                xl: 3,
               }}
             >
               <SetupSnapshot
@@ -250,10 +267,9 @@ export function RepositoryContainer({
               size={{
                 xs: 12,
                 sm: 6,
-                // md: 12,
                 md: 6,
                 lg: 6,
-                xl: 6,
+                xl: 3,
               }}
             >
               <RefreshSnapshot
@@ -262,6 +278,39 @@ export function RepositoryContainer({
                 snapshotError={refreshError}
                 stats={stats}
                 handleRefreshSnapshot={handleRefreshSnapshot}
+              />
+            </Grid>
+
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 6,
+                lg: 6,
+                xl: 3,
+              }}
+            >
+              <ExportSnapshotData
+                stats={stats}
+                exportSuccess={exportSuccess}
+                handleExportSnapshot={exportSnapshot}
+              />
+            </Grid>
+
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 6,
+                lg: 6,
+                xl: 3,
+              }}
+            >
+              <ImportSnapshotData
+                importLoading={importLoading}
+                importSuccess={importSuccess}
+                importError={importError}
+                handleImportSnapshot={handleImportSnapshot}
               />
             </Grid>
           </Grid>
