@@ -7,13 +7,13 @@ import { SectionCard } from '../common/section-card';
 interface ExportSnapshotDataProps {
   stats: PrototypeInMemoryStats | null;
   exportSuccess: string | null;
-  handleExportSnapshot: () => void;
+  handleExportSnapshotToJson: () => void;
 }
 
 export function ExportSnapshotData({
   stats,
   exportSuccess,
-  handleExportSnapshot,
+  handleExportSnapshotToJson,
 }: ExportSnapshotDataProps) {
   const hasData = stats && stats.size > 0;
 
@@ -30,7 +30,7 @@ export function ExportSnapshotData({
       </Typography>
 
       <ActionButton
-        onClick={handleExportSnapshot}
+        onClick={handleExportSnapshotToJson}
         disabled={!hasData}
         startIcon={<CloudDownloadIcon />}
         variant="secondary"

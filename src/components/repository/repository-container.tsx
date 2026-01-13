@@ -68,7 +68,7 @@ export function RepositoryContainer({
     exportSuccess,
     setupSnapshot,
     refreshSnapshot,
-    exportSnapshot,
+    exportSnapshotToJson,
     importSnapshot,
     clearSetupState,
     clearImportState,
@@ -293,7 +293,7 @@ export function RepositoryContainer({
               <ExportSnapshotData
                 stats={stats}
                 exportSuccess={exportSuccess}
-                handleExportSnapshot={exportSnapshot}
+                handleExportSnapshotToJson={exportSnapshotToJson}
               />
             </Grid>
 

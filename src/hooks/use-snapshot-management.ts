@@ -177,7 +177,7 @@ export function useSnapshotManagement() {
     }
   };
 
-  const exportSnapshot = () => {
+  const exportSnapshotToJson = () => {
     if (!repository) {
       console.error('Repository not initialized for export');
       return;
@@ -283,7 +283,7 @@ export function useSnapshotManagement() {
     stats,
     setupSnapshot,
     refreshSnapshot,
-    exportSnapshot,
+    exportSnapshotToJson,
     importSnapshot,
     clearSetupState,
     clearRefreshState,
