@@ -212,6 +212,111 @@ export function useSnapshotManagement() {
     }
   };
 
+  const exportSnapshotToTsv = () => {
+    if (!repository) {
+      console.error('Repository not initialized for export');
+      return;
+    }
+
+    setExportSuccess(null);
+
+    try {
+      const snapshot: SerializableSnapshot =
+        repository.getSerializableSnapshot();
+      const prototypeCount = snapshot.prototypes.length;
+      const headers = [
+        'id',
+        'prototypeNm',
+        'teamNm',
+        'users',
+        'tags',
+        'materials',
+        'events',
+        'awards',
+        'status',
+        'releaseFlg',
+        'licenseType',
+        'thanksFlg',
+        'viewCount',
+        'goodCount',
+        'commentCount',
+        'createDate',
+        'updateDate',
+        'releaseDate',
+        'mainUrl',
+        'officialLink',
+        'videoUrl',
+        'relatedLink',
+        'relatedLink2',
+        'relatedLink3',
+        'relatedLink4',
+        'relatedLink5',
+      ];
+
+      const sanitize = (value: unknown): string => {
+        if (value === undefined || value === null) return '';
+        const normalizedValue = Array.isArray(value)
+          ? value.join('|')
+          : String(value);
+        return normalizedValue.replace(/\t/g, ' ').replace(/\r?\n/g, ' ');
+      };
+
+      const rows = snapshot.prototypes.map((prototype) => [
+        sanitize(prototype.id),
+        sanitize(prototype.prototypeNm),
+        sanitize(prototype.teamNm),
+        sanitize(prototype.users),
+        sanitize(prototype.tags),
+        sanitize(prototype.materials),
+        sanitize(prototype.events),
+        sanitize(prototype.awards),
+        sanitize(prototype.status),
+        sanitize(prototype.releaseFlg),
+        sanitize(prototype.licenseType),
+        sanitize(prototype.thanksFlg),
+        sanitize(prototype.viewCount),
+        sanitize(prototype.goodCount),
+        sanitize(prototype.commentCount),
+        sanitize(prototype.createDate),
+        sanitize(prototype.updateDate),
+        sanitize(prototype.releaseDate),
+        sanitize(prototype.mainUrl),
+        sanitize(prototype.officialLink),
+        sanitize(prototype.videoUrl),
+        sanitize(prototype.relatedLink),
+        sanitize(prototype.relatedLink2),
+        sanitize(prototype.relatedLink3),
+        sanitize(prototype.relatedLink4),
+        sanitize(prototype.relatedLink5),
+      ]);
+
+      const tsvContent =
+        [headers.join('\t'), ...rows.map((row) => row.join('\t'))].join('\n') +
+        '\n';
+
+      const blob = new Blob([tsvContent], {
+        type: 'text/tab-separated-values;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const fileName = `promidas-snapshot-${new Date().toISOString()}.tsv`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      console.info(
+        `Snapshot TSV exported successfully with ${prototypeCount.toLocaleString()} prototypes`,
+      );
+      setExportSuccess(
+        `Snapshot TSV exported to ${fileName} (${prototypeCount.toLocaleString()} prototypes)`,
+      );
+    } catch (err) {
+      console.error('Failed to export snapshot as TSV:', err);
+    }
+  };
+
   const importSnapshot = (data: SerializableSnapshot) => {
     if (!repository) {
       setImportError({
@@ -284,6 +389,7 @@ export function useSnapshotManagement() {
     setupSnapshot,
     refreshSnapshot,
     exportSnapshotToJson,
+    exportSnapshotToTsv,
     importSnapshot,
     clearSetupState,
     clearRefreshState,
