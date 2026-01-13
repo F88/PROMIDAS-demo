@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Box,
   TextField,
   IconButton,
   InputAdornment,
@@ -49,8 +48,7 @@ export function TokenConfiguration({
       description="ProtoPedia APIトークンを設定"
       category="Authentication"
     >
-      <Box
-        component="form"
+      <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSave();
@@ -65,14 +63,14 @@ export function TokenConfiguration({
           placeholder="ProtoPedia APIトークン"
           size="small"
           sx={{ mb: 2 }}
-          name="api_token"
-          id="api_token"
+          name="protopedia_api_token"
+          id="protopedia_api_token"
           spellCheck={false}
           autoCapitalize="off"
+          autoCorrect="off"
           inputMode="text"
           slotProps={{
             input: {
-              autoComplete: 'on',
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -107,7 +105,7 @@ export function TokenConfiguration({
           )}
         </Stack>
         <button type="submit" hidden aria-hidden />
-      </Box>
+      </form>
       <Typography variant="body2" color="text.secondary">
         トークンは{' '}
         <Link
