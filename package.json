@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "homepage": "https://f88.github.io/PROMIDAS-demo",
   "scripts": {
@@ -27,7 +27,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@f88/promidas": "github:f88/promidas#v1.1.0",
-    "@f88/promidas-utils": "github:f88/promidas-utils#v0.3.0",
+    "@f88/promidas-utils": "github:f88/promidas-utils#v1.0.0",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
     "protopedia-api-v2-client": "^3.0.0",
