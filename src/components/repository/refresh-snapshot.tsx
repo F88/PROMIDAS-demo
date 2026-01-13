@@ -1,31 +1,35 @@
 import type { PrototypeInMemoryStats } from '@f88/promidas';
 import { toLocalizedMessage } from '@f88/promidas-utils/repository';
-import { getStoreState } from '@f88/promidas-utils/store';
 import type { SnapshotOperationFailure } from '@f88/promidas/repository';
 
 import { Alert, Stack } from '@mui/material';
 
+import { useProtopediaRepository } from '../../hooks';
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
 
 interface RefreshSnapshotProps {
+  stats: PrototypeInMemoryStats | null;
   snapshotLoading: boolean;
   snapshotSuccess: string | null;
   snapshotError: SnapshotOperationFailure | null;
-  stats: PrototypeInMemoryStats | null;
   handleRefreshSnapshot: () => void;
 }
 
 export function RefreshSnapshot({
+  stats,
   snapshotLoading,
   snapshotSuccess,
   snapshotError,
-  stats,
   handleRefreshSnapshot,
 }: RefreshSnapshotProps) {
   const localizedSnapshotError = toLocalizedMessage(snapshotError);
 
-  const disabled = snapshotLoading || getStoreState(stats) === 'not-stored';
+  const repository = useProtopediaRepository();
+  const disabled = snapshotLoading || repository === null;
+  // const disabled = snapshotLoading;
+
+  console.debug('[RefreshSnapshot] stats:', stats, 'repository:', repository);
 
   return (
     <SectionCard

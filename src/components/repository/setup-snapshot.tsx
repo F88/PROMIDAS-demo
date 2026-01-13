@@ -56,9 +56,10 @@ export function SetupSnapshot({
 }: SetupSnapshotProps) {
   const [areFiltersExpanded, setAreFiltersExpanded] = useState(false);
   const localizedSnapshotError = toLocalizedMessage(snapshotError);
-  const repository = useProtopediaRepository();
 
+  const repository = useProtopediaRepository();
   const disabled = snapshotLoading || repository === null;
+  // const disabled = snapshotLoading;
 
   console.debug('[SetupSnapshot] stats:', stats, 'repository:', repository);
 
