@@ -8,9 +8,9 @@
 import {
   type ProtopediaInMemoryRepository,
   PromidasRepositoryBuilder,
-} from '@f88/promidas';
-import { TOKEN_KEYS, TokenManager } from '@f88/promidas-utils/token';
-import type { LogLevel } from '@f88/promidas/logger';
+} from 'promidas';
+import { TOKEN_KEYS, TokenManager } from 'promidas-utils/token';
+import type { LogLevel } from 'promidas/logger';
 
 import { resolveRepositoryInitFailure } from './init-error';
 import { createRepositoryConfigs } from './repository-config';

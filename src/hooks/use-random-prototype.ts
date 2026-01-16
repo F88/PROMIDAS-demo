@@ -9,8 +9,8 @@
 
 import { useState, useCallback } from 'react';
 
-import { ValidationError } from '@f88/promidas/repository';
-import type { NormalizedPrototype } from '@f88/promidas/types';
+import { ValidationError } from 'promidas/repository';
+import type { NormalizedPrototype } from 'promidas/types';
 
 import { useProtopediaRepository } from './repository-context';
 

@@ -8,12 +8,12 @@
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
-} from '@f88/promidas';
+} from 'promidas';
 import type {
   FetchProgressEvent,
   ProtopediaApiCustomClientConfig,
-} from '@f88/promidas/fetcher';
-import type { LogLevel } from '@f88/promidas/logger';
+} from 'promidas/fetcher';
+import type { LogLevel } from 'promidas/logger';
 import { emitDownloadProgress } from '../../hooks/use-download-progress';
 import { userSettingsStorage } from '../settings/user-settings-storage';
 import { createFetch } from './create-fetch';

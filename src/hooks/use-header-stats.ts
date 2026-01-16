@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { PrototypeInMemoryStats } from 'promidas';
 
 import { useProtopediaRepository } from './repository-context';
 

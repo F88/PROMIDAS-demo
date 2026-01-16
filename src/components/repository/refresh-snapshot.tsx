@@ -1,6 +1,6 @@
-import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { toLocalizedMessage } from '@f88/promidas-utils/repository';
-import type { SnapshotOperationFailure } from '@f88/promidas/repository';
+import type { PrototypeInMemoryStats } from 'promidas';
+import { toLocalizedMessage } from 'promidas-utils/repository';
+import type { SnapshotOperationFailure } from 'promidas/repository';
 
 import { Alert, Stack } from '@mui/material';
 

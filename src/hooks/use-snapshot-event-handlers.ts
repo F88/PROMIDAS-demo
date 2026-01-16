@@ -8,7 +8,7 @@
  */
 
 import { useCallback } from 'react';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { PrototypeInMemoryStats } from 'promidas';
 import { useRepositoryEvents } from './use-repository-events';
 
 interface UseSnapshotEventHandlersParams {

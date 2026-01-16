@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Alert, Typography, Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
+
+import type { SnapshotOperationFailure } from 'promidas/repository';
+import type { SerializableSnapshot } from 'promidas/repository/types';
+
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import type { SnapshotOperationFailure } from '@f88/promidas/repository';
-import type { SerializableSnapshot } from '@f88/promidas/repository/types';
+import { Alert, Box, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
 

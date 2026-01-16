@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { TOKEN_KEYS, TokenManager } from '@f88/promidas-utils/token';
+import { TOKEN_KEYS, TokenManager } from 'promidas-utils/token';
 
 const tokenStorage = TokenManager.forSessionStorage(
   TOKEN_KEYS.PROTOPEDIA_API_V2_TOKEN,

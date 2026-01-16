@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
-import type { SnapshotOperationFailure } from '@f88/promidas/repository';
+import type { PrototypeInMemoryStats } from 'promidas';
+import type { SnapshotOperationFailure } from 'promidas/repository';
 import { useProtopediaRepository } from './repository-context';
 
 interface RepositoryEventHandlers {

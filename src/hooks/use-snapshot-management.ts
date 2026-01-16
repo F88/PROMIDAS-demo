@@ -9,13 +9,13 @@
 
 import { useEffect, useState } from 'react';
 
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { PrototypeInMemoryStats } from 'promidas';
 import {
   ValidationError,
   type SnapshotOperationFailure,
   type SnapshotOperationResult,
-} from '@f88/promidas/repository';
-import type { SerializableSnapshot } from '@f88/promidas/repository/types';
+} from 'promidas/repository';
+import type { SerializableSnapshot } from 'promidas/repository/types';
 
 import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 

@@ -10,7 +10,7 @@ import type {
   SnapshotOperationFailure,
   SnapshotOperationResult,
   SnapshotOperationSuccess,
-} from '@f88/promidas/repository';
+} from 'promidas/repository';
 
 /**
  * Log the result of a snapshot operation for demo site debugging.

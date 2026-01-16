@@ -1,5 +1,5 @@
-import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { getStoreState, type StoreState } from '@f88/promidas-utils/store';
+import type { PrototypeInMemoryStats } from 'promidas';
+import { getStoreState, type StoreState } from 'promidas-utils/store';
 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MemoryIcon from '@mui/icons-material/Memory';

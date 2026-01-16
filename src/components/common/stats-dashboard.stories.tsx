@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { StatsDashboard } from './stats-dashboard';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { PrototypeInMemoryStats } from 'promidas';
 import type { StoreConfig } from '../../hooks/use-config';
+import { StatsDashboard } from './stats-dashboard';
 
 const meta = {
   title: 'Common/StatsDashboard',

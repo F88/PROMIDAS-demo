@@ -1,24 +1,28 @@
-import { Typography, Grid } from '@mui/material';
+import { useCallback, useState } from 'react';
+
+import { Grid, Typography } from '@mui/material';
+
+import type { PrototypeInMemoryStats } from 'promidas';
+import type { SerializableSnapshot } from 'promidas/repository/types';
+import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+
+import { useSnapshotManagement } from '../../hooks';
+import type { StoreConfig } from '../../hooks/use-config';
+
+import { SETUP_SNAPSHOT } from '../../App';
 import { ContainerWrapper } from '../common/container-wrapper';
-import { SetupSnapshot } from './setup-snapshot';
-import { RefreshSnapshot } from './refresh-snapshot';
-import { ExportSnapshotData } from './export-snapshot-data';
-import { ImportSnapshotData } from './import-snapshot-data';
-import { RandomPrototype } from './random-prototype';
-import { SearchById } from './search-by-id';
-import { SingleRandom } from './single-random';
-import { PrototypeIds } from './prototype-ids';
-import { AllPrototypes } from './all-prototypes';
-import { Analysis } from './analysis';
 import { GetConfig } from '../store/get-config';
 import { GetStats } from '../store/get-stats';
-import { useCallback, useState } from 'react';
-import { useSnapshotManagement } from '../../hooks';
-import { SETUP_SNAPSHOT } from '../../App';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
-import type { SerializableSnapshot } from '@f88/promidas/repository/types';
-import type { ListPrototypesParams } from 'protopedia-api-v2-client';
-import type { StoreConfig } from '../../hooks/use-config';
+import { AllPrototypes } from './all-prototypes';
+import { Analysis } from './analysis';
+import { ExportSnapshotData } from './export-snapshot-data';
+import { ImportSnapshotData } from './import-snapshot-data';
+import { PrototypeIds } from './prototype-ids';
+import { RandomPrototype } from './random-prototype';
+import { RefreshSnapshot } from './refresh-snapshot';
+import { SearchById } from './search-by-id';
+import { SetupSnapshot } from './setup-snapshot';
+import { SingleRandom } from './single-random';
 
 interface RepositoryContainerProps {
   isActive?: boolean;

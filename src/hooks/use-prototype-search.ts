@@ -8,8 +8,8 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { NormalizedPrototype } from '@f88/promidas/types';
-import { ValidationError } from '@f88/promidas/repository';
+import type { NormalizedPrototype } from 'promidas/types';
+import { ValidationError } from 'promidas/repository';
 import { useProtopediaRepository } from './repository-context';
 
 export function usePrototypeSearch() {

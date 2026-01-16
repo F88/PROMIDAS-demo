@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { ProtopediaInMemoryRepository } from '@f88/promidas';
+import type { ProtopediaInMemoryRepository } from 'promidas';
 import { useProtopediaRepository } from './repository-context';
 
 export type StoreConfig = ReturnType<
