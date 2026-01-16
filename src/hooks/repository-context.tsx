@@ -13,7 +13,7 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
-import type { ProtopediaInMemoryRepository } from '@f88/promidas';
+import type { ProtopediaInMemoryRepository } from 'promidas';
 import {
   getProtopediaRepository,
   resetRepository,

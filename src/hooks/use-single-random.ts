@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-import type { NormalizedPrototype } from '@f88/promidas/types';
+import type { NormalizedPrototype } from 'promidas/types';
 
 import { useProtopediaRepository } from './repository-context';
 

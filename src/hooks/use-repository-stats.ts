@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import type { PrototypeInMemoryStats } from 'promidas';
 
 import { DEFAULT_REPOSITORY_TTL_MS } from '../lib/repository/constants';
 import { useProtopediaRepository } from './repository-context';
