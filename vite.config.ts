@@ -20,7 +20,7 @@ export default defineConfig({
             if (id.includes('promidas-utils')) {
               return 'promidas-utils';
             }
-            if (id.includes('promidas') && !id.includes('promidas-utils')) {
+            if (id.includes('promidas')) {
               return 'promidas';
             }
             if (id.includes('protopedia-api-v2-client')) {
