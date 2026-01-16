@@ -9,7 +9,7 @@ import tseslint from 'typescript-eslint';
 import importPlugin from 'eslint-plugin-import';
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', '!.storybook'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
