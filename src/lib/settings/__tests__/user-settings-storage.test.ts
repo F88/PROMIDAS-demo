@@ -19,7 +19,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@f88/promidas-utils/config', () => {
+vi.mock('promidas-utils/config', () => {
   return {
     ConfigManager: {
       forLocalStorage: (key: string) => {
@@ -216,7 +216,7 @@ describe('UserSettingsStorage', () => {
   describe('lazy initialization', () => {
     it('reuses ConfigStorage instances across multiple calls', async () => {
       const forLocalStorageSpy = vi.spyOn(
-        await import('@f88/promidas-utils/config').then((m) => m.ConfigManager),
+        await import('promidas-utils/config').then((m) => m.ConfigManager),
         'forLocalStorage',
       );
 

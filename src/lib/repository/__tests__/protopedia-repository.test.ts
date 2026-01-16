@@ -20,7 +20,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@f88/promidas-utils/token', () => {
+vi.mock('promidas-utils/token', () => {
   return {
     TokenManager: {
       forSessionStorage: () => ({
@@ -48,7 +48,7 @@ vi.mock('../init-error', () => {
   };
 });
 
-vi.mock('@f88/promidas', () => {
+vi.mock('promidas', () => {
   class PromidasRepositoryBuilder {
     public setStoreConfig(config: unknown) {
       mocks.setStoreConfig(config);

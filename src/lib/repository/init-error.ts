@@ -8,16 +8,16 @@
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
-} from '@f88/promidas';
-import { toErrorMessage } from '@f88/promidas-utils/builder';
-import type { ProtopediaApiCustomClientConfig } from '@f88/promidas/fetcher';
+} from 'promidas';
+import { toErrorMessage } from 'promidas-utils/builder';
+import type { ProtopediaApiCustomClientConfig } from 'promidas/fetcher';
 import {
   ConfigurationError,
   DataSizeExceededError,
   LIMIT_DATA_SIZE_BYTES,
   SizeEstimationError,
   StoreError,
-} from '@f88/promidas/store';
+} from 'promidas/store';
 
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,

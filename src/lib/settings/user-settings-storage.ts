@@ -12,7 +12,7 @@
  * - Lazy initialization: ConfigStorage instances are created on first use to avoid module-level crashes
  */
 
-import { ConfigManager, type ConfigStorage } from '@f88/promidas-utils/config';
+import { ConfigManager, type ConfigStorage } from 'promidas-utils/config';
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
   DEFAULT_REPOSITORY_TTL_MS,
