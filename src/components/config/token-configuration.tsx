@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Visibility, VisibilityOff, Save, Delete } from '@mui/icons-material';
 import {
   TextField,
   IconButton,
@@ -8,9 +8,10 @@ import {
   Link,
   Alert,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Save, Delete } from '@mui/icons-material';
-import { SectionCard } from '../common/section-card';
+import { useState } from 'react';
+
 import { ActionButton } from '../common/action-button';
+import { SectionCard } from '../common/section-card';
 
 interface TokenConfigurationProps {
   token: string;

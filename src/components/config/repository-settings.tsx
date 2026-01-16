@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import { RestartAlt, Save } from '@mui/icons-material';
 import {
   Alert,
@@ -9,13 +7,14 @@ import {
   ToggleButtonGroup,
   Typography,
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 
-import type { RepositoryStoreSettings } from '../../lib/repository/types';
-import { userSettingsStorage } from '../../lib/settings/user-settings-storage';
 import { useResetProtopediaRepository } from '../../hooks/repository-context';
-
+import { userSettingsStorage } from '../../lib/settings/user-settings-storage';
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
+
+import type { RepositoryStoreSettings } from '../../lib/repository/types';
 
 interface RepositorySettingsProps {
   onSettingsSaved?: () => void;

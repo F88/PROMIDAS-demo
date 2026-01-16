@@ -4,11 +4,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { PrototypeInMemoryStats } from 'promidas';
+import { DEFAULT_REPOSITORY_TTL_MS } from '../lib/repository/protopedia-repository';
 
 import { useProtopediaRepository } from './repository-context';
 
-import { DEFAULT_REPOSITORY_TTL_MS } from '../lib/repository/protopedia-repository';
+import type { PrototypeInMemoryStats } from 'promidas';
 
 export type HeaderStats = PrototypeInMemoryStats & {
   fetchedAt: number;

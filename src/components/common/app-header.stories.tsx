@@ -1,7 +1,8 @@
+import { AppHeader } from './app-header';
+
+import type { StoreConfig } from '../../hooks/use-config';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { PrototypeInMemoryStats } from 'promidas';
-import type { StoreConfig } from '../../hooks/use-config';
-import { AppHeader } from './app-header';
 
 const meta = {
   title: 'Common/AppHeader',

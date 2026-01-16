@@ -8,6 +8,7 @@
  */
 
 import { useState, useCallback } from 'react';
+
 import { useProtopediaRepository } from './repository-context';
 
 export function usePrototypeAnalysis() {

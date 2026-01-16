@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Stack } from '@mui/material';
+
 import { ActionButton } from './action-button';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Common/ActionButton',

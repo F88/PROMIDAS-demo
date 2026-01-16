@@ -13,10 +13,12 @@
  */
 
 import { ConfigManager, type ConfigStorage } from 'promidas-utils/config';
+
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
   DEFAULT_REPOSITORY_TTL_MS,
 } from '../repository/constants';
+
 import type { RepositoryStoreSettings } from '../repository/types';
 
 /**

@@ -1,6 +1,7 @@
+import { PrototypeCard } from './prototype-card';
+
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { NormalizedPrototype } from 'promidas/types';
-import { PrototypeCard } from './prototype-card';
 
 /**
  * Helper function to create mock prototype data

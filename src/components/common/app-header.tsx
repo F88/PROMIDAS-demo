@@ -1,10 +1,10 @@
-import type { PrototypeInMemoryStats } from 'promidas';
-
 import { Box, Stack } from '@mui/material';
 
-import type { StoreConfig } from '../../hooks/use-config';
 import { DataFlowIndicator } from './data-flow-indicator';
 import { StatsDashboard } from './stats-dashboard';
+
+import type { StoreConfig } from '../../hooks/use-config';
+import type { PrototypeInMemoryStats } from 'promidas';
 
 interface AppHeaderProps {
   stats: PrototypeInMemoryStats | null;

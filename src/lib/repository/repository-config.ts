@@ -5,6 +5,11 @@
  * can remain focused on interactions and presentation.
  */
 
+import { emitDownloadProgress } from '../../hooks/use-download-progress';
+import { userSettingsStorage } from '../settings/user-settings-storage';
+
+import { createFetch } from './create-fetch';
+
 import type {
   ProtopediaInMemoryRepositoryConfig,
   PrototypeInMemoryStoreConfig,
@@ -14,9 +19,6 @@ import type {
   ProtopediaApiCustomClientConfig,
 } from 'promidas/fetcher';
 import type { LogLevel } from 'promidas/logger';
-import { emitDownloadProgress } from '../../hooks/use-download-progress';
-import { userSettingsStorage } from '../settings/user-settings-storage';
-import { createFetch } from './create-fetch';
 
 type CreateRepositoryConfigResult = {
   storeConfig: PrototypeInMemoryStoreConfig;

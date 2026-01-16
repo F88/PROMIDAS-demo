@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 
-import type { NormalizedPrototype } from 'promidas/types';
-
 import { useProtopediaRepository } from './repository-context';
+
+import type { NormalizedPrototype } from 'promidas/types';
 
 /**
  * Custom hook for retrieving a single random prototype from the current snapshot.

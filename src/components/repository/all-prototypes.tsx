@@ -1,15 +1,13 @@
+import { Alert, Box, Chip, Stack, Typography } from '@mui/material';
+import { getStoreState } from 'promidas-utils/store';
 import { useEffect } from 'react';
 
-import type { PrototypeInMemoryStats } from 'promidas';
-import { getStoreState } from 'promidas-utils/store';
-
-import { Alert, Box, Chip, Stack, Typography } from '@mui/material';
-
 import { useAllPrototypes } from '../../hooks';
-
 import { ActionButton } from '../common/action-button';
 import { PrototypeIdAndName } from '../common/prototype-id-and-name';
 import { SectionCard } from '../common/section-card';
+
+import type { PrototypeInMemoryStats } from 'promidas';
 
 interface AllPrototypesProps {
   stats: PrototypeInMemoryStats | null;

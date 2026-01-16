@@ -1,10 +1,10 @@
-import type { PrototypeInMemoryStats } from 'promidas';
-
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { Alert, Stack, Typography } from '@mui/material';
 
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
+
+import type { PrototypeInMemoryStats } from 'promidas';
 
 interface ExportSnapshotDataProps {
   stats: PrototypeInMemoryStats | null;

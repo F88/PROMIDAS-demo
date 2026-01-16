@@ -1,5 +1,7 @@
 import { Grid } from '@mui/material';
+
 import { ContainerWrapper } from '../common/container-wrapper';
+
 import { RepositoryManager } from './repository-manager';
 
 export const ManagementContainer = () => {

@@ -3,8 +3,10 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { PrototypeInMemoryStats } from 'promidas';
+
 import { useProtopediaRepository } from './repository-context';
+
+import type { PrototypeInMemoryStats } from 'promidas';
 
 export type StoreStats = PrototypeInMemoryStats & {
   fetchedAt: number;

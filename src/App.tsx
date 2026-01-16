@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
 
 import { AppHeader } from './components/common/app-header';
 import { ConfigContainer } from './components/config/config-container';
@@ -10,7 +9,6 @@ import { FetcherContainer } from './components/fetcher/fetcher-container';
 import { ManagementContainer } from './components/management/management-container';
 import { RepositoryContainer } from './components/repository/repository-container';
 import { StoreContainer } from './components/store/store-container';
-
 import {
   useConfig,
   useDownloadProgress,

@@ -1,13 +1,12 @@
-import type { PrototypeInMemoryStats } from 'promidas';
-import { getStoreState, type StoreState } from 'promidas-utils/store';
-
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MemoryIcon from '@mui/icons-material/Memory';
 import StorageIcon from '@mui/icons-material/Storage';
 import TimerIcon from '@mui/icons-material/Timer';
 import { Box, Chip, LinearProgress, Stack, Typography } from '@mui/material';
+import { getStoreState, type StoreState } from 'promidas-utils/store';
 
 import type { StoreConfig } from '../../hooks/use-config';
+import type { PrototypeInMemoryStats } from 'promidas';
 
 interface StatsDashboardProps {
   stats: PrototypeInMemoryStats | null;

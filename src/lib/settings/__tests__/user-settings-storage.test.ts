@@ -1,8 +1,8 @@
 /**
  * @file Unit tests for UserSettingsStorage.
  */
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
   DEFAULT_REPOSITORY_TTL_MS,

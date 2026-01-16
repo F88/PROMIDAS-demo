@@ -7,17 +7,12 @@
  * behavior to demo site users.
  */
 
-import { useEffect, useState } from 'react';
-
-import type { PrototypeInMemoryStats } from 'promidas';
 import {
   ValidationError,
   type SnapshotOperationFailure,
   type SnapshotOperationResult,
 } from 'promidas/repository';
-import type { SerializableSnapshot } from 'promidas/repository/types';
-
-import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+import { useEffect, useState } from 'react';
 
 import { useProtopediaRepository } from './repository-context';
 import {
@@ -25,6 +20,10 @@ import {
   logFetchResult,
 } from './snapshot-helpers';
 import { emitDownloadProgress } from './use-download-progress';
+
+import type { PrototypeInMemoryStats } from 'promidas';
+import type { SerializableSnapshot } from 'promidas/repository/types';
+import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
 export function useSnapshotManagement() {
   const repository = useProtopediaRepository();

@@ -6,6 +6,7 @@
  */
 
 import { Grid } from '@mui/material';
+
 import { ContainerWrapper } from '../common/container-wrapper';
 
 interface ConfigContainerProps {

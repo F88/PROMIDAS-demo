@@ -4,6 +4,7 @@
 
 import { LIMIT_DATA_SIZE_BYTES } from 'promidas/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   RepositoryConfigurationError,
   resolveRepositoryInitFailure,

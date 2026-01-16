@@ -1,14 +1,13 @@
-import { useState } from 'react';
-
-import type { SnapshotOperationFailure } from 'promidas/repository';
-import type { SerializableSnapshot } from 'promidas/repository/types';
-
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Alert, Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useState } from 'react';
 
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
+
+import type { SnapshotOperationFailure } from 'promidas/repository';
+import type { SerializableSnapshot } from 'promidas/repository/types';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',

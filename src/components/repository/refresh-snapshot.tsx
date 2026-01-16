@@ -1,12 +1,12 @@
-import type { PrototypeInMemoryStats } from 'promidas';
-import { toLocalizedMessage } from 'promidas-utils/repository';
-import type { SnapshotOperationFailure } from 'promidas/repository';
-
 import { Alert, Stack } from '@mui/material';
+import { toLocalizedMessage } from 'promidas-utils/repository';
 
 import { useProtopediaRepository } from '../../hooks';
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
+
+import type { PrototypeInMemoryStats } from 'promidas';
+import type { SnapshotOperationFailure } from 'promidas/repository';
 
 interface RefreshSnapshotProps {
   stats: PrototypeInMemoryStats | null;

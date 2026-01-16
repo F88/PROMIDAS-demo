@@ -13,12 +13,15 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
-import type { ProtopediaInMemoryRepository } from 'promidas';
+
 import {
   getProtopediaRepository,
   resetRepository,
 } from '../lib/repository/protopedia-repository';
+
 import { useToken } from './use-token';
+
+import type { ProtopediaInMemoryRepository } from 'promidas';
 
 interface RepositoryContextValue {
   repository: ProtopediaInMemoryRepository | null;

@@ -8,8 +8,10 @@
  */
 
 import { useCallback } from 'react';
-import type { PrototypeInMemoryStats } from 'promidas';
+
 import { useRepositoryEvents } from './use-repository-events';
+
+import type { PrototypeInMemoryStats } from 'promidas';
 
 interface UseSnapshotEventHandlersParams {
   setIsRepositoryActive: (active: boolean) => void;

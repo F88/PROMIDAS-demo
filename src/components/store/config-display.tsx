@@ -7,9 +7,11 @@ import {
   TableCell,
 } from '@mui/material';
 import { useEffect } from 'react';
-import { SectionCard } from '../common/section-card';
-import type { StoreConfig } from '../../hooks/use-config';
+
 import { formatTime } from '../../utils/time-utils';
+import { SectionCard } from '../common/section-card';
+
+import type { StoreConfig } from '../../hooks/use-config';
 
 interface ConfigDisplayProps {
   repoConfig: StoreConfig | null;

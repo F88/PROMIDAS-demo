@@ -7,12 +7,12 @@
  * behavior to demo site users.
  */
 
+import { ValidationError } from 'promidas/repository';
 import { useState, useCallback } from 'react';
 
-import { ValidationError } from 'promidas/repository';
-import type { NormalizedPrototype } from 'promidas/types';
-
 import { useProtopediaRepository } from './repository-context';
+
+import type { NormalizedPrototype } from 'promidas/types';
 
 export function useRandomPrototype() {
   const repository = useProtopediaRepository();

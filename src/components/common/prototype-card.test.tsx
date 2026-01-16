@@ -1,10 +1,9 @@
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { render, screen } from '@testing-library/react';
+import { PrototypeCard } from './prototype-card';
 
 import type { NormalizedPrototype } from 'promidas/types';
-
-import { PrototypeCard } from './prototype-card';
 
 describe('PrototypeCard', () => {
   const mockPrototype: NormalizedPrototype = {

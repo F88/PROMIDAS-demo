@@ -1,15 +1,13 @@
+import { Alert, Box, Stack, Typography } from '@mui/material';
+import { getStoreState } from 'promidas-utils/store';
 import { useEffect } from 'react';
 
-import type { PrototypeInMemoryStats } from 'promidas';
-import { getStoreState } from 'promidas-utils/store';
-
-import { Alert, Box, Stack, Typography } from '@mui/material';
-
 import { useSingleRandom } from '../../hooks';
-
 import { ActionButton } from '../common/action-button';
 import { PrototypeCard } from '../common/prototype-card';
 import { SectionCard } from '../common/section-card';
+
+import type { PrototypeInMemoryStats } from 'promidas';
 
 interface SingleRandomProps {
   stats: PrototypeInMemoryStats | null;

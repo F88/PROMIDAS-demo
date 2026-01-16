@@ -1,17 +1,15 @@
+import { Alert, Collapse, Grid, Stack, TextField } from '@mui/material';
+import { toLocalizedMessage } from 'promidas-utils/repository';
 import { useState } from 'react';
 
-import type { PrototypeInMemoryStats } from 'promidas';
-import { toLocalizedMessage } from 'promidas-utils/repository';
-import type { SnapshotOperationFailure } from 'promidas/repository';
-
-import { Alert, Collapse, Grid, Stack, TextField } from '@mui/material';
-
 import { SETUP_SNAPSHOT } from '../../App';
-
 import { useProtopediaRepository } from '../../hooks';
 import { clampNumericInput } from '../../utils/number-utils';
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
+
+import type { PrototypeInMemoryStats } from 'promidas';
+import type { SnapshotOperationFailure } from 'promidas/repository';
 
 interface SetupSnapshotProps {
   stats: PrototypeInMemoryStats | null;

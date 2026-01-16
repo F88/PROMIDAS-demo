@@ -10,10 +10,11 @@ import {
   PromidasRepositoryBuilder,
 } from 'promidas';
 import { TOKEN_KEYS, TokenManager } from 'promidas-utils/token';
-import type { LogLevel } from 'promidas/logger';
 
 import { resolveRepositoryInitFailure } from './init-error';
 import { createRepositoryConfigs } from './repository-config';
+
+import type { LogLevel } from 'promidas/logger';
 
 export {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,

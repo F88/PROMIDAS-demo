@@ -1,11 +1,14 @@
 import { Grid } from '@mui/material';
+
 import { ContainerWrapper } from '../common/container-wrapper';
+
 import { ConfigDisplay } from './config-display';
+import { StatsDisplay } from './stats-display';
+
+import type { StoreConfig } from '../../hooks/use-config';
 import type { RepositoryStats } from '../../hooks/use-repository-stats';
 // import { GetStats } from './get-stats';
 // import { GetConfig } from './get-config';
-import { StatsDisplay } from './stats-display';
-import type { StoreConfig } from '../../hooks/use-config';
 
 interface StoreContainerProps {
   stats: RepositoryStats | null;

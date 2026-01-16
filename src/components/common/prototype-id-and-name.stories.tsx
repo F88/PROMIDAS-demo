@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Box } from '@mui/material';
+
 import { PrototypeIdAndName } from './prototype-id-and-name';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Common/PrototypeIdAndName',

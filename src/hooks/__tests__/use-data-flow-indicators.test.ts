@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { useDataFlowIndicators } from '../use-data-flow-indicators';
 
 describe('useDataFlowIndicators', () => {

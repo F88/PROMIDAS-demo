@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
-import type { ListPrototypesParams } from 'protopedia-api-v2-client';
+
+import { useProtopediaRepository } from './repository-context';
+
 import type { PrototypeInMemoryStats } from 'promidas';
 import type { SnapshotOperationFailure } from 'promidas/repository';
-import { useProtopediaRepository } from './repository-context';
+import type { ListPrototypesParams } from 'protopedia-api-v2-client';
 
 interface RepositoryEventHandlers {
   onSnapshotStarted?: (params?: ListPrototypesParams) => void;
