@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { NormalizedPrototype } from '@f88/promidas/types';
+import type { NormalizedPrototype } from 'promidas/types';
 import { PrototypeCard } from './prototype-card';
 
 /**
