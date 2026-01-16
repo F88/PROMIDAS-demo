@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Migrated `@f88/promidas` from GitHub packages to npm registry as `promidas` (v2.0.0).
+- Migrated `@f88/promidas-utils` from GitHub packages to npm registry as `promidas-utils` (v2.0.0).
+- Updated all imports to use new package names.
+- Enhanced build configuration to split promidas packages into separate chunks for better caching.
+
 ### Added
 
 - Snapshot export/import UI components and wiring in the repository page.
