@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import type { PrototypeInMemoryStats } from '@f88/promidas';
-import { getStoreState } from '@f88/promidas-utils/store';
+import type { PrototypeInMemoryStats } from 'promidas';
+import { getStoreState } from 'promidas-utils/store';
 
 import { Alert, Box, Stack, TextField } from '@mui/material';
 

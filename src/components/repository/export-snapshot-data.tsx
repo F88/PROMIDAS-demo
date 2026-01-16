@@ -1,6 +1,8 @@
-import { Alert, Stack, Typography } from '@mui/material';
+import type { PrototypeInMemoryStats } from 'promidas';
+
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import type { PrototypeInMemoryStats } from '@f88/promidas';
+import { Alert, Stack, Typography } from '@mui/material';
+
 import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
 
