@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- ESLint import management
+    - `eslint-plugin-import` - Import statement linting and auto-fixing
+    - `eslint-import-resolver-typescript` - TypeScript path alias resolution
+
 ## [2.0.0] - 2026-01-16
 
 ### Changed
