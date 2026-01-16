@@ -9,9 +9,24 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'mui-core': ['@mui/material', '@mui/system'],
-          'mui-icons': ['@mui/icons-material'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('@mui/material') || id.includes('@mui/system')) {
+              return 'mui-core';
+            }
+            if (id.includes('@mui/icons-material')) {
+              return 'mui-icons';
+            }
+            if (id.includes('promidas-utils')) {
+              return 'promidas-utils';
+            }
+            if (id.includes('promidas') && !id.includes('promidas-utils')) {
+              return 'promidas';
+            }
+            if (id.includes('protopedia-api-v2-client')) {
+              return 'protopedia-api-v2-client';
+            }
+          }
         },
       },
     },
