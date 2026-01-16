@@ -1,4 +1,10 @@
-import type { NormalizedPrototype } from '@f88/promidas/types';
+import type { NormalizedPrototype } from 'promidas/types';
+
+import CategoryIcon from '@mui/icons-material/Category';
+import EventIcon from '@mui/icons-material/Event';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import PeopleIcon from '@mui/icons-material/People';
 import {
   Button,
   Card,
@@ -6,15 +12,10 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  Typography,
   Chip,
   Stack,
+  Typography,
 } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import PeopleIcon from '@mui/icons-material/People';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import EventIcon from '@mui/icons-material/Event';
-import CategoryIcon from '@mui/icons-material/Category';
 
 interface PrototypeCardProps {
   prototype: NormalizedPrototype;
