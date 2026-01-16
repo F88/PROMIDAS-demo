@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- ESLint import management
+- Migrated ESLint configuration from `eslint.config.js` to `eslint.config.mjs`
+- Enhanced import ordering rules:
+    - Grouped parent and sibling imports together to reduce newline conflicts
+    - Added object and type import groups
+    - Added `import/first` rule to enforce imports at file top
+
+### Added
+
+- `eslint-plugin-unused-imports` for automatic detection and removal of unused imports
+- ESLint import management tools:
     - `eslint-plugin-import` - Import statement linting and auto-fixing
     - `eslint-import-resolver-typescript` - TypeScript path alias resolution
 
