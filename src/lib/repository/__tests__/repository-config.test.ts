@@ -3,6 +3,12 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+  DEFAULT_REPOSITORY_MAX_DATA_SIZE,
+  DEFAULT_REPOSITORY_TTL_MS,
+} from '../constants';
+import { createRepositoryConfigs } from '../repository-config';
+
 const mocks = vi.hoisted(() => {
   return {
     emitDownloadProgress: vi.fn(),
@@ -14,12 +20,6 @@ vi.mock('../../../hooks/use-download-progress', () => {
     emitDownloadProgress: mocks.emitDownloadProgress,
   };
 });
-
-import {
-  DEFAULT_REPOSITORY_MAX_DATA_SIZE,
-  DEFAULT_REPOSITORY_TTL_MS,
-} from '../constants';
-import { createRepositoryConfigs } from '../repository-config';
 
 describe('repository-config', () => {
   const originalFetch = globalThis.fetch;

@@ -4,6 +4,11 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+  getProtopediaRepository,
+  resetRepository,
+} from '../protopedia-repository';
+
 type Repo = { dispose?: () => void };
 
 const mocks = vi.hoisted(() => {
@@ -72,11 +77,6 @@ vi.mock('promidas', () => {
 
   return { PromidasRepositoryBuilder };
 });
-
-import {
-  getProtopediaRepository,
-  resetRepository,
-} from '../protopedia-repository';
 
 describe('protopedia-repository', () => {
   beforeEach(() => {

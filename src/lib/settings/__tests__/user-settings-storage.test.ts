@@ -3,10 +3,13 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// eslint-disable-next-line import/order -- intentional grouping with vitest import
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
   DEFAULT_REPOSITORY_TTL_MS,
 } from '../../repository/constants';
+
+import { UserSettingsStorage } from '../user-settings-storage';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -42,8 +45,6 @@ vi.mock('promidas-utils/config', () => {
     },
   };
 });
-
-import { UserSettingsStorage } from '../user-settings-storage';
 
 describe('UserSettingsStorage', () => {
   let storage: UserSettingsStorage;

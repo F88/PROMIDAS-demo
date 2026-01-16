@@ -9,9 +9,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { DEFAULT_REPOSITORY_TTL_MS } from '../lib/repository/constants';
-
 import { useProtopediaRepository } from './repository-context';
+import { DEFAULT_REPOSITORY_TTL_MS } from '../lib/repository/constants';
 
 import type { PrototypeInMemoryStats } from 'promidas';
 

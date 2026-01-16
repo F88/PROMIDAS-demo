@@ -14,12 +14,11 @@ import {
   type ReactNode,
 } from 'react';
 
+import { useToken } from './use-token';
 import {
   getProtopediaRepository,
   resetRepository,
 } from '../lib/repository/protopedia-repository';
-
-import { useToken } from './use-token';
 
 import type { ProtopediaInMemoryRepository } from 'promidas';
 

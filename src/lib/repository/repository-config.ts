@@ -5,10 +5,9 @@
  * can remain focused on interactions and presentation.
  */
 
+import { createFetch } from './create-fetch';
 import { emitDownloadProgress } from '../../hooks/use-download-progress';
 import { userSettingsStorage } from '../settings/user-settings-storage';
-
-import { createFetch } from './create-fetch';
 
 import type {
   ProtopediaInMemoryRepositoryConfig,
