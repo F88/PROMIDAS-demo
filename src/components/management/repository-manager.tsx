@@ -1,4 +1,5 @@
 import { Alert, Box, Stack } from '@mui/material';
+import type { ProtopediaInMemoryRepository } from 'promidas';
 import {
   useEnsureProtopediaRepository,
   useProtopediaRepository,
@@ -10,9 +11,7 @@ import { ActionButton } from '../common/action-button';
 import { SectionCard } from '../common/section-card';
 
 interface CreateRepositoryProps {
-  onRepositoryCreated?: (
-    repository: import('@f88/promidas').ProtopediaInMemoryRepository,
-  ) => void;
+  onRepositoryCreated?: (repository: ProtopediaInMemoryRepository) => void;
 }
 
 export function RepositoryManager({
