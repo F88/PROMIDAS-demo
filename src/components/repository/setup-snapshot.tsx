@@ -136,8 +136,14 @@ export function SetupSnapshot({
           />
         </Grid>
       </Grid>
-
-      <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          justifyContent: 'center',
+          mb: 2,
+        }}
+      >
         <ActionButton
           onClick={() => setAreFiltersExpanded((prev) => !prev)}
           variant="secondary"
@@ -146,7 +152,6 @@ export function SetupSnapshot({
           {areFiltersExpanded ? 'フィルタを隠す' : 'フィルタを表示'}
         </ActionButton>
       </Stack>
-
       <Collapse in={areFiltersExpanded}>
         <Grid
           container
@@ -229,7 +234,6 @@ export function SetupSnapshot({
           </Grid>
         </Grid>
       </Collapse>
-
       <Stack
         direction="row"
         spacing={1}

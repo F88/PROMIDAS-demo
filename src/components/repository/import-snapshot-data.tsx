@@ -67,10 +67,15 @@ export function ImportSnapshotData({
 
   return (
     <SectionCard title="Import Snapshot">
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'text.secondary',
+          mb: 2,
+        }}
+      >
         JSONファイルからスナップショットを復元
       </Typography>
-
       <Box
         sx={
           {
@@ -94,7 +99,6 @@ export function ImportSnapshotData({
           />
         </ActionButton>
       </Box>
-
       {importSuccess && (
         <Alert
           severity="success"

@@ -54,11 +54,12 @@ function PromidasInfoSection() {
         <Typography
           variant="h4"
           component="h1"
-          fontWeight={600}
           sx={{
+            fontWeight: 600,
             color: 'white',
             textAlign: 'center',
             my: 3,
+
             fontSize: {
               xs: '1.5rem', // h5相当 (小画面)
               sm: '2rem', // h4相当 (中画面)
