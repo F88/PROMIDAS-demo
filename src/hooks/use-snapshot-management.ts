@@ -12,7 +12,7 @@ import {
   type SnapshotOperationFailure,
   type SnapshotOperationResult,
 } from 'promidas/repository';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useProtopediaRepository } from './repository-context';
 import {
@@ -43,8 +43,12 @@ export function useSnapshotManagement() {
   const [exportSuccess, setExportSuccess] = useState<string | null>(null);
   const [stats, setStats] = useState<PrototypeInMemoryStats | null>(null);
 
-  // Clear errors when repository is destroyed
-  useEffect(() => {
+  // Clear errors when the repository is destroyed. Adjusting state during
+  // render (instead of in an effect) avoids a cascading re-render and the
+  // brief flash of stale errors right after the repository becomes null.
+  const [prevRepository, setPrevRepository] = useState(repository);
+  if (repository !== prevRepository) {
+    setPrevRepository(repository);
     if (!repository) {
       setSetupError(null);
       setSetupSuccess(null);
@@ -54,7 +58,7 @@ export function useSnapshotManagement() {
       setImportSuccess(null);
       setExportSuccess(null);
     }
-  }, [repository]);
+  }
 
   const setupSnapshot = async (params: ListPrototypesParams = {}) => {
     if (!repository) {
