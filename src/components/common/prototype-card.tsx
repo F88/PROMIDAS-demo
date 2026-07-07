@@ -66,7 +66,7 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
         )}
 
         <Stack spacing={1.5} sx={{ mt: 2 }}>
-          {/* Teamm */}
+          {/* Team */}
           {prototype.teamNm && (
             <Stack
               direction="row"
