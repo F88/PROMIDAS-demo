@@ -40,8 +40,8 @@ export function SectionCard({
         variant="h6"
         component="h3"
         gutterBottom
-        fontWeight={600}
         sx={{
+          fontWeight: 600,
           wordBreak: 'break-word',
           overflowWrap: 'break-word',
         }}
@@ -51,8 +51,8 @@ export function SectionCard({
       {description && (
         <Typography
           variant="body2"
-          color="text.secondary"
           sx={{
+            color: 'text.secondary',
             mb: 1,
           }}
         >

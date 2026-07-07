@@ -2,11 +2,7 @@ import { Box, Chip } from '@mui/material';
 import { type ReactNode } from 'react';
 
 type ContainerType =
-  | 'config'
-  | 'management'
-  | 'fetcher'
-  | 'store'
-  | 'repository';
+  'config' | 'management' | 'fetcher' | 'store' | 'repository';
 
 interface ContainerWrapperProps {
   type: ContainerType;

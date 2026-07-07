@@ -44,9 +44,13 @@ export function AppHeader({
       <Stack
         direction={'column'}
         spacing={2}
-        alignItems="center"
-        justifyContent="center"
-        sx={{ maxWidth: 1400, margin: '0 auto', mb: 1 }}
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          maxWidth: 1400,
+          margin: '0 auto',
+          mb: 1,
+        }}
       >
         <StatsDashboard stats={stats} config={config} />
         <DataFlowIndicator

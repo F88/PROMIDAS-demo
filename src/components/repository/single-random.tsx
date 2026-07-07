@@ -85,9 +85,11 @@ export function SingleRandom({ stats, onUseSnapshot }: SingleRandomProps) {
         !singleRandomError && (
           <Typography
             variant="body2"
-            color="text.secondary"
             align="center"
-            sx={{ py: 2 }}
+            sx={{
+              color: 'text.secondary',
+              py: 2,
+            }}
           >
             No results found
           </Typography>

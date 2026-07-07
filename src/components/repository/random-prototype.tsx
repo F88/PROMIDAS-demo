@@ -107,21 +107,21 @@ export function RandomPrototype({
           {randomError}
         </Alert>
       )}
-
       {randomHasExecuted &&
         randomPrototypes.length === 0 &&
         !randomLoading &&
         !randomError && (
           <Typography
             variant="body2"
-            color="text.secondary"
             align="center"
-            sx={{ py: 2 }}
+            sx={{
+              color: 'text.secondary',
+              py: 2,
+            }}
           >
             No results found
           </Typography>
         )}
-
       {randomPrototypes.length > 0 && !randomLoading && (
         <Box
           sx={{

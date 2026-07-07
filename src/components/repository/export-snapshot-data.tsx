@@ -25,14 +25,13 @@ export function ExportSnapshotData({
     <SectionCard title="Export Snapshot">
       <Typography
         variant="body2"
-        color="text.secondary"
         sx={{
+          color: 'text.secondary',
           mb: 2,
         }}
       >
         現在のスナップショットを保存
       </Typography>
-
       <Stack
         direction="row"
         spacing={1}
@@ -60,7 +59,6 @@ export function ExportSnapshotData({
           TSV
         </ActionButton>
       </Stack>
-
       {exportSuccess && (
         <Alert
           severity="success"

@@ -54,9 +54,11 @@ export function ConfigDisplay({
       {!repoConfig && !configLoading && !configError && (
         <Typography
           variant="body2"
-          color="text.secondary"
           align="center"
-          sx={{ py: 2 }}
+          sx={{
+            color: 'text.secondary',
+            py: 2,
+          }}
         >
           NO DATA
         </Typography>

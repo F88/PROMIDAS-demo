@@ -107,7 +107,12 @@ export function TokenConfiguration({
         </Stack>
         <button type="submit" hidden aria-hidden />
       </form>
-      <Typography variant="body2" color="text.secondary">
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         トークンは{' '}
         <Link
           href="https://protopedia.net/settings/application"

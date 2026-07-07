@@ -92,9 +92,12 @@ export function FetcherContainer() {
             {progressLog.length === 0 ? (
               <Typography
                 variant="body2"
-                color="text.secondary"
                 align="center"
-                sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
+                sx={{
+                  color: 'text.secondary',
+                  fontFamily: 'monospace',
+                  fontSize: '0.75rem',
+                }}
               >
                 {hasToken ? 'No fetch operations yet.' : 'No API token set.'}
               </Typography>

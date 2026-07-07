@@ -163,23 +163,33 @@ function StatItem({
             {icon}
           </Box>
         )}
-        <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+            mr: 0.5,
+          }}
+        >
           {label}:
         </Typography>
         <Typography
           variant="body2"
           component="span"
-          fontWeight={600}
-          color="text.primary"
-          sx={(theme) => ({
-            transition: theme.transitions.create('color', {
-              duration: theme.transitions.duration.shorter,
-              easing: theme.transitions.easing.easeInOut,
-            }),
-            '@media (prefers-reduced-motion: reduce)': {
-              transition: 'none',
+          sx={[
+            {
+              fontWeight: 600,
+              color: 'text.primary',
             },
-          })}
+            (theme) => ({
+              transition: theme.transitions.create('color', {
+                duration: theme.transitions.duration.shorter,
+                easing: theme.transitions.easing.easeInOut,
+              }),
+              '@media (prefers-reduced-motion: reduce)': {
+                transition: 'none',
+              },
+            }),
+          ]}
         >
           {value}
         </Typography>
@@ -357,7 +367,12 @@ export function StatsDashboard({ stats, config }: StatsDashboardProps) {
       {storeState === 'not-stored' ? (
         <>
           <StateChip state={storeState} />
-          <Typography variant="caption" color="text.secondary">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             No data in store
           </Typography>
         </>

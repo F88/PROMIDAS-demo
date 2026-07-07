@@ -74,7 +74,12 @@ export const WithContent: Story = {
     children: (
       <Stack spacing={2}>
         <Typography variant="h6">setupSnapshot()</Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Initialize the in-memory snapshot
         </Typography>
         <Stack direction="row" spacing={1}>
@@ -158,7 +163,12 @@ export const ComplexContent: Story = {
     children: (
       <Stack spacing={2}>
         <Typography variant="h6">setupSnapshot()</Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Initialize the in-memory snapshot with filters
         </Typography>
         <Stack spacing={1}>

@@ -41,8 +41,10 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
             <Typography
               //
               variant="body1"
-              color="text.secondary"
-              sx={{ mb: 2 }}
+              sx={{
+                color: 'text.secondary',
+                mb: 2,
+              }}
             >
               {prototype.summary}
             </Typography>
@@ -50,7 +52,13 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
 
           <Stack spacing={1.5} sx={{ mt: 2 }}>
             {prototype.users && prototype.users.length > 0 && (
-              <Stack direction="row" spacing={0.5} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: 'center',
+                }}
+              >
                 <PeopleIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                 <Stack
                   direction="row"
@@ -70,7 +78,13 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
             )}
 
             {prototype.tags && prototype.tags.length > 0 && (
-              <Stack direction="row" spacing={0.5} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: 'center',
+                }}
+              >
                 <LocalOfferIcon
                   fontSize="small"
                   color="action"
@@ -94,7 +108,13 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
             )}
 
             {prototype.events && prototype.events.length > 0 && (
-              <Stack direction="row" spacing={0.5} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: 'center',
+                }}
+              >
                 <EventIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                 <Stack
                   direction="row"
@@ -114,7 +134,13 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
             )}
 
             {prototype.materials && prototype.materials.length > 0 && (
-              <Stack direction="row" spacing={0.5} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: 'center',
+                }}
+              >
                 <CategoryIcon
                   fontSize="small"
                   color="action"

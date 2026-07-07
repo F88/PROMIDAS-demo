@@ -57,7 +57,13 @@ export function RepositoryManager({
       category="Repository"
     >
       <Stack spacing={2}>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <Box
             sx={{
               fontSize: '0.9rem',
