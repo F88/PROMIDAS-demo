@@ -99,7 +99,9 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
               >
                 {prototype.users.map((user, index) => {
                   const parsedUsername = parseUsername(user);
-                  const profileUrl = buildUserLink(parsedUsername.profileId ?? '');
+                  const profileUrl = buildUserLink(
+                    parsedUsername.profileId ?? '',
+                  );
                   return profileUrl ? (
                     <Chip
                       key={index}
@@ -198,20 +200,18 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
           )}
         </Stack>
       </CardContent>
-      {prototype.mainUrl && (
-        <CardActions>
-          <Button
-            // variant="contained"
-            endIcon={<OpenInNewIcon />}
-            href={buildPrototypeLink(prototype.id)}
-            target="_blank"
-            rel="noopener noreferrer"
-            // sx={{ mb: 2 }}
-          >
-            View on ProtoPedia
-          </Button>
-        </CardActions>
-      )}
+      <CardActions>
+        <Button
+          // variant="contained"
+          endIcon={<OpenInNewIcon />}
+          href={buildPrototypeLink(prototype.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          // sx={{ mb: 2 }}
+        >
+          View on ProtoPedia
+        </Button>
+      </CardActions>
     </Card>
   );
 }
