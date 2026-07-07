@@ -99,9 +99,7 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
               >
                 {prototype.users.map((user, index) => {
                   const parsedUsername = parseUsername(user);
-                  const profileUrl = buildUserLink(
-                    parsedUsername.profileId || parsedUsername.displayName,
-                  );
+                  const profileUrl = buildUserLink(parsedUsername.profileId ?? '');
                   return profileUrl ? (
                     <Chip
                       key={index}
