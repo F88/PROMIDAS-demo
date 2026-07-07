@@ -82,7 +82,7 @@ export function PrototypeCard({ prototype }: PrototypeCardProps) {
             </Stack>
           )}
 
-          {/* Users  */}
+          {/* Users */}
           {prototype.users && prototype.users.length > 0 && (
             <Stack
               direction="row"
