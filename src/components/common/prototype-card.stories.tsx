@@ -23,7 +23,7 @@ function createMockPrototype(
     viewCount: 1250,
     goodCount: 42,
     commentCount: 8,
-    users: ['user1', 'user2'],
+    users: ['Alice@alice', 'Bob@bob'],
     teamNm: 'Tech Innovators',
     tags: ['IoT', 'Arduino', 'Cloud'],
     materials: ['ESP32', 'Temperature Sensor'],
@@ -160,6 +160,29 @@ export const JapaneseContent: Story = {
       summary:
         'Arduinoとクラウド連携を使用したリアルタイムデータ追跡のためのスマート温度監視システムです。',
       teamNm: '技術イノベーターズ',
+    }),
+  },
+};
+
+/**
+ * User name variations, decoded by parseUsername (promidas-utils) and shown
+ * as `displayName (profileId)`. Each element is a ProtoPedia
+ * `displayName@profileId` string covering a pattern seen in real data:
+ * normal, empty display name, display name containing `@`, and a malformed
+ * value with no `@` separator.
+ */
+export const UserNameVariations: Story = {
+  args: {
+    prototype: createMockPrototype({
+      prototypeNm: 'Username Parsing Showcase',
+      summary:
+        'Demonstrates how parseUsername decomposes each users[] element into a display name and a profile id.',
+      users: [
+        'Alice@alice', // normal -> "Alice (alice)"
+        '@bob', // empty display name -> "@bob"
+        'Carol@Example@carol', // display name contains '@' -> "Carol@Example (carol)"
+        'legacy-handle', // no '@' separator -> "legacy-handle"
+      ],
     }),
   },
 };
