@@ -11,7 +11,7 @@ import { RefreshSnapshot } from './refresh-snapshot';
 import { SearchById } from './search-by-id';
 import { SetupSnapshot } from './setup-snapshot';
 import { SingleRandom } from './single-random';
-import { SETUP_SNAPSHOT } from '../../App';
+import { SETUP_SNAPSHOT } from '../../constants/snapshot';
 import { useSnapshotManagement } from '../../hooks';
 import { ContainerWrapper } from '../common/container-wrapper';
 import { GetConfig } from '../store/get-config';

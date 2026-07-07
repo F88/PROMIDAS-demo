@@ -2,7 +2,7 @@ import { Alert, Collapse, Grid, Stack, TextField } from '@mui/material';
 import { toLocalizedMessage } from 'promidas-utils/repository';
 import { useState } from 'react';
 
-import { SETUP_SNAPSHOT } from '../../App';
+import { SETUP_SNAPSHOT } from '../../constants/snapshot';
 import { useProtopediaRepository } from '../../hooks';
 import { clampNumericInput } from '../../utils/number-utils';
 import { ActionButton } from '../common/action-button';
