@@ -49,8 +49,7 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
 
   // The input field must stay editable even when empty, so it only reacts to
   // loading and store availability - not to whether a value is present.
-  const inputDisabled =
-    searchLoading || getStoreState(stats) === 'not-stored';
+  const inputDisabled = searchLoading || getStoreState(stats) === 'not-stored';
 
   // The execute button additionally requires a non-empty value.
   const searchDisabled = inputDisabled || searchId.trim() === '';

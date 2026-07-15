@@ -9,6 +9,8 @@ and this project adheres to [CalVer](https://calver.org/).
 
 ## [Unreleased]
 
+## 2026-07-15
+
 ### Fixed
 
 - Keep the input field editable when its value is emptied in the
@@ -19,7 +21,7 @@ and this project adheres to [CalVer](https://calver.org/).
   `getRandomSampleFromSnapshot` section, matching
   `getPrototypeFromSnapshotByPrototypeId`.
 
-## [2026.07.07] - 2026-07-07
+## 2026-07-07
 
 ### PROMIDAS versions
 
@@ -37,7 +39,7 @@ and this project adheres to [CalVer](https://calver.org/).
 
 - Changed versioning scheme from SemVer to CalVer.
 
-## [3.0.0] - 2026-01-28
+## 3.0.0] - 2026-01-28
 
 ### PROMIDAS versions
 
@@ -59,7 +61,7 @@ and this project adheres to [CalVer](https://calver.org/).
     - `eslint-plugin-import` - Import statement linting and auto-fixing
     - `eslint-import-resolver-typescript` - TypeScript path alias resolution
 
-## [2.0.0] - 2026-01-16
+## 2.0.0 - 2026-01-16
 
 ### PROMIDAS versions
 
@@ -75,7 +77,7 @@ and this project adheres to [CalVer](https://calver.org/).
 
 - Snapshot export/import UI components and wiring in the repository page.
 
-## [1.1.0] - 2026-01-13
+## 1.1.0 - 2026-01-13
 
 ### PROMIDAS versions
 
@@ -90,7 +92,7 @@ and this project adheres to [CalVer](https://calver.org/).
 
 - Updated Node.js engine requirement to `>=22`.
 
-## [1.0.0] - 2025-12-24
+## 1.0.0 - 2025-12-24
 
 ### Added
 
