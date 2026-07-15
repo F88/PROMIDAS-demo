@@ -49,7 +49,13 @@ export function RandomPrototype({
     fetchRandom(size);
   };
 
-  const disabled = randomLoading || getStoreState(stats) === 'not-stored';
+  // The input field must stay editable even when empty, so it only reacts to
+  // loading and store availability - not to whether a value is present.
+  const inputDisabled =
+    randomLoading || getStoreState(stats) === 'not-stored';
+
+  // The execute button additionally requires a non-empty value.
+  const fetchDisabled = inputDisabled || randomSampleSize.trim() === '';
 
   return (
     <SectionCard
@@ -65,7 +71,7 @@ export function RandomPrototype({
         }}
       >
         <TextField
-          disabled={disabled}
+          disabled={inputDisabled}
           label="件数"
           type="number"
           value={randomSampleSize}
@@ -89,13 +95,13 @@ export function RandomPrototype({
       >
         <ActionButton
           onClick={handleFetchRandom}
-          disabled={disabled}
+          disabled={fetchDisabled}
           loading={randomLoading}
         >
           実行
         </ActionButton>
         <ActionButton
-          disabled={disabled || randomPrototypes.length === 0}
+          disabled={inputDisabled || randomPrototypes.length === 0}
           onClick={clearRandom}
           variant="secondary"
         >

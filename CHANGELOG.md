@@ -7,6 +7,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [CalVer](https://calver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Keep the input field editable when its value is emptied in the
+  `getPrototypeFromSnapshotByPrototypeId` and `getRandomSampleFromSnapshot`
+  sections. Previously clearing the value disabled the field itself and
+  trapped the user.
+- Disable the execute button while the input is empty in the
+  `getRandomSampleFromSnapshot` section, matching
+  `getPrototypeFromSnapshotByPrototypeId`.
+
 ## [2026.07.07] - 2026-07-07
 
 ### PROMIDAS versions
