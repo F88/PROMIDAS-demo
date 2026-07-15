@@ -47,10 +47,13 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
     }
   };
 
-  const disabled =
-    searchLoading ||
-    searchId.trim() === '' ||
-    getStoreState(stats) === 'not-stored';
+  // The input field must stay editable even when empty, so it only reacts to
+  // loading and store availability - not to whether a value is present.
+  const inputDisabled =
+    searchLoading || getStoreState(stats) === 'not-stored';
+
+  // The execute button additionally requires a non-empty value.
+  const searchDisabled = inputDisabled || searchId.trim() === '';
 
   return (
     <SectionCard
@@ -66,7 +69,7 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
         }}
       >
         <TextField
-          disabled={disabled}
+          disabled={inputDisabled}
           label="ID"
           type="number"
           value={searchId}
@@ -87,7 +90,7 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
         }}
       >
         <ActionButton
-          disabled={disabled}
+          disabled={searchDisabled}
           onClick={handleSearch}
           loading={searchLoading}
         >
@@ -95,7 +98,6 @@ export function SearchById({ stats, onUseSnapshot }: SearchByIdProps) {
         </ActionButton>
         <ActionButton
           disabled={!searchPrototype}
-          // disabled={disabled}
           onClick={clearSearch}
           variant="secondary"
         >
