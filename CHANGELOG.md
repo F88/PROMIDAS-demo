@@ -9,6 +9,8 @@ and this project adheres to [CalVer](https://calver.org/).
 
 ## [Unreleased]
 
+## 2026-07-21
+
 ### Added
 
 - Footer: add a data attribution notice ("This site uses data from ProtoPedia
