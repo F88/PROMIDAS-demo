@@ -396,6 +396,27 @@ function App() {
             PROMIDAS
           </Link>
         </Typography>
+        <Typography variant="body2" sx={{ mt: 0.5 }}>
+          This site uses data from{' '}
+          <Link
+            href="https://protopedia.net/"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ color: 'white', fontWeight: 600 }}
+          >
+            ProtoPedia
+          </Link>{' '}
+          (
+          <Link
+            href="https://creativecommons.org/licenses/by/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ color: 'white', fontWeight: 600 }}
+          >
+            CC BY 4.0
+          </Link>
+          ).
+        </Typography>
       </Box>
     </Box>
   );
