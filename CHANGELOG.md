@@ -9,6 +9,15 @@ and this project adheres to [CalVer](https://calver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Footer: add a data attribution notice ("This site uses data from ProtoPedia
+  (CC BY 4.0)") with links to ProtoPedia and the CC BY 4.0 license.
+- README: add a "Data Source & License" section documenting that the app uses
+  ProtoPedia data retrieved through the ProtoPedia API (v2), and that ProtoPedia
+  applies the CC BY 4.0 license to registered work information by default
+  (English and Japanese).
+
 ## 2026-07-15
 
 ### Fixed
