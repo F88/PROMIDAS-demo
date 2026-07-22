@@ -17,6 +17,8 @@ interface DownloadProgress {
   limit?: number;
   increment?: number;
   errorMessage?: string;
+  /** HTTP status code of the response (available once headers arrive). */
+  httpStatus?: number;
   timestamp: number;
 }
 

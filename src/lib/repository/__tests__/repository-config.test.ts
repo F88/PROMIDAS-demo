@@ -103,18 +103,21 @@ describe('repository-config', () => {
         cb({ type: 'request-start' });
         cb({
           type: 'response-received',
+          status: 200,
           estimatedTotal: 100,
           limit: 200,
           prepareTimeMs: 1234,
         });
         cb({
           type: 'download-progress',
+          status: 200,
           received: 10,
           total: 100,
           percentage: 10,
         });
         cb({
           type: 'complete',
+          status: 200,
           received: 100,
           estimatedTotal: 100,
           downloadTimeMs: 2345,
@@ -123,6 +126,7 @@ describe('repository-config', () => {
 
         expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
           status: 'started',
+          httpStatus: 200,
           estimatedBytes: 100,
           limit: 200,
           prepareTimeMs: 1234,
@@ -130,6 +134,7 @@ describe('repository-config', () => {
 
         expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
           status: 'in-progress',
+          httpStatus: 200,
           receivedBytes: 10,
           estimatedBytes: 100,
           percentage: 10,
@@ -137,10 +142,51 @@ describe('repository-config', () => {
 
         expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
           status: 'completed',
+          httpStatus: 200,
           receivedBytes: 100,
           estimatedBytes: 100,
           downloadTimeMs: 2345,
           totalTimeMs: 3456,
+        });
+      });
+
+      it('forwards a non-2xx HTTP status on a completed error body (#126)', async () => {
+        const { apiClientConfig } = await createRepositoryConfigs(
+          'token',
+          'debug',
+        );
+        const cb = apiClientConfig.progressCallback;
+
+        if (!cb) {
+          throw new Error('Expected progressCallback to be defined');
+        }
+
+        // A 401 error body (e.g. 97-byte JSON) still finishes downloading:
+        // the transport reports a completed transfer carrying status 401.
+        cb({ type: 'request-start' });
+        cb({
+          type: 'response-received',
+          status: 401,
+          estimatedTotal: 25_000_000,
+          limit: 100,
+          prepareTimeMs: 100,
+        });
+        cb({
+          type: 'complete',
+          status: 401,
+          received: 97,
+          estimatedTotal: 25_000_000,
+          downloadTimeMs: 119,
+          totalTimeMs: 200,
+        });
+
+        expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
+          status: 'completed',
+          httpStatus: 401,
+          receivedBytes: 97,
+          estimatedBytes: 25_000_000,
+          downloadTimeMs: 119,
+          totalTimeMs: 200,
         });
       });
     });
@@ -160,18 +206,21 @@ describe('repository-config', () => {
         cb({ type: 'request-start' });
         cb({
           type: 'response-received',
+          status: 200,
           estimatedTotal: 50000,
           limit: 100,
           prepareTimeMs: 500,
         });
         cb({
           type: 'download-progress',
+          status: 200,
           received: 12345,
           total: 50000,
           percentage: 24.69,
         });
         cb({
           type: 'error',
+          status: 200,
           error: 'Network error occurred',
           received: 12345,
           estimatedTotal: 50000,
@@ -181,6 +230,7 @@ describe('repository-config', () => {
 
         expect(mocks.emitDownloadProgress).toHaveBeenCalledWith({
           status: 'error',
+          httpStatus: 200,
           errorMessage: 'Network error occurred',
           receivedBytes: 12345,
           estimatedBytes: 50000,

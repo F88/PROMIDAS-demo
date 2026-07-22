@@ -69,6 +69,15 @@ export function FetcherContainer() {
           progress.totalTimeMs !== undefined
             ? (progress.totalTimeMs / 1000).toFixed(2)
             : 'N/A';
+        // A completed body transfer is not necessarily a successful fetch.
+        // For a non-2xx response the body (e.g. an error JSON payload) still
+        // finishes downloading, so distinguish it from a success (see #126).
+        const isHttpError =
+          progress.httpStatus !== undefined &&
+          (progress.httpStatus < 200 || progress.httpStatus >= 300);
+        if (isHttpError) {
+          return `[${time}] ⚠️ Error response body received (HTTP ${progress.httpStatus}): ${progress.receivedBytes ?? 0} bytes in ${downloadTimeS}s (total: ${totalTimeS}s)`;
+        }
         return `[${time}] ✅ Download complete: ${progress.receivedBytes ?? 0} bytes received (estimated ${progress.estimatedBytes ?? 0} bytes) in ${downloadTimeS}s (total: ${totalTimeS}s)`;
       }
       case 'error':
@@ -116,7 +125,11 @@ export function FetcherContainer() {
                       progress.status === 'error'
                         ? 'error'
                         : progress.status === 'completed'
-                          ? 'success.main'
+                          ? progress.httpStatus !== undefined &&
+                            (progress.httpStatus < 200 ||
+                              progress.httpStatus >= 300)
+                            ? 'warning.main'
+                            : 'success.main'
                           : progress.status === 'started'
                             ? 'warning.main'
                             : progress.status === 'in-progress'
