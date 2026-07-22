@@ -57,12 +57,14 @@ export async function createRepositoryConfigs(
           break;
         case 'response-received':
           console.info('[Download Progress] Started', {
+            httpStatus: event.status,
             estimatedBytes: event.estimatedTotal,
             limit: event.limit,
             prepareTimeMs: event.prepareTimeMs,
           });
           emitDownloadProgress({
             status: 'started',
+            httpStatus: event.status,
             estimatedBytes: event.estimatedTotal,
             limit: event.limit,
             prepareTimeMs: event.prepareTimeMs,
@@ -70,12 +72,14 @@ export async function createRepositoryConfigs(
           break;
         case 'download-progress':
           console.info('[Download Progress] In progress', {
+            httpStatus: event.status,
             receivedBytes: event.received,
             totalBytes: event.total,
             percentage: event.percentage,
           });
           emitDownloadProgress({
             status: 'in-progress',
+            httpStatus: event.status,
             receivedBytes: event.received,
             estimatedBytes: event.total,
             percentage: event.percentage,
@@ -83,6 +87,7 @@ export async function createRepositoryConfigs(
           break;
         case 'complete':
           console.info('[Download Progress] Completed', {
+            httpStatus: event.status,
             receivedBytes: event.received,
             estimatedBytes: event.estimatedTotal,
             downloadTimeMs: event.downloadTimeMs,
@@ -90,6 +95,7 @@ export async function createRepositoryConfigs(
           });
           emitDownloadProgress({
             status: 'completed',
+            httpStatus: event.status,
             receivedBytes: event.received,
             estimatedBytes: event.estimatedTotal,
             downloadTimeMs: event.downloadTimeMs,
@@ -98,6 +104,7 @@ export async function createRepositoryConfigs(
           break;
         case 'error':
           console.error('[Download Progress] Error', {
+            httpStatus: event.status,
             error: event.error,
             receivedBytes: event.received,
             estimatedBytes: event.estimatedTotal,
@@ -106,6 +113,7 @@ export async function createRepositoryConfigs(
           });
           emitDownloadProgress({
             status: 'error',
+            httpStatus: event.status,
             errorMessage: event.error,
             receivedBytes: event.received,
             estimatedBytes: event.estimatedTotal,

@@ -28,7 +28,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.2.0",
     "@mui/material": "^9.2.0",
-    "promidas": "^3.0.1",
+    "promidas": "^3.1.0",
     "promidas-utils": "^3.2.1",
     "protopedia-api-v2-client": "^3.0.0",
     "react": "^19.2.7",

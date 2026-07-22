@@ -9,6 +9,19 @@ and this project adheres to [CalVer](https://calver.org/).
 
 ## [Unreleased]
 
+### PROMIDAS versions
+
+- Upgraded `promidas` to `v3.1.0`.
+
+### Changed
+
+- Forward the HTTP status carried by `FetchProgressEvent` (added in `promidas`
+  v3.1.0) through the download-progress pipeline. A completed transfer with a
+  non-2xx status is now shown as an error response
+  ("Error response body received (HTTP xxx)") instead of "Download complete",
+  so an error body (e.g. a 401 JSON payload) is no longer reported as a
+  successful fetch.
+
 ## 2026-07-21
 
 ### Added
