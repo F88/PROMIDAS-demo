@@ -9,10 +9,10 @@ import {
   type ProtopediaInMemoryRepository,
   PromidasRepositoryBuilder,
 } from 'promidas';
-import { TOKEN_KEYS, TokenManager } from 'promidas-utils/token';
 
 import { resolveRepositoryInitFailure } from './init-error';
 import { createRepositoryConfigs } from './repository-config';
+import { inMemoryTokenStorage } from '../token/in-memory-token-storage';
 
 import type { LogLevel } from 'promidas/logger';
 
@@ -30,10 +30,9 @@ let repository: ProtopediaInMemoryRepository | null = null;
  */
 export async function getProtopediaRepository(): Promise<ProtopediaInMemoryRepository> {
   if (!repository) {
-    const tokenStorage = TokenManager.forSessionStorage(
-      TOKEN_KEYS.PROTOPEDIA_API_V2_TOKEN,
-    );
-    const token: string | null = await tokenStorage.get();
+    // Shared instance on purpose. The token lives only in memory now, so there
+    // is no backing store to synchronise a second instance through.
+    const token: string | null = await inMemoryTokenStorage.get();
 
     // For demo site, set log level to debug to help with troubleshooting
     const LOG_LEVEL_FOR_DEMO_SITE: LogLevel = 'debug';
