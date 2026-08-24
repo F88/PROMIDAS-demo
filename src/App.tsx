@@ -93,15 +93,12 @@ function PromidasInfoSection() {
 }
 
 function App() {
-  const { token, hasToken, saveToken, removeToken } = useToken();
+  const { hasToken, saveToken, removeToken } = useToken();
   const resetRepositoryInstance = useResetProtopediaRepository();
+  // Write-only field. A stored token is deliberately never restored into the
+  // input, so the raw value stays out of the DOM; `hasToken` tells the user
+  // whether one is set. Requests read the token straight from storage.
   const [tokenInput, setTokenInput] = useState('');
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      setTokenInput(token ?? '');
-    });
-  }, [token]);
 
   // Data flow visualization
   const {
@@ -212,6 +209,10 @@ function App() {
   const handleSaveToken = async () => {
     if (tokenInput.trim()) {
       await saveToken(tokenInput.trim());
+      // Clear the field once the token is stored so the raw value stops
+      // lingering in the DOM, and so a saved token always looks the same
+      // whether or not the page has been reloaded since.
+      setTokenInput('');
       resetRepositoryInstance();
       showStoreInfo();
     }
