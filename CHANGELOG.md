@@ -9,6 +9,34 @@ and this project adheres to [CalVer](https://calver.org/).
 
 ## [Unreleased]
 
+## 2026-08-24
+
+### Added
+
+- Content Security Policy. Production builds carry it in a `<meta http-equiv>`
+  tag, because GitHub Pages cannot set response headers; the dev server serves
+  an equivalent policy as a real header. Every origin other than the ProtoPedia
+  API is denied, so `fetch`, `sendBeacon`, image and WebSocket requests can no
+  longer carry data off-site. Top-level navigation is not covered by any CSP
+  directive and remains possible.
+
+### Changed
+
+- The API token is no longer kept in `sessionStorage`. It lives in memory for
+  the lifetime of the page, so **a reload discards it and it has to be entered
+  again**. In exchange it never reaches disk, is out of reach of extension
+  content scripts, and stops being readable after navigating the tab to another
+  page on the shared `f88.github.io` origin.
+- The token field is now write-only. A stored token is no longer restored into
+  the input, and the field is cleared once the token is saved; the placeholder
+  reports that a token is set instead of showing it. The visibility toggle is
+  disabled while the field is empty, and still works while entering a value.
+
+### Fixed
+
+- Favicon. `index.html` pointed at `/vite.svg`, which existed nowhere in the
+  project and returned 404 on GitHub Pages.
+
 ## 2026-07-22
 
 ### PROMIDAS versions
