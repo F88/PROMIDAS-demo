@@ -6,10 +6,12 @@ import { defineConfig, type Plugin } from 'vite';
  * Builds the Content Security Policy for the given environment.
  *
  * The app loads no remote images, fonts, iframes or workers, so everything
- * except the ProtoPedia API endpoint can be denied. The dev server needs two
- * relaxations: inline scripts for the React Fast Refresh preamble, and its HMR
- * WebSocket. The http(s) origins reachable through `connect-src` and `img-src`
- * are the same in both modes, so exfiltration behaves identically there.
+ * except the ProtoPedia API endpoint can be denied. The dev server needs a
+ * single relaxation: inline scripts for the React Fast Refresh preamble. Its
+ * HMR WebSocket needs no extra source, because `connect-src 'self'` already
+ * matches a ws:// URL on the page's own host and port. Every other directive,
+ * `connect-src` and `img-src` included, is identical in both modes, so
+ * exfiltration behaves the same way in development as in production.
  *
  * Delivery differs per environment: GitHub Pages serves static files only and
  * cannot set response headers, so the production policy travels in a
@@ -36,14 +38,11 @@ function buildContentSecurityPolicy(
     // such as a favicon. `data:` issues no network request, so neither source
     // can be used to smuggle data out.
     "img-src 'self' data:",
-    // The single legitimate destination for the API token. The dev server also
-    // needs its HMR WebSocket; the port is wildcarded because Vite picks the
-    // next free one when its default is taken (and --port overrides it), which
-    // would otherwise break HMR silently. Every other origin stays denied, so
-    // exfiltration behaviour is identical to production.
-    `connect-src 'self' https://protopedia.net${
-      isDev ? ' ws://localhost:*' : ''
-    }`,
+    // The single legitimate destination for the API token, in both modes. The
+    // dev server's HMR WebSocket needs no entry of its own: CSP matches a ws://
+    // URL against 'self', so it keeps working through whichever loopback
+    // hostname and port the page was reached on.
+    "connect-src 'self' https://protopedia.net",
     // No form performs a real submission; the token form calls preventDefault().
     "form-action 'none'",
     // Prevents an injected <base> tag from rewriting relative URLs.
