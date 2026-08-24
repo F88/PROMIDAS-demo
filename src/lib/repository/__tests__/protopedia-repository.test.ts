@@ -25,18 +25,13 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('promidas-utils/token', () => {
+vi.mock('../../token/in-memory-token-storage', () => {
   return {
-    TokenManager: {
-      forSessionStorage: () => ({
-        get: mocks.tokenStorageGet,
-        save: vi.fn(),
-        remove: vi.fn(),
-        has: vi.fn(),
-      }),
-    },
-    TOKEN_KEYS: {
-      PROTOPEDIA_API_V2_TOKEN: 'protopedia_api_v2_token',
+    inMemoryTokenStorage: {
+      get: mocks.tokenStorageGet,
+      save: vi.fn(),
+      remove: vi.fn(),
+      has: vi.fn(),
     },
   };
 });
