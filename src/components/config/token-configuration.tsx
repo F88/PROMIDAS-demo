@@ -61,7 +61,9 @@ export function TokenConfiguration({
           type={showToken ? 'text' : 'password'}
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          placeholder="ProtoPedia APIトークン"
+          placeholder={
+            hasToken ? '設定済み (再入力で上書き)' : 'ProtoPedia APIトークン'
+          }
           size="small"
           sx={{ mb: 2 }}
           name="protopedia_api_token"
@@ -76,6 +78,9 @@ export function TokenConfiguration({
                 <InputAdornment position="end">
                   <IconButton
                     onClick={() => setShowToken(!showToken)}
+                    // The field is write-only, so it is empty until the user
+                    // types. Toggling visibility on an empty field does nothing.
+                    disabled={!token}
                     edge="end"
                     aria-label={showToken ? 'Hide token' : 'Show token'}
                     size="small"
