@@ -15,6 +15,9 @@ and this project adheres to [CalVer](https://calver.org/).
   `protopedia-api-v2-client` to 5.2.0 (#85). A failed browser fetch is now
   `BROWSER_FETCH_FAILED` instead of `CORS_BLOCKED`, and its message no longer
   names CORS as the cause, because the browser does not tell which it is.
+- Updated dependencies within their major versions, including React 19.3,
+  MUI 9.5, Vite 8.3, Storybook 10.6, and Playwright 1.65. Vitest stays at 4.1.10
+  and is left for the Vitest 5 update.
 
 ### Removed
 
