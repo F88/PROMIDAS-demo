@@ -22,14 +22,14 @@ PROMIDAS Playground の開発者向けドキュメント
 
 ### Testing & Documentation
 
-- **Vitest 4** - テストフレームワーク
+- **Vitest 5** - テストフレームワーク
 - **Testing Library** - Reactコンポーネントテスト
 - **Storybook 10** - UIコンポーネントドキュメント
 
 ### Code Quality
 
 - **Prettier** - コードフォーマッター
-- **ESLint 9** - 静的解析
+- **ESLint 10** - 静的解析
 - **TypeScript ESLint** - TypeScript用Lintルール
 
 ## セットアップ
