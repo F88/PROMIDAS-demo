@@ -108,10 +108,7 @@ npm run lint:fix
 
 ### デプロイ
 
-```bash
-# GitHub Pagesにデプロイ
-npm run deploy
-```
+`main` ブランチに push すると、GitHub Actions が GitHub Pages に自動でデプロイします。詳しくは [ビルドとデプロイ](#ビルドとデプロイ) を参照してください。
 
 ## プロジェクト構成
 
@@ -148,7 +145,7 @@ src/
 │   │   ├── repository-config.ts     # 設定管理
 │   │   └── repository-settings.ts   # 設定値定義
 │   └── token/             # トークン管理
-│       └── token-storage.ts        # SessionStorage操作
+│       └── in-memory-token-storage.ts # メモリ上のトークン保持
 ├── utils/                  # ユーティリティ
 │   ├── number-utils.ts            # 数値フォーマット
 │   ├── time-utils.ts              # 時刻フォーマット
@@ -259,23 +256,19 @@ PROMIDASリポジトリは以下のイベントを発火:
 
 ### GitHub Pages
 
-プロジェクトは自動的にGitHub Pagesにデプロイされます:
+`main` ブランチに push すると、GitHub Actions のワークフロー (`.github/workflows/deploy.yml`) が `npm run build` でビルドし、`dist/` を GitHub Pages にデプロイします。
 
-```bash
-npm run deploy
-```
-
-ビルド成果物は`dist/`ディレクトリに生成され、`gh-pages`ブランチにプッシュされます。
+`package.json` の `npm run deploy` は `dist/` を `gh-pages` ブランチに push するスクリプトですが、現在の公開には使っていません。
 
 ### 環境変数
 
-特別な環境変数は不要です。APIトークンはSessionStorageで管理されます。
+特別な環境変数は不要です。APIトークンはメモリにだけ保持し、ブラウザのストレージには保存しません。
 
 ## トラブルシューティング
 
-### APIトークンが保存されない
+### APIトークンが消える
 
-SessionStorageはプライベートブラウジングモードで動作しない場合があります。通常のブラウジングモードで試してください。
+ページを再読み込みするとトークンは消えます。メモリにだけ保持しているためで、不具合ではありません。もう一度入力してください。
 
 ### TTLの更新が反映されない
 
