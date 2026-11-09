@@ -7,17 +7,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [CalVer](https://calver.org/).
 
-## [Unreleased]
+## 2026-11-09
+
+### PROMIDAS versions
+
+- Upgraded `promidas` to `v5.0.0`.
+- Upgraded `promidas-utils` to `v5.0.0`.
+- Upgraded `protopedia-api-v2-client` to `v5.2.0`.
 
 ### Changed
 
-- Updated `promidas` to 5.0.0, `promidas-utils` to 5.0.0, and
-  `protopedia-api-v2-client` to 5.2.0 (#85). A failed browser fetch is now
-  `BROWSER_FETCH_FAILED` instead of `CORS_BLOCKED`, and its message no longer
-  names CORS as the cause, because the browser does not tell which it is.
+- A failed browser fetch is now `BROWSER_FETCH_FAILED` instead of
+  `CORS_BLOCKED`, and its message no longer names CORS as the cause, because
+  the browser does not tell which it is (#85).
 - Updated dependencies within their major versions, including React 19.3,
-  MUI 9.5, Vite 8.3, Storybook 10.6, and Playwright 1.65. Vitest stays at 4.1.10
-  and is left for the Vitest 5 update.
+  MUI 9.5, Vite 8.3, Storybook 10.6, and Playwright 1.65.
 - Updated development dependencies to new major versions: ESLint 10, Vitest 5,
   jsdom 31, and `@testing-library/jest-dom` 7. `eslint-plugin-import` does not
   support ESLint 10, so it is replaced with `eslint-plugin-import-x`, which also
