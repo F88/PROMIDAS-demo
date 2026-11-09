@@ -9,6 +9,13 @@ and this project adheres to [CalVer](https://calver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Updated `promidas` to 5.0.0, `promidas-utils` to 5.0.0, and
+  `protopedia-api-v2-client` to 5.2.0 (#85). A failed browser fetch is now
+  `BROWSER_FETCH_FAILED` instead of `CORS_BLOCKED`, and its message no longer
+  names CORS as the cause, because the browser does not tell which it is.
+
 ## 2026-08-24
 
 ### Added

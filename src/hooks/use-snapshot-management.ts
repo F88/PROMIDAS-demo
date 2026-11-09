@@ -89,7 +89,8 @@ export function useSnapshotManagement() {
         // Only emit to Fetcher for network/fetch failures, not validation failures
         if (
           result.origin === 'fetcher' &&
-          (result.code === 'NETWORK_ERROR' || result.code === 'CORS_BLOCKED')
+          (result.code === 'NETWORK_ERROR' ||
+            result.code === 'BROWSER_FETCH_FAILED')
         ) {
           emitDownloadProgress({
             status: 'error',
@@ -149,7 +150,8 @@ export function useSnapshotManagement() {
         // Only emit to Fetcher for network/fetch failures, not validation failures
         if (
           result.origin === 'fetcher' &&
-          (result.code === 'NETWORK_ERROR' || result.code === 'CORS_BLOCKED')
+          (result.code === 'NETWORK_ERROR' ||
+            result.code === 'BROWSER_FETCH_FAILED')
         ) {
           emitDownloadProgress({
             status: 'error',
