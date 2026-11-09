@@ -10,9 +10,9 @@ import {
   PromidasRepositoryBuilder,
 } from 'promidas';
 
+import { inMemoryTokenStorage } from '../token/in-memory-token-storage';
 import { resolveRepositoryInitFailure } from './init-error';
 import { createRepositoryConfigs } from './repository-config';
-import { inMemoryTokenStorage } from '../token/in-memory-token-storage';
 
 import type { LogLevel } from 'promidas/logger';
 
