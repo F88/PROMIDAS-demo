@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// eslint-disable-next-line import/order -- intentional grouping with vitest import
+// eslint-disable-next-line import-x/order -- intentional grouping with vitest import
 import {
   DEFAULT_REPOSITORY_MAX_DATA_SIZE,
   DEFAULT_REPOSITORY_TTL_MS,

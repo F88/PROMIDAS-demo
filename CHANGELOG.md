@@ -18,6 +18,10 @@ and this project adheres to [CalVer](https://calver.org/).
 - Updated dependencies within their major versions, including React 19.3,
   MUI 9.5, Vite 8.3, Storybook 10.6, and Playwright 1.65. Vitest stays at 4.1.10
   and is left for the Vitest 5 update.
+- Updated development dependencies to new major versions: ESLint 10, Vitest 5,
+  jsdom 31, and `@testing-library/jest-dom` 7. `eslint-plugin-import` does not
+  support ESLint 10, so it is replaced with `eslint-plugin-import-x`, which also
+  reorders some imports.
 
 ### Removed
 
