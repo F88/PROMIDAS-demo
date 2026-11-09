@@ -15,12 +15,21 @@ and this project adheres to [CalVer](https://calver.org/).
   `protopedia-api-v2-client` to 5.2.0 (#85). A failed browser fetch is now
   `BROWSER_FETCH_FAILED` instead of `CORS_BLOCKED`, and its message no longer
   names CORS as the cause, because the browser does not tell which it is.
+- Updated dependencies within their major versions, including React 19.3,
+  MUI 9.5, Vite 8.3, Storybook 10.6, and Playwright 1.65. Vitest stays at 4.1.10
+  and is left for the Vitest 5 update.
 
 ### Removed
 
 - The `deploy` and `predeploy` scripts and the `gh-pages` package. The site is
   published by the deploy workflow on push to `main`, and the Pages source is
   now GitHub Actions instead of the `gh-pages` branch.
+
+### Security
+
+- Updated `zod`, a dependency of `promidas`, from 4.4.3 to 4.6.7 to fix
+  [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5),
+  where validating an oversized collection could exhaust memory.
 
 ## 2026-08-24
 

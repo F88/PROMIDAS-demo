@@ -8,11 +8,11 @@ PROMIDAS Playground の開発者向けドキュメント
 
 - **React 19** - UIライブラリ
 - **TypeScript 5.9** - 型安全な開発
-- **Vite 7** - 高速ビルドツール
+- **Vite 8** - 高速ビルドツール
 
 ### UI Framework
 
-- **Material-UI (MUI) 7** - Reactコンポーネントライブラリ
+- **Material-UI (MUI) 9** - Reactコンポーネントライブラリ
 - **Emotion** - CSS-in-JS
 
 ### Data Management
@@ -36,7 +36,7 @@ PROMIDAS Playground の開発者向けドキュメント
 
 ### 前提条件
 
-- Node.js >= 20
+- Node.js >= 22
 
 ### 1. 依存関係のインストール
 
@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-ブラウザで <http://localhost:5173/> を開きます。
+ブラウザで <http://localhost:5173/PROMIDAS-demo/> を開きます。
 
 ## 利用可能なスクリプト
 
@@ -127,8 +127,12 @@ src/
 │   │   └── repository-settings.tsx # リポジトリ設定
 │   ├── fetcher/            # Fetcherコンポーネント
 │   ├── store/              # Storeコンポーネント
-│   └── repository/         # Repositoryコンポーネント
+│   ├── repository/         # Repositoryコンポーネント
+│   └── management/         # リポジトリ管理コンポーネント
+├── constants/              # 定数
+│   └── snapshot.ts                # スナップショット取得件数(limit/offset)
 ├── hooks/                  # カスタムReact Hooks
+│   ├── repository-context.tsx     # リポジトリの生成と共有
 │   ├── use-config.ts              # 設定取得
 │   ├── use-header-stats.ts        # ヘッダー統計
 │   ├── use-store-stats.ts         # Store統計
@@ -143,17 +147,19 @@ src/
 │   ├── repository/         # リポジトリ管理
 │   │   ├── protopedia-repository.ts # PROMIDAS統合
 │   │   ├── repository-config.ts     # 設定管理
-│   │   └── repository-settings.ts   # 設定値定義
+│   │   ├── create-fetch.ts          # API通信用のfetch
+│   │   ├── init-error.ts            # 初期化エラー
+│   │   └── constants.ts             # 設定の既定値
+│   ├── settings/           # ユーザー設定
+│   │   └── user-settings-storage.ts # 設定のlocalStorage保存
 │   └── token/             # トークン管理
 │       └── in-memory-token-storage.ts # メモリ上のトークン保持
 ├── utils/                  # ユーティリティ
+│   ├── link.ts                    # リンク生成
 │   ├── number-utils.ts            # 数値フォーマット
-│   ├── time-utils.ts              # 時刻フォーマット
-│   ├── snapshot-error-utils.ts    # エラー処理
-│   └── store-state-utils.ts       # ステート判定
-├── test/                   # テストファイル
-│   ├── setup.ts
-│   └── *.test.tsx
+│   └── time-utils.ts              # 時刻フォーマット
+├── test/                   # テストの共通設定
+│   └── setup.ts
 ├── App.tsx                 # メインアプリケーション
 ├── main.tsx                # エントリーポイント
 └── theme.ts                # MUIテーマ設定
@@ -195,25 +201,29 @@ Fetcher → Store → Repository → Display
 
 ### PROMIDASリポジトリ設定
 
-デフォルト設定は[src/lib/repository/repository-settings.ts](src/lib/repository/repository-settings.ts)で定義:
+ストアの設定の既定値は[src/lib/repository/constants.ts](src/lib/repository/constants.ts)で定義:
 
 ```typescript
-{
-  ttl: 30_000,           // キャッシュTTL: 30秒
-  maxPayload: 30 * 1024, // 最大ペイロード: 30 MiB
-  limit: 10,             // デフォルト取得件数
-  offset: 0              // デフォルトオフセット
-}
+DEFAULT_REPOSITORY_TTL_MS = 60 * 1_000; // キャッシュTTL: 60秒
+DEFAULT_REPOSITORY_MAX_DATA_SIZE = 10 * 1024 * 1024; // 最大データサイズ: 10 MiB
+```
+
+Repository Settingsで変更した値はlocalStorageに保存されます。
+
+スナップショット取得件数の既定値は[src/constants/snapshot.ts](src/constants/snapshot.ts)で定義:
+
+```typescript
+LIMIT: { MAX: 10_000, MIN: 0, DEFAULT: 10 }, // 取得件数
+OFFSET: { MIN: 0, DEFAULT: 0 },              // 取得開始位置
 ```
 
 ### イベントシステム
 
 PROMIDASリポジトリは以下のイベントを発火:
 
-- `request-start` - API リクエスト開始
-- `request-end` - API リクエスト終了
-- `snapshot-setup-complete` - スナップショット作成完了
-- `snapshot-refresh-complete` - スナップショット更新完了
+- `snapshotStarted` - スナップショットの取得開始
+- `snapshotCompleted` - スナップショットの取得完了
+- `snapshotFailed` - スナップショットの取得失敗
 
 これらのイベントは`useRepositoryEvents`でリッスンし、データフロー可視化に利用されます。
 
@@ -223,12 +233,13 @@ PROMIDASリポジトリは以下のイベントを発火:
 
 - カスタムフックのテスト: `hooks/__tests__/`
 - ユーティリティ関数のテスト: `utils/__tests__/`
-- リポジトリロジックのテスト: `lib/__tests__/`
+- リポジトリロジックと設定のテスト: `lib/*/__tests__/`
 
 ### コンポーネントテスト
 
 - React Testing Libraryを使用
-- `test/`ディレクトリに配置
+- コンポーネントと同じディレクトリに`*.test.tsx`として配置
+- 共通設定は`test/setup.ts`
 
 ### ビジュアルテスト
 
@@ -248,9 +259,9 @@ PROMIDASリポジトリは以下のイベントを発火:
 
 ### カラースキーム
 
-- ヘッダー背景: `#37474f` (ダークグレー)
-- PromidasInfoSection背景: 設定可能
-- フッター背景: 設定可能
+- ヘッダー背景: `#263238` (ダークグレー)
+- PromidasInfoSection背景: `#0288d1`
+- フッター背景: `#0288d1`
 
 ## ビルドとデプロイ
 
@@ -260,7 +271,7 @@ PROMIDASリポジトリは以下のイベントを発火:
 
 ### 環境変数
 
-特別な環境変数は不要です。APIトークンはメモリにだけ保持し、ブラウザのストレージには保存しません。
+特別な環境変数は不要です。APIトークンはメモリにだけ保持し、ブラウザのストレージには保存しません。Repository Settingsの値はlocalStorageに保存します。
 
 ## トラブルシューティング
 
@@ -268,9 +279,9 @@ PROMIDASリポジトリは以下のイベントを発火:
 
 ページを再読み込みするとトークンは消えます。メモリにだけ保持しているためで、不具合ではありません。もう一度入力してください。
 
-### TTLの更新が反映されない
+### 設定を保存したらスナップショットが消えた
 
-Repository Settingsを変更した後は、リポジトリを再初期化するためにページをリロードしてください。
+Repository Settingsで保存すると、新しい設定でリポジトリを作り直します。それまでのスナップショットは使えなくなるので、もう一度Setup Snapshotを実行してください。
 
 ### テストが失敗する
 
