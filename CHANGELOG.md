@@ -16,6 +16,12 @@ and this project adheres to [CalVer](https://calver.org/).
   `BROWSER_FETCH_FAILED` instead of `CORS_BLOCKED`, and its message no longer
   names CORS as the cause, because the browser does not tell which it is.
 
+### Removed
+
+- The `deploy` and `predeploy` scripts and the `gh-pages` package. The site is
+  published by the deploy workflow on push to `main`, and the Pages source is
+  now GitHub Actions instead of the `gh-pages` branch.
+
 ## 2026-08-24
 
 ### Added
