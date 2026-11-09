@@ -22,6 +22,12 @@ and this project adheres to [CalVer](https://calver.org/).
   published by the deploy workflow on push to `main`, and the Pages source is
   now GitHub Actions instead of the `gh-pages` branch.
 
+### Security
+
+- Updated `zod`, a dependency of `promidas`, from 4.4.3 to 4.6.7 to fix
+  [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5),
+  where validating an oversized collection could exhaust memory.
+
 ## 2026-08-24
 
 ### Added
