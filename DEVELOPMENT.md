@@ -258,8 +258,6 @@ PROMIDASリポジトリは以下のイベントを発火:
 
 `main` ブランチに push すると、GitHub Actions のワークフロー (`.github/workflows/deploy.yml`) が `npm run build` でビルドし、`dist/` を GitHub Pages にデプロイします。
 
-`package.json` の `npm run deploy` は `dist/` を `gh-pages` ブランチに push するスクリプトですが、現在の公開には使っていません。
-
 ### 環境変数
 
 特別な環境変数は不要です。APIトークンはメモリにだけ保持し、ブラウザのストレージには保存しません。
